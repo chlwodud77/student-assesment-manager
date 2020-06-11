@@ -18,7 +18,161 @@ class WindowClass(QMainWindow, form_class) :
 
         self.fileUpdBtn.clicked.connect(self.uploadFile)
         self.clsSaveBtn.clicked.connect(self.uploadCls)
+        self.subSaveBtn.clicked.connect(self.saveSub)
+        
 
+        self.grdAseDelBtn.clicked.connect(self.delAse)
+        self.grdAseAddBtn.clicked.connect(self.addAse)
+        self.grdAseModBtn.clicked.connect(self.modAse)
+        self.grdAAseList.clicked.connect(self.activateEdit)
+        self.grdBAseList.clicked.connect(self.activateEdit)
+        self.grdCAseList.clicked.connect(self.activateEdit)
+
+    #과목, 평가 등급 점수, 평가 내용 db 저장 함수
+    def saveSub(self):
+        subTitleEdit = self.subTitleEdit.text()
+        print(subTitleEdit)
+        grdAEdit1 = self.grdAEdit1.text()
+        grdAEdit2 = self.grdAEdit2.text()
+        grdBEdit1 = self.grdBEdit1.text()
+        grdBEdit2 = self.grdBEdit2.text()
+        grdCEdit1 = self.grdCEdit1.text()
+        grdCEdit2 = self.grdCEdit2.text()
+
+        grdAList = []
+        grdBList = []
+        grdCList = []
+
+        for i in range (0,self.grdAAseList.rowCount()):
+            for j in range (0,self.grdAAseList.columnCount()):
+                grdAList.append(self.grdAAseList.item(i,j).text())
+
+        for i in range (0,self.grdBAseList.rowCount()):
+            for j in range (0,self.grdBAseList.columnCount()):
+                grdBList.append(self.grdBAseList.item(i,j).text())
+
+        for i in range (0,self.grdCAseList.rowCount()):
+            for j in range (0,self.grdCAseList.columnCount()):
+                grdCList.append(self.grdCAseList.item(i,j).text())
+
+        conn = sqlite3.connect("studentManager.db")
+
+        #기존 과목 없으면 새로 생성
+        try:    
+            with conn:
+                if(not subTitleEdit):
+                    QMessageBox.about(self, "오류", "과목을 입력하세요")
+                else:
+                    c = conn.cursor()
+                    isExist = c.execute("select * from Subject where subName = ?", (subTitleEdit,)).fetchall()
+                    if(not isExist):
+                        c.execute("insert into Subject(subName) values (?)", (subTitleEdit,))
+                    
+                    #기존 과목을 참조하여 평가지를 새로 생성 및 수정 (먼저 다 삭제했다가 다시 새로 생성)
+                    subId = c.execute("select id from Subject where subName=?", (subTitleEdit,)).fetchone()[0]
+                    c.execute("delete from Assesment where subId = ?", (subId,))
+                    sql = "insert into Assesment(subId, grade, content, greater, less) values (?,?,?,?,?)"
+                    for i in range(0, len(grdAList)):
+                        c.execute(sql, (subId, "A", grdAList[i], int(grdAEdit1), int(grdAEdit2)))
+                    
+                    for i in range(0, len(grdBList)):
+                        c.execute(sql, (subId, "B", grdBList[i], int(grdBEdit1), int(grdBEdit2)))
+
+                    for i in range(0, len(grdCList)):
+                        c.execute(sql, (subId, "C", grdCList[i], int(grdCEdit1), int(grdCEdit2)))
+
+                    QMessageBox.about(self, "결과", "성공")   
+        except sqlite3.IntegrityError:
+            print("문제 발생")
+            QMessageBox.about(self, "오류", "실패")
+
+    # 평가 내용 수정 함수
+    def modAse(self):
+        focusedTab = self.grdAseWidget.currentIndex()
+        if(focusedTab == 0):
+            widget = self.grdAAseList
+            content = self.grdAseEdit.toPlainText()
+            widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
+
+        
+        elif(focusedTab == 1):
+            widget = self.grdBAseList
+            content = self.grdAseEdit.toPlainText()
+            widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
+
+        elif(focusedTab == 2):
+            widget = self.grdCAseList
+            content = self.grdAseEdit.toPlainText()
+            widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
+
+    #평가 내용 선택하면 편집기에 해당 내용 보여줌
+    def activateEdit(self):
+        focusedTab = self.grdAseWidget.currentIndex()
+        if(focusedTab == 0):
+            widget = self.grdAAseList
+            self.grdAseEdit.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
+
+        
+        elif(focusedTab == 1):
+            widget = self.grdBAseList
+            self.grdAseEdit.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
+
+        elif(focusedTab == 2):
+            widget = self.grdCAseList
+            self.grdAseEdit.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
+
+    #평가 내용 항목 지우는 함수
+    def delAse(self):
+        focusedTab = self.grdAseWidget.currentIndex()
+        
+        if(focusedTab == 0):
+            row = self.grdAAseList.currentRow()
+            col = self.grdAAseList.currentColumn()
+            self.grdAAseList.removeRow(row)
+        
+        elif(focusedTab == 1):
+            row = self.grdBAseList.currentRow()
+            col = self.grdBAseList.currentColumn()
+            self.grdBAseList.removeRow(row)
+
+        
+        elif(focusedTab == 2):
+            row = self.grdCAseList.currentRow()
+            col = self.grdCAseList.currentColumn()
+            self.grdCAseList.removeRow(row)
+
+    #평가 내용 추가 함수
+    def addAse(self):
+        focusedTab = self.grdAseWidget.currentIndex()
+        content = self.grdAseEdit.toPlainText()
+        item = QTableWidgetItem(content)
+                
+        if(focusedTab == 0):
+            currentRowCnt = self.grdAAseList.rowCount()
+            if(currentRowCnt == 0):
+                self.grdAAseList.insertRow(currentRowCnt)
+                self.grdAAseList.setItem(currentRowCnt, 0, item)
+            else:
+                self.grdAAseList.insertRow(currentRowCnt)
+                self.grdAAseList.setItem(currentRowCnt, 0, item)
+        elif(focusedTab == 1):
+            currentRowCnt = self.grdBAseList.rowCount()
+            if(currentRowCnt == 0):
+                self.grdBAseList.insertRow(currentRowCnt)
+                self.grdBAseList.setItem(currentRowCnt, 0, item)
+            else:
+                self.grdBAseList.insertRow(currentRowCnt)
+                self.grdBAseList.setItem(currentRowCnt, 0, item)
+        
+        elif(focusedTab == 2):
+            currentRowCnt = self.grdCAseList.rowCount()
+            if(currentRowCnt == 0):
+                self.grdCAseList.insertRow(currentRowCnt)
+                self.grdCAseList.setItem(currentRowCnt, 0, item)
+            else:
+                self.grdCAseList.insertRow(currentRowCnt)
+                self.grdCAseList.setItem(currentRowCnt, 0, item)
+        
     #엑셀로 불러온 학급 구성원 db 에 업로드 
     def uploadCls(self):
         conn = sqlite3.connect("studentManager.db")

@@ -14,11 +14,11 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_13">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -201,20 +201,6 @@
         <string>과목관리</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="4" column="0">
-         <widget class="QPushButton" name="subSaveBtn">
-          <property name="text">
-           <string>저장</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" alignment="Qt::AlignHCenter">
          <widget class="QFrame" name="frame_18">
           <property name="autoFillBackground">
@@ -275,12 +261,9 @@
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_8">
                  <item>
-                  <widget class="QLineEdit" name="subAddEdit"/>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="subAddBtn">
+                  <widget class="QLabel" name="label">
                    <property name="text">
-                    <string>추가</string>
+                    <string>과목 리스트</string>
                    </property>
                   </widget>
                  </item>
@@ -355,55 +338,14 @@
                   <widget class="QLineEdit" name="grdAEdit1"/>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="grdARng1">
-                   <item>
-                    <property name="text">
-                     <string>이상</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>이하</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>미만</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>초과</string>
-                    </property>
-                   </item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>~</string>
+                   </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="grdAEdit2"/>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="grdARng2">
-                   <item>
-                    <property name="text">
-                     <string>이상</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>이하</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>미만</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>초과</string>
-                    </property>
-                   </item>
-                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -428,55 +370,14 @@
                   <widget class="QLineEdit" name="grdBEdit1"/>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="grdBRng1">
-                   <item>
-                    <property name="text">
-                     <string>이상</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>이하</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>미만</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>초과</string>
-                    </property>
-                   </item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>~</string>
+                   </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="grdBEdit2"/>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="grdBRng2">
-                   <item>
-                    <property name="text">
-                     <string>이상</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>이하</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>미만</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>초과</string>
-                    </property>
-                   </item>
-                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -501,55 +402,14 @@
                   <widget class="QLineEdit" name="grdCEdit1"/>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="grdCRng1">
-                   <item>
-                    <property name="text">
-                     <string>이상</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>이하</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>미만</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>초과</string>
-                    </property>
-                   </item>
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>~</string>
+                   </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="grdCEdit2"/>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="grdCRng2">
-                   <item>
-                    <property name="text">
-                     <string>이상</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>이하</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>미만</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>초과</string>
-                    </property>
-                   </item>
-                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -558,6 +418,20 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QPushButton" name="subSaveBtn">
+          <property name="text">
+           <string>저장</string>
+          </property>
          </widget>
         </item>
         <item row="3" column="0">
@@ -570,7 +444,32 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
+            <widget class="QFrame" name="frame_5">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <item>
+               <widget class="QLabel" name="subTitleLabel">
+                <property name="text">
+                 <string>과목명</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="subTitleEdit"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <widget class="QTabWidget" name="grdAseWidget">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
              <property name="currentIndex">
               <number>2</number>
              </property>
@@ -580,60 +479,12 @@
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <item>
-                <widget class="QListWidget" name="grdAAseList">
-                 <item>
+                <widget class="QTableWidget" name="grdAAseList">
+                 <column>
                   <property name="text">
-                   <string>이렇다이</string>
+                   <string>연번</string>
                   </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>이말이야이</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPlainTextEdit" name="grdAAseEdit"/>
-               </item>
-               <item>
-                <widget class="QFrame" name="grdABtnFrm">
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_7">
-                  <item>
-                   <widget class="QPushButton" name="grdAAddBtn">
-                    <property name="text">
-                     <string>추가</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="grdAModBtn">
-                    <property name="text">
-                     <string>수정</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="grdADelBtn">
-                    <property name="text">
-                     <string>삭제</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 </column>
                 </widget>
                </item>
               </layout>
@@ -644,49 +495,12 @@
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_8">
                <item>
-                <widget class="QListWidget" name="grdBAseList"/>
-               </item>
-               <item>
-                <widget class="Line" name="line_4">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPlainTextEdit" name="grdBAseEdit"/>
-               </item>
-               <item>
-                <widget class="QFrame" name="grdBBtnFrm">
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_9">
-                  <item>
-                   <widget class="QPushButton" name="grdBAddBtn">
-                    <property name="text">
-                     <string>추가</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="grdBModBtn">
-                    <property name="text">
-                     <string>수정</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="grdBDelBtn">
-                    <property name="text">
-                     <string>삭제</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                <widget class="QTableWidget" name="grdBAseList">
+                 <column>
+                  <property name="text">
+                   <string>연번</string>
+                  </property>
+                 </column>
                 </widget>
                </item>
               </layout>
@@ -697,56 +511,80 @@
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <item>
-                <widget class="QListWidget" name="grdCAseList"/>
-               </item>
-               <item>
-                <widget class="Line" name="line_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPlainTextEdit" name="grdCAseEdit"/>
-               </item>
-               <item>
-                <widget class="QFrame" name="grdCBtnFrm">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_10">
-                  <item>
-                   <widget class="QPushButton" name="grdCAddBtn">
-                    <property name="text">
-                     <string>추가</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="grdCModBtn">
-                    <property name="text">
-                     <string>수정</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="grdCDelBtn">
-                    <property name="text">
-                     <string>삭제</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                <widget class="QTableWidget" name="grdCAseList">
+                 <column>
+                  <property name="text">
+                   <string>연번</string>
+                  </property>
+                 </column>
                 </widget>
                </item>
               </layout>
              </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QFrame" name="frame_6">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QFrame" name="frame_7">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_14">
+              <item>
+               <widget class="QPlainTextEdit" name="grdAseEdit">
+                <property name="plainText">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="grdABtnFrm">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QPushButton" name="grdAseAddBtn">
+                <property name="text">
+                 <string>추가</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="grdAseModBtn">
+                <property name="text">
+                 <string>수정</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="grdAseDelBtn">
+                <property name="text">
+                 <string>삭제</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
