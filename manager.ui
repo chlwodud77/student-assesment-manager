@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>835</height>
+    <width>1280</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -200,40 +200,15 @@
        <attribute name="title">
         <string>과목관리</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0" alignment="Qt::AlignHCenter">
-         <widget class="QFrame" name="frame_18">
-          <property name="autoFillBackground">
-           <bool>false</bool>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_14">
-           <item>
-            <widget class="QLabel" name="subSrhLabel">
-             <property name="text">
-              <string>조회된 과목 : </string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="subSrhStaLabel">
-             <property name="text">
-              <string>없음</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item>
          <widget class="QFrame" name="frame_2">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -242,6 +217,18 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
            <item>
             <widget class="QFrame" name="frame_4">
              <property name="frameShape">
@@ -319,6 +306,34 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
+               <widget class="QFrame" name="frame_5">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_13">
+                 <item>
+                  <widget class="QLabel" name="subTitleLabel">
+                   <property name="text">
+                    <string>과목명</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="subTitleEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
                <widget class="QFrame" name="grdARngFrm">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -330,7 +345,7 @@
                  <item>
                   <widget class="QLabel" name="grdALabel">
                    <property name="text">
-                    <string>A등급</string>
+                    <string>A등급:</string>
                    </property>
                   </widget>
                  </item>
@@ -340,12 +355,19 @@
                  <item>
                   <widget class="QLabel" name="label_2">
                    <property name="text">
-                    <string>~</string>
+                    <string>초과</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="grdAEdit2"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="text">
+                    <string>미만</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -362,7 +384,7 @@
                  <item>
                   <widget class="QLabel" name="grdBLabel">
                    <property name="text">
-                    <string>B등급</string>
+                    <string>B등급:</string>
                    </property>
                   </widget>
                  </item>
@@ -370,14 +392,21 @@
                   <widget class="QLineEdit" name="grdBEdit1"/>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_3">
+                  <widget class="QLabel" name="label_8">
                    <property name="text">
-                    <string>~</string>
+                    <string>초과</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="grdBEdit2"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>미만</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -394,7 +423,7 @@
                  <item>
                   <widget class="QLabel" name="grdCLabel">
                    <property name="text">
-                    <string>C등급</string>
+                    <string>C등급:</string>
                    </property>
                   </widget>
                  </item>
@@ -402,14 +431,21 @@
                   <widget class="QLineEdit" name="grdCEdit1"/>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_4">
+                  <widget class="QLabel" name="label_10">
                    <property name="text">
-                    <string>~</string>
+                    <string>초과</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="grdCEdit2"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_11">
+                   <property name="text">
+                    <string>미만</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -420,171 +456,190 @@
           </layout>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QPushButton" name="subSaveBtn">
-          <property name="text">
-           <string>저장</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QFrame" name="frame_3">
+        <item>
+         <widget class="QFrame" name="frame_10">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
+          <layout class="QVBoxLayout" name="verticalLayout_15">
            <item>
-            <widget class="QFrame" name="frame_5">
+            <widget class="QFrame" name="frame_8">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
+              <enum>QFrame::Plain</enum>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
-               <widget class="QLabel" name="subTitleLabel">
-                <property name="text">
-                 <string>과목명</string>
+               <widget class="QFrame" name="frame_6">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <widget class="QFrame" name="frame_7">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_14">
+                    <item>
+                     <widget class="QPlainTextEdit" name="grdAseEdit">
+                      <property name="plainText">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="grdABtnFrm">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_7">
+                    <item>
+                     <widget class="QPushButton" name="grdAseAddBtn">
+                      <property name="text">
+                       <string>추가</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="grdAseModBtn">
+                      <property name="text">
+                       <string>수정</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="grdAseDelBtn">
+                      <property name="text">
+                       <string>삭제</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="subTitleEdit"/>
+               <widget class="QFrame" name="frame_3">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_6">
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <widget class="QTabWidget" name="grdAseWidget">
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="currentIndex">
+                    <number>0</number>
+                   </property>
+                   <widget class="QWidget" name="grdAAseTab">
+                    <attribute name="title">
+                     <string>A등급</string>
+                    </attribute>
+                    <layout class="QVBoxLayout" name="verticalLayout_7">
+                     <item>
+                      <widget class="QTableWidget" name="grdAAseList">
+                       <column>
+                        <property name="text">
+                         <string>연번</string>
+                        </property>
+                       </column>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                   <widget class="QWidget" name="grdBAseTab">
+                    <attribute name="title">
+                     <string>B등급</string>
+                    </attribute>
+                    <layout class="QVBoxLayout" name="verticalLayout_8">
+                     <item>
+                      <widget class="QTableWidget" name="grdBAseList">
+                       <column>
+                        <property name="text">
+                         <string>연번</string>
+                        </property>
+                       </column>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                   <widget class="QWidget" name="grdCAseTab">
+                    <attribute name="title">
+                     <string>C등급</string>
+                    </attribute>
+                    <layout class="QVBoxLayout" name="verticalLayout_9">
+                     <item>
+                      <widget class="QTableWidget" name="grdCAseList">
+                       <column>
+                        <property name="text">
+                         <string>연번</string>
+                        </property>
+                       </column>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </item>
              </layout>
             </widget>
            </item>
            <item>
-            <widget class="QTabWidget" name="grdAseWidget">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
+            <widget class="QPushButton" name="subSaveBtn">
+             <property name="text">
+              <string>저장</string>
              </property>
-             <property name="currentIndex">
-              <number>2</number>
-             </property>
-             <widget class="QWidget" name="grdAAseTab">
-              <attribute name="title">
-               <string>A등급</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
-               <item>
-                <widget class="QTableWidget" name="grdAAseList">
-                 <column>
-                  <property name="text">
-                   <string>연번</string>
-                  </property>
-                 </column>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="grdBAseTab">
-              <attribute name="title">
-               <string>B등급</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_8">
-               <item>
-                <widget class="QTableWidget" name="grdBAseList">
-                 <column>
-                  <property name="text">
-                   <string>연번</string>
-                  </property>
-                 </column>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="grdCAseTab">
-              <attribute name="title">
-               <string>C등급</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_9">
-               <item>
-                <widget class="QTableWidget" name="grdCAseList">
-                 <column>
-                  <property name="text">
-                   <string>연번</string>
-                  </property>
-                 </column>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QFrame" name="frame_6">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QFrame" name="frame_7">
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_14">
-              <item>
-               <widget class="QPlainTextEdit" name="grdAseEdit">
-                <property name="plainText">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="grdABtnFrm">
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QPushButton" name="grdAseAddBtn">
-                <property name="text">
-                 <string>추가</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="grdAseModBtn">
-                <property name="text">
-                 <string>수정</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="grdAseDelBtn">
-                <property name="text">
-                 <string>삭제</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </widget>
            </item>
           </layout>
@@ -667,13 +722,19 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>736</width>
-                <height>616</height>
+                <width>1182</width>
+                <height>528</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <item>
                 <widget class="QTableWidget" name="tableWidget_2">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <row>
                   <property name="text">
                    <string>1</string>
@@ -759,8 +820,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>21</height>
+     <width>1280</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
