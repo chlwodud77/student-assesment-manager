@@ -15,10 +15,14 @@ class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
+        self.showSub()
+
 
         self.fileUpdBtn.clicked.connect(self.uploadFile)
         self.clsSaveBtn.clicked.connect(self.uploadCls)
         self.subSaveBtn.clicked.connect(self.saveSub)
+        self.subSrhBtn.clicked.connect(self.searchSub)
+        self.subDelBtn.clicked.connect(self.delSub)
         
 
         self.grdAseDelBtn.clicked.connect(self.delAse)
@@ -27,6 +31,122 @@ class WindowClass(QMainWindow, form_class) :
         self.grdAAseList.clicked.connect(self.activateEdit)
         self.grdBAseList.clicked.connect(self.activateEdit)
         self.grdCAseList.clicked.connect(self.activateEdit)
+
+    #선택 과목 삭제 함수
+    def delSub(self):
+        conn = sqlite3.connect("studentManager.db")
+        clickedSub = self.subListWidget.currentItem().text()
+        sql1 = "select id from Subject where subName = ?"
+        sql2 = "delete from Subject where subName = ?"
+        sql3 = "delete from Assesment where subId = ?"
+        try:
+            with conn:
+                c = conn.cursor()
+                subId = c.execute(sql1, (clickedSub,)).fetchone()[0]
+                if(subId):
+                    c.execute(sql2, (clickedSub,))
+                    c.execute(sql3, (subId,))
+                    QMessageBox.about(self, "결과", "삭제 성공")   
+
+        except sqlite3.IntegrityError:
+            print("과목 삭제 문제 발생")
+            QMessageBox.about(self, "결과", "삭제 실패")
+
+        self.showSub()
+
+
+    #과목 리스트에서 과목 선택하면 과목 세부 내용 조회 함수
+    def searchSub(self):
+        conn = sqlite3.connect("studentManager.db")
+        subListWidget = self.subListWidget
+        clickedSub = subListWidget.currentItem().text()
+        print(clickedSub)
+        sql1 = "select id from Subject where subName = ?"
+        sql2 = "select greater, less from Assesment where subId = ? and grade = ?"
+        sql3 = "select content from Assesment where subId = ? and grade = ?"
+        try:
+            with conn:
+                c = conn.cursor()
+                subId = c.execute(sql1, (clickedSub,)).fetchone()[0]
+                grdARng = []
+                grdBRng = []
+                grdCRng = []
+                if(subId):
+
+                    #조회된 과목 등급 점수표 조회 및 출력
+                    grdARng = c.execute(sql2, (subId, "A")).fetchall()
+                    grdBRng = c.execute(sql2, (subId, "B")).fetchall()
+                    grdCRng = c.execute(sql2, (subId, "C")).fetchall()
+
+                    if(len(grdARng) != 0):
+                        self.grdAEdit1.setText(str(grdARng[0][0]))
+                        self.grdAEdit2.setText(str(grdARng[0][1]))
+                    else:
+                        self.grdAEdit1.setText(str("없음"))
+                        self.grdAEdit2.setText(str("없음"))
+                    if(len(grdBRng) != 0):
+                        self.grdBEdit1.setText(str(grdBRng[0][0]))
+                        self.grdBEdit2.setText(str(grdBRng[0][1]))
+                    else:
+                        self.grdBEdit1.setText(str("없음"))
+                        self.grdBEdit2.setText(str("없음"))
+                    if(len(grdCRng) != 0):
+                        self.grdCEdit1.setText(str(grdCRng[0][0]))
+                        self.grdCEdit2.setText(str(grdCRng[0][1]))
+                    else:
+                        self.grdCEdit1.setText(str("없음"))
+                        self.grdCEdit2.setText(str("없음"))
+
+                    #조회된 과목 이름 및 평가 출력
+                    conn.row_factory = lambda cursor, row: row[0]
+                    c = conn.cursor()
+                    self.subTitleEdit.setText(str(clickedSub))
+                    
+                    grdAAse = []
+                    grdBAse = []
+                    grdCAse = []
+
+                    grdAAse = c.execute(sql3, (subId, "A")).fetchall()
+                    grdBAse = c.execute(sql3, (subId, "B")).fetchall()
+                    grdCAse = c.execute(sql3, (subId, "C")).fetchall()
+
+                    self.grdAAseList.setRowCount(len(grdAAse))
+                    self.grdAAseList.setColumnCount(1)
+                    self.grdBAseList.setRowCount(len(grdBAse))
+                    self.grdBAseList.setColumnCount(1)
+                    self.grdCAseList.setRowCount(len(grdCAse))
+                    self.grdCAseList.setColumnCount(1)
+
+                    for i in range(0, len(grdAAse)):
+                        self.grdAAseList.setItem(i, 0, QTableWidgetItem(grdAAse[i]))
+                    for i in range(0, len(grdBAse)):
+                        self.grdBAseList.setItem(i, 0, QTableWidgetItem(grdBAse[i]))
+                    for i in range(0, len(grdCAse)):
+                        self.grdCAseList.setItem(i, 0, QTableWidgetItem(grdCAse[i]))
+
+        except sqlite3.IntegrityError:
+            print("과목조회 문제 발생")
+
+
+    #db 에서 과목 리스트 가져와서 보여주는 함수
+    def showSub(self):
+        conn = sqlite3.connect("studentManager.db")
+        subList = []
+        subListWidget = self.subListWidget
+        subListWidget.clear()
+        conn.row_factory = lambda cursor, row: row[0]
+        sql = "select subName from Subject"
+
+        try:    
+            with conn:
+                c = conn.cursor()
+                subList = c.execute(sql).fetchall()
+
+                for i in range (0, len(subList)):
+                    subListWidget.addItem(QListWidgetItem(subList[i]))
+        except sqlite3.IntegrityError:
+            print("문제 발생")
+
 
     #과목, 평가 등급 점수, 평가 내용 db 저장 함수
     def saveSub(self):
@@ -67,7 +187,7 @@ class WindowClass(QMainWindow, form_class) :
                     isExist = c.execute("select * from Subject where subName = ?", (subTitleEdit,)).fetchall()
                     if(not isExist):
                         c.execute("insert into Subject(subName) values (?)", (subTitleEdit,))
-                    
+
                     #기존 과목을 참조하여 평가지를 새로 생성 및 수정 (먼저 다 삭제했다가 다시 새로 생성)
                     subId = c.execute("select id from Subject where subName=?", (subTitleEdit,)).fetchone()[0]
                     c.execute("delete from Assesment where subId = ?", (subId,))
@@ -86,6 +206,8 @@ class WindowClass(QMainWindow, form_class) :
             print("문제 발생")
             QMessageBox.about(self, "오류", "실패")
 
+        self.showSub()
+        
     # 평가 내용 수정 함수
     def modAse(self):
         focusedTab = self.grdAseWidget.currentIndex()
