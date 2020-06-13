@@ -2,7 +2,8 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from openpyxl import load_workbook
-import sqlite3
+import sqlite3, random
+
 
 
 #UI파일 연결
@@ -16,6 +17,8 @@ class WindowClass(QMainWindow, form_class) :
         super().__init__()
         self.setupUi(self)
         self.showSub()
+        self.insertSubComboBox()
+        self.insertClassComboBox()
 
 
         self.fileUpdBtn.clicked.connect(self.uploadFile)
@@ -24,7 +27,6 @@ class WindowClass(QMainWindow, form_class) :
         self.subSrhBtn.clicked.connect(self.searchSub)
         self.subDelBtn.clicked.connect(self.delSub)
         
-
         self.grdAseDelBtn.clicked.connect(self.delAse)
         self.grdAseAddBtn.clicked.connect(self.addAse)
         self.grdAseModBtn.clicked.connect(self.modAse)
@@ -32,6 +34,134 @@ class WindowClass(QMainWindow, form_class) :
         self.grdBAseList.clicked.connect(self.activateEdit)
         self.grdCAseList.clicked.connect(self.activateEdit)
 
+        self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
+        self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
+
+    ##############점수입력###########################
+
+    def returnAssementStandard(self, subId):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT DISTINCT grade, greater, less FROM Assesment WHERE subId = ?"
+                return conn.cursor().execute(sql, (subId,)).fetchall()
+        except sqlite3.IntegrityError:
+            print("과목 조회 오류")
+
+
+    def returnSubId(self, subName):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT id FROM Subject WHERE subName = ?"
+                return conn.cursor().execute(sql, (subName,)).fetchone()[0]
+        except sqlite3.IntegrityError:
+            print("과목 조회 오류")
+
+    def returnRandomAssesment(self, subId):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT grade, content FROM Assesment WHERE subId = ?"
+                return conn.cursor().execute(sql, (subId,)).fetchall()
+        except sqlite3.IntegrityError:
+            print("과목 평가문 조회 오류")
+
+
+    def returnClassMemberList(self, grade, classes):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT name, id FROM Student WHERE grade = ? and class = ?"
+                return conn.cursor().execute(sql, (grade, classes)).fetchall()
+        except sqlite3.IntegrityError:
+            print("학급 구성원 조회 오류")
+
+    def returnClassList(self):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT DISTINCT grade, class from Student"
+                return conn.cursor().execute(sql).fetchall()
+        except sqlite3.IntegrityError:
+            print("학급 조회 오류")
+
+    def returnSubList(self):
+        conn = sqlite3.connect("studentManager.db")
+        conn.row_factory = lambda cursor, row: row[0]
+        try:
+            with conn:
+                sql = "select subName from Subject"
+                return conn.cursor().execute(sql).fetchall()
+
+        except sqlite3.IntegrityError:
+            print("과목 조회 오류")
+
+    #점수 등급별 랜덤 평가 생성 함수
+    def insertRandomAssesment(self):
+        grdAList = []
+        grdBList = []
+        grdCList = []
+        subId = self.returnSubId(self.subList.currentText())
+        grdStandard = self.returnAssementStandard(subId)
+        assementList = self.returnRandomAssesment(subId)
+        for i in range(0, len(assementList)):
+            if(assementList[i][0] == "A"):
+                grdAList.append(assementList[i][1])
+            elif(assementList[i][0] == "B"):
+                grdBList.append(assementList[i][1])
+            elif(assementList[i][0] == "C"):
+                grdCList.append(assementList[i][1])
+
+        
+        for i in range(0, self.classListWidget.rowCount()):
+            for j in range(0, len(grdStandard)):
+                if(self.classListWidget.item(i,2)):
+                    score = int(self.classListWidget.item(i,2).text())
+                    if(grdStandard[j][1] < score and score <= grdStandard[j][2]):
+                        if(grdStandard[j][0] == "A"):
+                            randomIndex = random.randint(0, len(grdAList)-1)
+                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdAList[randomIndex]))
+                        elif(grdStandard[j][0] == "B"):
+                            randomIndex = random.randint(0, len(grdBList)-1)
+                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdBList[randomIndex]))
+                        elif(grdStandard[j][0] == "C"):
+                            randomIndex = random.randint(0, len(grdCList)-1)
+                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdCList[randomIndex]))
+    
+    #과목 리스트 출력 함수
+    def insertSubComboBox(self):
+        subjects = self.returnSubList()
+        for i in range(0, len(subjects)):
+            self.subList.addItem(str(subjects[i]))
+
+    #학급 리스트 출력 함수
+    def insertClassComboBox(self):
+        classes = self.returnClassList()
+        for i in range(0, len(classes)):
+            self.classList.addItem(str(classes[i][0])+"학년 "+str(classes[i][1])+"반")
+
+    #선택 학급 조회 함수
+    def showClassMemberList(self):     
+        grade = int(self.classList.currentText()[0])
+        classes = int(self.classList.currentText()[4])
+        members = self.returnClassMemberList(grade, classes)
+        headers = ["이름", "학번", "점수", "평가"]
+
+        self.classListWidget.setRowCount(len(members))
+        self.classListWidget.setColumnCount(4)
+        self.classListWidget.setHorizontalHeaderLabels(headers)
+
+        for i in range(0, len(members)):
+            name = QTableWidgetItem(str(members[i][0]))
+            stdId = QTableWidgetItem(str(members[i][1]))
+            self.classListWidget.setItem(i, 0, name)
+            self.classListWidget.setItem(i, 1, stdId)
+            
+        
+
+    ##############과목관리###########################
+    
     #선택 과목 삭제 함수
     def delSub(self):
         conn = sqlite3.connect("studentManager.db")
@@ -55,7 +185,7 @@ class WindowClass(QMainWindow, form_class) :
         self.showSub()
 
 
-    #과목 리스트에서 과목 선택하면 과목 세부 내용 조회 함수
+    #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):
         conn = sqlite3.connect("studentManager.db")
         subListWidget = self.subListWidget
@@ -295,6 +425,8 @@ class WindowClass(QMainWindow, form_class) :
                 self.grdCAseList.insertRow(currentRowCnt)
                 self.grdCAseList.setItem(currentRowCnt, 0, item)
         
+    ##############학급추가###########################
+    
     #엑셀로 불러온 학급 구성원 db 에 업로드 
     def uploadCls(self):
         conn = sqlite3.connect("studentManager.db")

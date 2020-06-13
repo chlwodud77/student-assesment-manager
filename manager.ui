@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>800</height>
+    <width>958</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -365,7 +365,7 @@
                  <item>
                   <widget class="QLabel" name="label_5">
                    <property name="text">
-                    <string>미만</string>
+                    <string>이하</string>
                    </property>
                   </widget>
                  </item>
@@ -404,7 +404,7 @@
                  <item>
                   <widget class="QLabel" name="label_9">
                    <property name="text">
-                    <string>미만</string>
+                    <string>이하</string>
                    </property>
                   </widget>
                  </item>
@@ -443,7 +443,7 @@
                  <item>
                   <widget class="QLabel" name="label_11">
                    <property name="text">
-                    <string>미만</string>
+                    <string>이하</string>
                    </property>
                   </widget>
                  </item>
@@ -678,7 +678,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox_10"/>
+               <widget class="QComboBox" name="subList"/>
               </item>
               <item>
                <widget class="QLabel" name="label_7">
@@ -688,13 +688,13 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox_9"/>
+               <widget class="QComboBox" name="classList"/>
               </item>
              </layout>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_16">
+            <widget class="QPushButton" name="callClassMemberBtn">
              <property name="text">
               <string>학급 불러오기</string>
              </property>
@@ -722,24 +722,19 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>1182</width>
-                <height>528</height>
+                <width>894</width>
+                <height>436</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <item>
-                <widget class="QTableWidget" name="tableWidget_2">
+                <widget class="QTableWidget" name="classListWidget">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <row>
-                  <property name="text">
-                   <string>1</string>
-                  </property>
-                 </row>
                  <column>
                   <property name="text">
                    <string>이름</string>
@@ -779,7 +774,7 @@
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_11">
                   <item>
-                   <widget class="QPushButton" name="pushButton_19">
+                   <widget class="QPushButton" name="createAssesmentBtn">
                     <property name="text">
                      <string>평가 생성</string>
                     </property>
@@ -820,8 +815,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
-     <height>22</height>
+     <width>958</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
