@@ -430,7 +430,7 @@ class WindowClass(QMainWindow, form_class) :
     #엑셀로 불러온 학급 구성원 db 에 업로드 
     def uploadCls(self):
         conn = sqlite3.connect("studentManager.db")
-        sql = "insert into Student(IdCode, name, grade, class) values (?,?,?,?)"
+        sql = "insert into Student(id, name, grade, class) values (?,?,?,?)"
 
         focGrade = int(self.grdListComboBox.currentText())
         focClass = int(self.clsListComboBox.currentText())
