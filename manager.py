@@ -29,6 +29,7 @@ class WindowClass(QMainWindow, form_class) :
         self.addChildBtn.clicked.connect(self.addChildSub)
         self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
+        self.subTreeWidget.itemDoubleClicked.connect(self.searchSub)
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdAseDelBtn.clicked.connect(self.delAse)
@@ -190,16 +191,22 @@ class WindowClass(QMainWindow, form_class) :
     def delSub(self):
         conn = sqlite3.connect("studentManager.db")
         clickedItem = self.subTreeWidget.currentItem()
+        if(clickedItem is None):
+            QMessageBox.about(self, "결과", "삭제할 과목을 선택해주세요.")
+            return
+
         if(clickedItem.whatsThis(0) == ''):
             self.subTreeWidget.removeItemWidget(clickedItem,0)
             self.showSub()
         else:
             clickedSubId = int(clickedItem.whatsThis(0))
+            sql1 = "delete from Subject where parentId = ?"
             sql2 = "delete from Subject where id = ?"
             sql3 = "delete from Assesment where subId = ?"
             try:
                 with conn:
                     c = conn.cursor()
+                    c.execute(sql1, (clickedSubId,))
                     c.execute(sql2, (clickedSubId,))
                     c.execute(sql3, (clickedSubId,))
                     QMessageBox.about(self, "결과", "삭제 성공")   
@@ -318,10 +325,18 @@ class WindowClass(QMainWindow, form_class) :
                 subId = subList[i][0]
                 subName = self.returnSubName(subList[i][2])
                 childName = subList[i][1]
-                parentItem = subTreeWidget.findItems(subName, QtCore.Qt.MatchExactly, column=0)
-                childItem = QTreeWidgetItem(parentItem[0])
-                childItem.setWhatsThis(0,str(subId))
-                childItem.setText(0,childName)
+                parentId = subList[i][2]
+                it = QTreeWidgetItemIterator(self.subTreeWidget)
+                while it.value():
+                    if it.value() is not None and int(it.value().whatsThis(0)) == int(parentId):
+                        childItem = QTreeWidgetItem(it.value())
+                        childItem.setWhatsThis(0,str(subId))
+                        childItem.setText(0,childName)
+                    it += 1
+                # parentItem = subTreeWidget.findItems(subName, QtCore.Qt.MatchExactly, column=0)
+                # childItem = QTreeWidgetItem(parentItem[0])
+                # childItem.setWhatsThis(0,str(subId))
+                # childItem.setText(0,childName)
 
 
     #과목, 평가 등급 점수, 평가 내용 db 저장 함수
