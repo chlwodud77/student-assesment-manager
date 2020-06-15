@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
+from PyQt5 import QtCore
 from openpyxl import load_workbook
 import sqlite3, random
 
@@ -20,13 +21,16 @@ class WindowClass(QMainWindow, form_class) :
         self.insertSubComboBox()
         self.insertClassComboBox()
 
-
+        #학급추가 탭
         self.fileUpdBtn.clicked.connect(self.uploadFile)
         self.clsSaveBtn.clicked.connect(self.uploadCls)
+
+        #과목관리 탭
+        self.addChildBtn.clicked.connect(self.addChildSub)
         self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
+        self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
-        
         self.grdAseDelBtn.clicked.connect(self.delAse)
         self.grdAseAddBtn.clicked.connect(self.addAse)
         self.grdAseModBtn.clicked.connect(self.modAse)
@@ -34,6 +38,7 @@ class WindowClass(QMainWindow, form_class) :
         self.grdBAseList.clicked.connect(self.activateEdit)
         self.grdCAseList.clicked.connect(self.activateEdit)
 
+        #점수입력 탭
         self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
         self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
 
@@ -55,6 +60,15 @@ class WindowClass(QMainWindow, form_class) :
             with conn:
                 sql = "SELECT id FROM Subject WHERE subName = ?"
                 return conn.cursor().execute(sql, (subName,)).fetchone()[0]
+        except sqlite3.IntegrityError:
+            print("과목 조회 오류")
+    
+    def returnSubName(self, subId):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT subName FROM Subject WHERE id = ?"
+                return conn.cursor().execute(sql, (subId,)).fetchone()[0]
         except sqlite3.IntegrityError:
             print("과목 조회 오류")
 
@@ -86,12 +100,12 @@ class WindowClass(QMainWindow, form_class) :
         except sqlite3.IntegrityError:
             print("학급 조회 오류")
 
-    def returnSubList(self):
+    def returnSubNameList(self):
         conn = sqlite3.connect("studentManager.db")
-        conn.row_factory = lambda cursor, row: row[0]
+        # conn.row_factory = lambda cursor, row: row[0]
         try:
             with conn:
-                sql = "select subName from Subject"
+                sql = "SELECT a.Id, a.subName as childSub,  b.subName as parentSub FROM Subject a INNER JOIN Subject b ON a.parentId = b.id"
                 return conn.cursor().execute(sql).fetchall()
 
         except sqlite3.IntegrityError:
@@ -131,9 +145,11 @@ class WindowClass(QMainWindow, form_class) :
     
     #과목 리스트 출력 함수
     def insertSubComboBox(self):
-        subjects = self.returnSubList()
-        for i in range(0, len(subjects)):
-            self.subList.addItem(str(subjects[i]))
+        # pass
+        subjects = self.returnSubNameList()
+        print(subjects)
+        # for i in range(0, len(subjects)):
+        #     self.subList.addItem(str(subjects[i]))
 
     #학급 리스트 출력 함수
     def insertClassComboBox(self):
@@ -161,43 +177,53 @@ class WindowClass(QMainWindow, form_class) :
         
 
     ##############과목관리###########################
+
+    def addNewSubjectItem(self):
+        QTreeWidgetItem(self.subTreeWidget, ["새과목"])
+
+    def addChildSub(self):
+        parentItem = self.subTreeWidget.currentItem()
+        childItem = QTreeWidgetItem(parentItem)
+        childItem.setText(0, "새항목")
     
     #선택 과목 삭제 함수
     def delSub(self):
         conn = sqlite3.connect("studentManager.db")
-        clickedSub = self.subListWidget.currentItem().text()
-        sql1 = "select id from Subject where subName = ?"
-        sql2 = "delete from Subject where subName = ?"
-        sql3 = "delete from Assesment where subId = ?"
-        try:
-            with conn:
-                c = conn.cursor()
-                subId = c.execute(sql1, (clickedSub,)).fetchone()[0]
-                if(subId):
-                    c.execute(sql2, (clickedSub,))
-                    c.execute(sql3, (subId,))
+        clickedItem = self.subTreeWidget.currentItem()
+        if(clickedItem.whatsThis(0) == ''):
+            self.subTreeWidget.removeItemWidget(clickedItem,0)
+            self.showSub()
+        else:
+            clickedSubId = int(clickedItem.whatsThis(0))
+            sql2 = "delete from Subject where id = ?"
+            sql3 = "delete from Assesment where subId = ?"
+            try:
+                with conn:
+                    c = conn.cursor()
+                    c.execute(sql2, (clickedSubId,))
+                    c.execute(sql3, (clickedSubId,))
                     QMessageBox.about(self, "결과", "삭제 성공")   
+    
+            except sqlite3.IntegrityError:
+                print("과목 삭제 문제 발생")
+                QMessageBox.about(self, "결과", "삭제 실패")
 
-        except sqlite3.IntegrityError:
-            print("과목 삭제 문제 발생")
-            QMessageBox.about(self, "결과", "삭제 실패")
-
-        self.showSub()
+            self.showSub()
 
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):
         conn = sqlite3.connect("studentManager.db")
-        subListWidget = self.subListWidget
-        clickedSub = subListWidget.currentItem().text()
-        print(clickedSub)
-        sql1 = "select id from Subject where subName = ?"
+        subTreeWidget = self.subTreeWidget
+        clickedSubId = subTreeWidget.currentItem().whatsThis(0)
+        if(clickedSubId == ''):
+            clickedSubId = -1
         sql2 = "select greater, less from Assesment where subId = ? and grade = ?"
         sql3 = "select content from Assesment where subId = ? and grade = ?"
         try:
             with conn:
                 c = conn.cursor()
-                subId = c.execute(sql1, (clickedSub,)).fetchone()[0]
+                subId = int(clickedSubId)
                 grdARng = []
                 grdBRng = []
                 grdCRng = []
@@ -230,7 +256,7 @@ class WindowClass(QMainWindow, form_class) :
                     #조회된 과목 이름 및 평가 출력
                     conn.row_factory = lambda cursor, row: row[0]
                     c = conn.cursor()
-                    self.subTitleEdit.setText(str(clickedSub))
+                    self.subTitleEdit.setText(self.subTreeWidget.currentItem().text(0))
                     
                     grdAAse = []
                     grdBAse = []
@@ -261,8 +287,8 @@ class WindowClass(QMainWindow, form_class) :
     #db 에서 과목 리스트 가져와서 보여주는 함수
     def returnSubList(self):
         conn = sqlite3.connect("studentManager.db")
-        conn.row_factory = lambda cursor, row: row[0]
-        sql = "select subName from Subject"
+        # conn.row_factory = lambda cursor, row: row[0]
+        sql = "select id, subName, parentId from Subject"
         subList = []
 
         try:    
@@ -275,18 +301,32 @@ class WindowClass(QMainWindow, form_class) :
 
     def showSub(self):
         subList = self.returnSubList()
-        subListWidget = self.subListWidget
-        subListWidget.clear()
+        subTreeWidget = self.subTreeWidget
+        subTreeWidget.clear()
+        subTreeWidget.setColumnCount(1)
+        subTreeWidget.setHeaderLabels(["과목"])
 
         for i in range (0, len(subList)):
-            subListWidget.addItem(QListWidgetItem(subList[i]))
+            if(subList[i][2] is None):
+                subId = subList[i][0]
+                subName = subList[i][1]
+                parentItem = QTreeWidgetItem(subTreeWidget, [subName])
+                parentItem.setWhatsThis(0,str(subId))
 
+        for i in range(0, len(subList)):
+            if(subList[i][2] is not None):
+                subId = subList[i][0]
+                subName = self.returnSubName(subList[i][2])
+                childName = subList[i][1]
+                parentItem = subTreeWidget.findItems(subName, QtCore.Qt.MatchExactly, column=0)
+                childItem = QTreeWidgetItem(parentItem[0])
+                childItem.setWhatsThis(0,str(subId))
+                childItem.setText(0,childName)
 
 
     #과목, 평가 등급 점수, 평가 내용 db 저장 함수
     def saveSub(self):
-        subTitleEdit = self.subTitleEdit.text()
-        print(subTitleEdit)
+        subTitleEdit = self.subTreeWidget.currentItem().text(0)
         grdAEdit1 = self.grdAEdit1.text()
         grdAEdit2 = self.grdAEdit2.text()
         grdBEdit1 = self.grdBEdit1.text()
@@ -315,28 +355,55 @@ class WindowClass(QMainWindow, form_class) :
         #기존 과목 없으면 새로 생성
         try:    
             with conn:
-                if(not subTitleEdit):
+                subName = self.subTitleEdit.text()
+                subId = self.subTreeWidget.currentItem().whatsThis(0)
+                c = conn.cursor()
+
+                if(not subName):
                     QMessageBox.about(self, "오류", "과목을 입력하세요")
                 else:
-                    c = conn.cursor()
-                    isExist = c.execute("select * from Subject where subName = ?", (subTitleEdit,)).fetchall()
-                    if(not isExist):
-                        c.execute("insert into Subject(subName) values (?)", (subTitleEdit,))
+                    if(subId == ''): # 기존에 없던 과목인 경우
+                        if(self.subTreeWidget.currentItem().parent()): #하위 노드일 경우
+                            parent = self.subTreeWidget.currentItem().parent()
+                            parentName = parent.text(0)
+                            print("부모노드: ",parentName)
+                            parentId = parent.whatsThis(0)
+                            sql = "insert into Subject(subName, parentId) values (?, ?)"
+                            c.execute(sql, (subName, int(parentId)))
 
-                    #기존 과목을 참조하여 평가지를 새로 생성 및 수정 (먼저 다 삭제했다가 다시 새로 생성)
-                    subId = c.execute("select id from Subject where subName=?", (subTitleEdit,)).fetchone()[0]
-                    c.execute("delete from Assesment where subId = ?", (subId,))
-                    sql = "insert into Assesment(subId, grade, content, greater, less) values (?,?,?,?,?)"
-                    for i in range(0, len(grdAList)):
-                        c.execute(sql, (subId, "A", grdAList[i], int(grdAEdit1), int(grdAEdit2)))
-                    
-                    for i in range(0, len(grdBList)):
-                        c.execute(sql, (subId, "B", grdBList[i], int(grdBEdit1), int(grdBEdit2)))
+                            sql2 = "select id from Subject where subName = ? and parentId = ?"
+                            childSubId = c.execute(sql2, (subName, int(parentId))).fetchone()[0]
+                            # print(childSubId)
+                            c.execute("delete from Assesment where subId = ?", (int(childSubId),))
+                            sql = "insert into Assesment(subId, grade, content, greater, less) values (?,?,?,?,?)"
+                            for i in range(0, len(grdAList)):
+                                c.execute(sql, (int(childSubId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2)))
+                            
+                            for i in range(0, len(grdBList)):
+                                c.execute(sql, (int(childSubId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2)))
 
-                    for i in range(0, len(grdCList)):
-                        c.execute(sql, (subId, "C", grdCList[i], int(grdCEdit1), int(grdCEdit2)))
+                            for i in range(0, len(grdCList)):
+                                c.execute(sql, (int(childSubId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2)))
 
-                    QMessageBox.about(self, "결과", "성공")   
+                            
+                        else: #부모 노드일 경우
+                            print(c.execute("insert into Subject(subName) values (?)", (subName,)))
+                    else: # 기존에 있던 과목인 경우
+                        
+                        #기존 과목을 참조하여 평가지를 새로 생성 및 수정 (먼저 다 삭제했다가 다시 새로 생성)
+                        # subId = c.execute("select id from Subject where subName=?", (subName,)).fetchone()[0]
+                        c.execute("delete from Assesment where subId = ?", (int(subId),))
+                        sql = "insert into Assesment(subId, grade, content, greater, less) values (?,?,?,?,?)"
+                        for i in range(0, len(grdAList)):
+                            c.execute(sql, (int(subId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2)))
+                        
+                        for i in range(0, len(grdBList)):
+                            c.execute(sql, (int(subId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2)))
+
+                        for i in range(0, len(grdCList)):
+                            c.execute(sql, (int(subId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2)))
+
+                    QMessageBox.about(self, "결과", "성공")
         except sqlite3.IntegrityError:
             print("문제 발생")
             QMessageBox.about(self, "오류", "실패")
