@@ -259,23 +259,28 @@ class WindowClass(QMainWindow, form_class) :
 
 
     #db 에서 과목 리스트 가져와서 보여주는 함수
-    def showSub(self):
+    def returnSubList(self):
         conn = sqlite3.connect("studentManager.db")
-        subList = []
-        subListWidget = self.subListWidget
-        subListWidget.clear()
         conn.row_factory = lambda cursor, row: row[0]
         sql = "select subName from Subject"
+        subList = []
 
         try:    
             with conn:
                 c = conn.cursor()
                 subList = c.execute(sql).fetchall()
-
-                for i in range (0, len(subList)):
-                    subListWidget.addItem(QListWidgetItem(subList[i]))
+                return subList
         except sqlite3.IntegrityError:
             print("문제 발생")
+
+    def showSub(self):
+        subList = self.returnSubList()
+        subListWidget = self.subListWidget
+        subListWidget.clear()
+
+        for i in range (0, len(subList)):
+            subListWidget.addItem(QListWidgetItem(subList[i]))
+
 
 
     #과목, 평가 등급 점수, 평가 내용 db 저장 함수
