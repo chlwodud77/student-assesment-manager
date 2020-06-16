@@ -5,8 +5,6 @@ from PyQt5 import QtCore
 from openpyxl import load_workbook
 import sqlite3, random
 
-
-
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 form_class = uic.loadUiType("manager.ui")[0]
@@ -17,8 +15,8 @@ class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
-        self.showSub()
-        self.insertSubComboBox()
+        self.showSub(self.subTreeWidget)
+        self.showSub(self.scoreSubTreeWidget)
         self.insertClassComboBox()
 
         #학급추가 탭
@@ -30,6 +28,7 @@ class WindowClass(QMainWindow, form_class) :
         self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemDoubleClicked.connect(self.searchSub)
+        self.scoreSubTreeWidget.itemDoubleClicked.connect(self.showSubClickedLabel)
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdAseDelBtn.clicked.connect(self.delAse)
@@ -40,6 +39,7 @@ class WindowClass(QMainWindow, form_class) :
         self.grdCAseList.clicked.connect(self.activateEdit)
 
         #점수입력 탭
+        self.saveAssesmentBtn.clicked.connect(self.saveAssesment)
         self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
         self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
 
@@ -73,11 +73,20 @@ class WindowClass(QMainWindow, form_class) :
         except sqlite3.IntegrityError:
             print("과목 조회 오류")
 
+    def returnAssesmentContentById(self, id):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT content FROM Assesment WHERE id = ?"
+                return conn.cursor().execute(sql, (id,)).fetchone()[0]
+        except sqlite3.IntegrityError:
+            print("과목 평가문 조회 오류")
+
     def returnRandomAssesment(self, subId):
         conn = sqlite3.connect("studentManager.db")
         try:
             with conn:
-                sql = "SELECT grade, content FROM Assesment WHERE subId = ?"
+                sql = "SELECT id, grade, content FROM Assesment WHERE subId = ?"
                 return conn.cursor().execute(sql, (subId,)).fetchall()
         except sqlite3.IntegrityError:
             print("과목 평가문 조회 오류")
@@ -112,21 +121,103 @@ class WindowClass(QMainWindow, form_class) :
         except sqlite3.IntegrityError:
             print("과목 조회 오류")
 
+    #과목 선택 시 라벨에 선택 과목 표시 함수
+    def showSubClickedLabel(self):
+        self.subClickedLabel.setText(self.scoreSubTreeWidget.currentItem().text(0))
+
+    def saveScore(self, params):
+        conn = sqlite3.connect("studentManager.db")
+        sql = "INSERT into Score(subId, stdId, score, assesId) VALUES (?,?,?,?)"
+        try:
+            with conn:
+                c = conn.cursor()
+                c.execute(sql, (params[0], params[1], params[2], params[3]))
+                return True
+        except sqlite3.IntegrityError:
+            print("점수 저장 오류")
+            QMessageBox.about(self, "결과", "점수 저장 실패.")
+            return False
+
+
+    def saveAssesment(self):
+        for i in range(0, self.classListWidget.rowCount()):
+            if(self.classListWidget.item(i,3) is not None):
+                assesId = int(self.classListWidget.item(i,3).whatsThis())
+                score = int(self.classListWidget.item(i,2).text())
+                stdId = int(self.classListWidget.item(i,1).text())
+                subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+                params = []
+                params.append(subId)
+                params.append(stdId)
+                params.append(score)
+                params.append(assesId)
+                self.saveScore(params)
+        QMessageBox.about(self, "결과", "점수 저장 성공.")
+
+    def returnScore(self, subId, stdId):
+        conn = sqlite3.connect("studentManager.db")
+        sql = "SELECT id, score, assesId FROM Score WHERE subId = ? and stdId = ?"
+        try:
+            with conn:
+                c = conn.cursor()
+                c.execute(sql, (subId, stdId))
+                return True
+        except sqlite3.IntegrityError:
+            print("점수 조회 오류")
+            QMessageBox.about(self, "결과", "점수 조회 실패.")
+            return False
+
+    def showScoreList(self):
+        scoreInfo = []
+        subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+        stdId = []
+        assesment = []
+        for row in range(0, self.classListWidget.rowCount()):
+            stdId.append(int(self.classListWidget.item(row,1).text()))
+        
+        for i in range(0, self.classListWidget.rowCount()):
+            scoreInfo.append(self.returnScore(subId, stdId[i]))
+        
+        for i in range(0, self.classListWidget.rowCount()):
+            print(self.returnAssesmentContentById(286))
+            # assesment.append(self.returnAssesmentContentById(scoreInfo[i][2]))
+        
+        for i in range(0, self.classListWidget.rowCount()):
+            self.classListWidget.setItem(i, 2, QTableWidgetItem(str(scoreInfo[i][1])))
+            self.classListWidget.setItem(i, 3, QTableWidgetItem(str(assesment[i])))
+            self.classListWidget.item(i,2).setWhatsThis(str(scoreInfo[i][0]))
+            self.classListWidget.item(i,3).setWhatsThis(str(scoreInfo[i][2]))
+
+
+        
+
+
     #점수 등급별 랜덤 평가 생성 함수
     def insertRandomAssesment(self):
+        clickedSub = self.scoreSubTreeWidget.currentItem().text(0)
         grdAList = []
         grdBList = []
         grdCList = []
-        subId = self.returnSubId(self.subList.currentText())
+        subId = self.returnSubId(clickedSub)
         grdStandard = self.returnAssementStandard(subId)
         assementList = self.returnRandomAssesment(subId)
+        assementId = assementList[0][0]
         for i in range(0, len(assementList)):
-            if(assementList[i][0] == "A"):
-                grdAList.append(assementList[i][1])
-            elif(assementList[i][0] == "B"):
-                grdBList.append(assementList[i][1])
-            elif(assementList[i][0] == "C"):
-                grdCList.append(assementList[i][1])
+            if(assementList[i][1] == "A"):
+                p = []
+                p.append(assementList[i][0])
+                p.append(assementList[i][2])
+                grdAList.append(p)
+            elif(assementList[i][1] == "B"):
+                p = []
+                p.append(assementList[i][0])
+                p.append(assementList[i][2])
+                grdBList.append(p)
+            elif(assementList[i][1] == "C"):
+                p = []
+                p.append(assementList[i][0])
+                p.append(assementList[i][2])
+                grdCList.append(p)
 
         
         for i in range(0, self.classListWidget.rowCount()):
@@ -136,29 +227,24 @@ class WindowClass(QMainWindow, form_class) :
                     if(grdStandard[j][1] < score and score <= grdStandard[j][2]):
                         if(grdStandard[j][0] == "A"):
                             randomIndex = random.randint(0, len(grdAList)-1)
-                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdAList[randomIndex]))
+                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdAList[randomIndex][1]))
+                            self.classListWidget.item(i,3).setWhatsThis(str(grdAList[randomIndex][0]))
                         elif(grdStandard[j][0] == "B"):
                             randomIndex = random.randint(0, len(grdBList)-1)
-                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdBList[randomIndex]))
+                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdBList[randomIndex][1]))
+                            self.classListWidget.item(i,3).setWhatsThis(str(grdBList[randomIndex][0]))
                         elif(grdStandard[j][0] == "C"):
                             randomIndex = random.randint(0, len(grdCList)-1)
-                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdCList[randomIndex]))
+                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdCList[randomIndex][1]))
+                            self.classListWidget.item(i,3).setWhatsThis(str(grdCList[randomIndex][0]))
     
-    #과목 리스트 출력 함수
-    def insertSubComboBox(self):
-        # pass
-        subjects = self.returnSubNameList()
-        print(subjects)
-        # for i in range(0, len(subjects)):
-        #     self.subList.addItem(str(subjects[i]))
-
     #학급 리스트 출력 함수
     def insertClassComboBox(self):
         classes = self.returnClassList()
         for i in range(0, len(classes)):
             self.classList.addItem(str(classes[i][0])+"학년 "+str(classes[i][1])+"반")
 
-    #선택 학급 조회 함수
+    #선택 학급 조회 함수    
     def showClassMemberList(self):     
         grade = int(self.classList.currentText()[0])
         classes = int(self.classList.currentText()[4])
@@ -174,7 +260,8 @@ class WindowClass(QMainWindow, form_class) :
             stdId = QTableWidgetItem(str(members[i][1]))
             self.classListWidget.setItem(i, 0, name)
             self.classListWidget.setItem(i, 1, stdId)
-            
+        
+        self.showScoreList()
         
 
     ##############과목관리###########################
@@ -188,34 +275,38 @@ class WindowClass(QMainWindow, form_class) :
         childItem.setText(0, "새항목")
     
     #선택 과목 삭제 함수
-    def delSub(self):
+    def deleteSubById(self, subId):
         conn = sqlite3.connect("studentManager.db")
+        sql1 = "delete from Subject where parentId = ?"
+        sql2 = "delete from Subject where id = ?"
+        sql3 = "delete from Assesment where subId = ?"
+        try:
+            with conn:
+                c = conn.cursor()
+                c.execute(sql1, (subId,))
+                c.execute(sql2, (subId,))
+                c.execute(sql3, (subId,))
+                return True  
+
+        except sqlite3.IntegrityError:
+            print("과목 삭제 문제 발생")
+            return False
+
+    def delSub(self):
         clickedItem = self.subTreeWidget.currentItem()
         if(clickedItem is None):
             QMessageBox.about(self, "결과", "삭제할 과목을 선택해주세요.")
             return
-
         if(clickedItem.whatsThis(0) == ''):
             self.subTreeWidget.removeItemWidget(clickedItem,0)
-            self.showSub()
+            self.showSub(self.subTreeWidget)
         else:
             clickedSubId = int(clickedItem.whatsThis(0))
-            sql1 = "delete from Subject where parentId = ?"
-            sql2 = "delete from Subject where id = ?"
-            sql3 = "delete from Assesment where subId = ?"
-            try:
-                with conn:
-                    c = conn.cursor()
-                    c.execute(sql1, (clickedSubId,))
-                    c.execute(sql2, (clickedSubId,))
-                    c.execute(sql3, (clickedSubId,))
-                    QMessageBox.about(self, "결과", "삭제 성공")   
-    
-            except sqlite3.IntegrityError:
-                print("과목 삭제 문제 발생")
+            if(self.deleteSubById(clickedSubId)):
+                QMessageBox.about(self, "결과", "삭제 성공")   
+            else:
                 QMessageBox.about(self, "결과", "삭제 실패")
-
-            self.showSub()
+        self.showSub(self.subTreeWidget)
 
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
@@ -306,9 +397,9 @@ class WindowClass(QMainWindow, form_class) :
         except sqlite3.IntegrityError:
             print("문제 발생")
 
-    def showSub(self):
+    def showSub(self, treeWidget):
         subList = self.returnSubList()
-        subTreeWidget = self.subTreeWidget
+        subTreeWidget = treeWidget
         subTreeWidget.clear()
         subTreeWidget.setColumnCount(1)
         subTreeWidget.setHeaderLabels(["과목"])
@@ -326,7 +417,7 @@ class WindowClass(QMainWindow, form_class) :
                 subName = self.returnSubName(subList[i][2])
                 childName = subList[i][1]
                 parentId = subList[i][2]
-                it = QTreeWidgetItemIterator(self.subTreeWidget)
+                it = QTreeWidgetItemIterator(subTreeWidget)
                 while it.value():
                     if it.value() is not None and int(it.value().whatsThis(0)) == int(parentId):
                         childItem = QTreeWidgetItem(it.value())
@@ -423,7 +514,7 @@ class WindowClass(QMainWindow, form_class) :
             print("문제 발생")
             QMessageBox.about(self, "오류", "실패")
 
-        self.showSub()
+        self.showSub(self.subTreeWidget)
         
     # 평가 내용 수정 함수
     def modAse(self):
@@ -515,28 +606,38 @@ class WindowClass(QMainWindow, form_class) :
     ##############학급추가###########################
     
     #엑셀로 불러온 학급 구성원 db 에 업로드 
-    def uploadCls(self):
+    def saveStudent(self, name, grade, classes):
         conn = sqlite3.connect("studentManager.db")
-        sql = "insert into Student(id, name, grade, class) values (?,?,?,?)"
-
-        focGrade = int(self.grdListComboBox.currentText())
-        focClass = int(self.clsListComboBox.currentText())
-
-        try:    
+        sql = "insert into Student(name, grade, class) values (?,?,?)"
+        try:
             with conn:
                 c = conn.cursor()
-                for i in range(self.stdListWidget.rowCount()):
-                    placeholder = []
-                    for j in range(self.stdListWidget.columnCount()):
-                        if j == 0:
-                            placeholder.append(int(self.stdListWidget.item(i,j).text()))
-                        else: 
-                            placeholder.append(self.stdListWidget.item(i,j).text())
-                    c.execute(sql, (placeholder[0], placeholder[1], focGrade, focClass))
-            QMessageBox.about(self, "결과", "성공")   
+                c.execute(sql, (name, grade, classes))
+                return True  
+
         except sqlite3.IntegrityError:
-            print("문제 발생")
-            QMessageBox.about(self, "오류", "실패")
+            print("과목 저장 문제 발생")
+            QMessageBox.about(self, "결과", "학생 저장 실패.")
+            return False
+
+
+    def uploadCls(self):
+
+        rowCnt = self.stdListWidget.rowCount()
+        columnCnt = self.stdListWidget.columnCount()
+
+        for col in range(0, columnCnt):
+            header = self.stdListWidget.horizontalHeaderItem(col).text()
+            grade = header[0]
+            classes = header[2]
+            for row in range(0, rowCnt):
+                name = self.stdListWidget.item(row,col).text()
+                if(name != "" or name is not None):
+                    self.saveStudent(name, grade, classes)
+                    
+        QMessageBox.about(self, "결과", "학생 저장 완료.")
+        
+
 
 
     #학급 구성원 엑셀 파일로 불러와서 리스트로 보여줌
