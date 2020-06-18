@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5 import QtCore
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 import sqlite3, random
 
 #UI파일 연결
@@ -52,6 +52,7 @@ class WindowClass(QMainWindow, form_class) :
         self.exlSubAddBtn.clicked.connect(self.exlSubAddClass)
         self.exlSubExtBtn.clicked.connect(self.exlSubExtClass)
         self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
+        self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
     
     ##############엑셀출력###########################
     def returnClassAssesmentBySubId(self, subId, grade, classes):
@@ -82,15 +83,43 @@ class WindowClass(QMainWindow, form_class) :
         except sqlite3.IntegrityError:
             print("과목 조회 오류")
 
+    #최종 엑셀 파일로 저장 함수
+    def exlSaveToFile(self):
+        filename = self.exlClassList.currentText()+".xlsx"
+        wb = Workbook()
+        ws = wb.active
+        content = []
+        for i in range(0, self.exlClassListWidget.rowCount()):
+            p = []
+            p.append(self.exlClassListWidget.item(i,0).text())
+            if(self.exlClassListWidget.item(i,2) is not None):
+                p.append(self.exlClassListWidget.item(i,2).text())
+            else:
+                p.append("")
+            content.append(p)
+
+        for x in range(1,len(content)+1):
+            for y in range(1,3):
+                ws.cell(row = x, column = y).value = content[x-1][y-1]
+
+        wb.save(filename)
+        QMessageBox.about(self, "결과", "저장 성공.")
+
+
+        
+
+
     #학급별 종합 평가 출력 함수
     def exlShowTotAssesment(self):
         self.exlClassListWidget.clearContents()
-        grade = int(self.exlClassList.currentText()[0])
-        classes = int(self.exlClassList.currentText()[4])
         if(self.exlSubAddedWidget.count() == 0):
             QMessageBox.about(self, "오류", "과목을 추가해주세요.")
             return
+        grade = int(self.exlClassList.currentText()[0])
+        classes = int(self.exlClassList.currentText()[4])
         subjectsIds = []
+        assesments = []
+        members = []
         items = []
         for row in range(self.exlSubAddedWidget.count()):
             item = self.exlSubAddedWidget.item(row)
@@ -98,27 +127,35 @@ class WindowClass(QMainWindow, form_class) :
         for item in items:
             subjectsIds.append(int(item.whatsThis()))
         
-        assesments = []
 
         for id in subjectsIds:
             assesments.append(self.returnClassAssesmentBySubId(id, grade, classes))
 
-        print(assesments)
-        members = []
         members = self.returnClassMemberList(grade, classes)
         self.exlClassListWidget.setRowCount(len(members))
         self.exlClassListWidget.setColumnCount(3)
 
         for i in range(0,len(members)):
-            name = QTableWidgetItem(str(members[i][0]))
-            stdId = QTableWidgetItem(str(members[i][1]))
-            self.exlClassListWidget.setItem(i, 0, name)
-            self.exlClassListWidget.setItem(i, 1, stdId)
+            nameItem = QTableWidgetItem(str(members[i][0]))
+            stdIdItem = QTableWidgetItem(str(members[i][1]))
+            stdIdItem.setWhatsThis(str(members[i][1]))
+            self.exlClassListWidget.setItem(i, 0, nameItem)
+            self.exlClassListWidget.setItem(i, 1, stdIdItem)
 
-
-        # for asses in assesments:
-        #     for row in asses:
-        #         print(row[0], row[1], row[2])
+        
+        for i in range(0,len(members)):
+            stdId = self.exlClassListWidget.item(i,1).text()
+            for asses in assesments:
+                for row in asses:
+                    if(int(row[1]) == int(stdId)):
+                        if(self.exlClassListWidget.item(i,2) is not None): #기존에 내용이 있는 경우 붙여서 추가
+                            orgContent = self.exlClassListWidget.item(i,2).text()
+                            newContent = orgContent+" "+str(row[2])
+                            assesItem = QTableWidgetItem(newContent)
+                            self.exlClassListWidget.setItem(i,2, assesItem)
+                        else: #기존에 내용이 없는 빈 칸인 경우
+                            assesItem = QTableWidgetItem(str(row[2]))
+                            self.exlClassListWidget.setItem(i,2, assesItem)
 
     #학급별 평가 과목 선택 추가 함수
     def exlSubAddClass(self):
@@ -404,11 +441,10 @@ class WindowClass(QMainWindow, form_class) :
         if(self.scoreSubTreeWidget.currentItem() is None):
             QMessageBox.about(self, "오류", "과목을 선택해주세요.")
             return
-        clickedSub = self.scoreSubTreeWidget.currentItem().text(0)
         grdAList = []
         grdBList = []
         grdCList = []
-        subId = self.returnSubIdBySubName(clickedSub)
+        subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
         grdStandard = self.returnAssementStandardBySubId(subId)
         assementList = self.returnAssesmentBySubId(subId)
         for i in range(0, len(assementList)):

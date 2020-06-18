@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1032</width>
+    <width>1036</width>
     <height>655</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -632,7 +632,13 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QTreeWidget" name="scoreSubTreeWidget"/>
+               <widget class="QTreeWidget" name="scoreSubTreeWidget">
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
+               </widget>
               </item>
               <item>
                <widget class="QFrame" name="frame_18">
@@ -727,8 +733,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>662</width>
-                <height>531</height>
+                <width>301</width>
+                <height>147</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -952,7 +958,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>470</width>
+                <width>472</width>
                 <height>531</height>
                </rect>
               </property>
@@ -999,7 +1005,7 @@
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_18">
                   <item>
-                   <widget class="QPushButton" name="exlRstPrintBtn">
+                   <widget class="QPushButton" name="exlFileSaveBtn">
                     <property name="minimumSize">
                      <size>
                       <width>200</width>
@@ -1038,7 +1044,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1032</width>
+     <width>1036</width>
      <height>21</height>
     </rect>
    </property>
