@@ -43,6 +43,7 @@ class WindowClass(QMainWindow, form_class) :
         self.saveAssesmentBtn.clicked.connect(self.saveAssesment)
         self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
         self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
+        self.createIndiAssesmentBtn.clicked.connect(self.insertIndiRandomAssesment)
 
     ##############점수입력###########################
 
@@ -136,7 +137,7 @@ class WindowClass(QMainWindow, form_class) :
 
     def saveScore(self, params):
         conn = sqlite3.connect("studentManager.db")
-        sql = "INSERT into Score(subId, stdId, score, assesId) VALUES (?,?,?,?)"
+        sql = "INSERT into Score(subId, stdId, score, asses) VALUES (?,?,?,?)"
         try:
             with conn:
                 c = conn.cursor()
@@ -151,7 +152,8 @@ class WindowClass(QMainWindow, form_class) :
     def saveAssesment(self):
         for row in range(0, self.classListWidget.rowCount()):
             if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
-                assesId = int(self.classListWidget.item(row,3).whatsThis())
+                # assesId = int(self.classListWidget.item(row,3).whatsThis())
+                asses = self.classListWidget.item(row,3).text()
                 score = int(self.classListWidget.item(row,2).text())
                 scoreId = int(self.classListWidget.item(row,2).whatsThis())
                 stdId = int(self.classListWidget.item(row,1).text())
@@ -161,11 +163,11 @@ class WindowClass(QMainWindow, form_class) :
                 params.append(subId)
                 params.append(stdId)
                 params.append(score)
-                params.append(assesId)
+                params.append(asses)
                 self.saveScore(params) # 다시 재 저장.
             else: #기존에 스코어 존재 X
-                if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,3).whatsThis() != ""):
-                    assesId = int(self.classListWidget.item(row,3).whatsThis())
+                if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,2).text() != ""):
+                    asses = self.classListWidget.item(row,3).text()
                     score = int(self.classListWidget.item(row,2).text())
                     stdId = int(self.classListWidget.item(row,1).text())
                     subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
@@ -173,13 +175,13 @@ class WindowClass(QMainWindow, form_class) :
                     params.append(subId)
                     params.append(stdId)
                     params.append(score)
-                    params.append(assesId)
+                    params.append(asses)
                     self.saveScore(params) # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
 
     def returnScore(self, subId, stdId):
         conn = sqlite3.connect("studentManager.db")
-        sql = "SELECT id, score, assesId FROM Score WHERE subId = ? and stdId = ?"
+        sql = "SELECT id, score, asses FROM Score WHERE subId = ? and stdId = ?"
         try:
             with conn:
                 c = conn.cursor()
@@ -206,7 +208,7 @@ class WindowClass(QMainWindow, form_class) :
         for row in range(0, self.classListWidget.rowCount()):
             asses = []
             if(scoreInfo[row][2] is not ""):
-                asses.append(self.returnAssesmentContentById(scoreInfo[row][2]))
+                asses.append(scoreInfo[row][2])
             else:
                 asses.append("")
             assesments.append(asses)
@@ -220,11 +222,66 @@ class WindowClass(QMainWindow, form_class) :
 
             if(assesments[row][0] != ""):
                 self.classListWidget.setItem(row, 3, QTableWidgetItem(str(assesments[row][0]))) #평가입력
-                self.classListWidget.item(row,3).setWhatsThis(str(scoreInfo[row][2])) #평가 id 속성
+                # self.classListWidget.item(row,3).setWhatsThis(str(scoreInfo[row][2])) #평가 id 속성
             else:
                 self.classListWidget.setItem(row, 3, QTableWidgetItem(""))
             
-    #점수 등급별 랜덤 평가 생성 함수
+    #점수 등급별 랜덤 평가 생성 함수 (선택)
+    def insertIndiRandomAssesment(self):
+        clickedSub = self.scoreSubTreeWidget.currentItem().text(0)
+        grdAList = []
+        grdBList = []
+        grdCList = []
+        subId = self.returnSubIdBySubName(clickedSub)
+        grdStandard = self.returnAssementStandardBySubId(subId)
+        assementList = self.returnAssesmentBySubId(subId)
+        for i in range(0, len(assementList)):
+            if(assementList[i][1] == "A"):
+                p = []
+                p.append(assementList[i][0])
+                p.append(assementList[i][2])
+                grdAList.append(p)
+            elif(assementList[i][1] == "B"):
+                p = []
+                p.append(assementList[i][0])
+                p.append(assementList[i][2])
+                grdBList.append(p)
+            elif(assementList[i][1] == "C"):
+                p = []
+                p.append(assementList[i][0])
+                p.append(assementList[i][2])
+                grdCList.append(p)
+        
+        items = []
+        items = self.classListWidget.selectedItems()
+ 
+        for i in range(0, len(items)):
+            if(self.classListWidget.selectedItems()[i].column() is 2):
+                row = self.classListWidget.selectedItems()[i].row()
+                score = self.classListWidget.item(row,2).text()
+                if(score == ""):
+                    self.classListWidget.setItem(row,3,QTableWidgetItem(""))
+                else:
+                    for j in range(0, len(grdStandard)):
+                        # if(self.classListWidget.item(row,2) and self.classListWidget.item(row,2).text() != ""):
+                        score = int(score)
+                        if(grdStandard[j][1] < score and score <= grdStandard[j][2]):
+                            if(grdStandard[j][0] == "A"):
+                                randomIndex = random.randint(0, len(grdAList)-1)
+                                self.classListWidget.setItem(row,3,QTableWidgetItem(grdAList[randomIndex][1]))
+                                # self.classListWidget.item(row,3).setWhatsThis(str(grdAList[randomIndex][0]))
+                            elif(grdStandard[j][0] == "B"):
+                                randomIndex = random.randint(0, len(grdBList)-1)
+                                self.classListWidget.setItem(row,3,QTableWidgetItem(grdBList[randomIndex][1]))
+                                # self.classListWidget.item(row,3).setWhatsThis(str(grdBList[randomIndex][0]))
+                            elif(grdStandard[j][0] == "C"):
+                                randomIndex = random.randint(0, len(grdCList)-1)
+                                self.classListWidget.setItem(row,3,QTableWidgetItem(grdCList[randomIndex][1]))
+                                # self.classListWidget.item(row,3).setWhatsThis(str(grdCList[randomIndex][0]))
+
+            
+
+    #점수 등급별 랜덤 평가 생성 함수 (전체)
     def insertRandomAssesment(self):
         clickedSub = self.scoreSubTreeWidget.currentItem().text(0)
         grdAList = []
@@ -250,28 +307,27 @@ class WindowClass(QMainWindow, form_class) :
                 p.append(assementList[i][2])
                 grdCList.append(p)
 
-        
-        for i in range(0, self.classListWidget.rowCount()):
-            score = self.classListWidget.item(i,2).text()
+        for row in range(0, self.classListWidget.rowCount()):
+            score = self.classListWidget.item(row,2).text()
             if(score == ""):
-                self.classListWidget.setItem(i,3,QTableWidgetItem(""))
+                self.classListWidget.setItem(row,3,QTableWidgetItem(""))
             else:
                 for j in range(0, len(grdStandard)):
-                    # if(self.classListWidget.item(i,2) and self.classListWidget.item(i,2).text() != ""):
+                    # if(self.classListWidget.item(row,2) and self.classListWidget.item(row,2).text() != ""):
                     score = int(score)
                     if(grdStandard[j][1] < score and score <= grdStandard[j][2]):
                         if(grdStandard[j][0] == "A"):
                             randomIndex = random.randint(0, len(grdAList)-1)
-                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdAList[randomIndex][1]))
-                            self.classListWidget.item(i,3).setWhatsThis(str(grdAList[randomIndex][0]))
+                            self.classListWidget.setItem(row,3,QTableWidgetItem(grdAList[randomIndex][1]))
+                            # self.classListWidget.item(row,3).setWhatsThis(str(grdAList[randomIndex][0]))
                         elif(grdStandard[j][0] == "B"):
                             randomIndex = random.randint(0, len(grdBList)-1)
-                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdBList[randomIndex][1]))
-                            self.classListWidget.item(i,3).setWhatsThis(str(grdBList[randomIndex][0]))
+                            self.classListWidget.setItem(row,3,QTableWidgetItem(grdBList[randomIndex][1]))
+                            # self.classListWidget.item(row,3).setWhatsThis(str(grdBList[randomIndex][0]))
                         elif(grdStandard[j][0] == "C"):
                             randomIndex = random.randint(0, len(grdCList)-1)
-                            self.classListWidget.setItem(i,3,QTableWidgetItem(grdCList[randomIndex][1]))
-                            self.classListWidget.item(i,3).setWhatsThis(str(grdCList[randomIndex][0]))
+                            self.classListWidget.setItem(row,3,QTableWidgetItem(grdCList[randomIndex][1]))
+                            # self.classListWidget.item(row,3).setWhatsThis(str(grdCList[randomIndex][0]))
     
     #학급 리스트 출력 함수
     def insertClassComboBox(self):

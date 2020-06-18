@@ -151,7 +151,13 @@
                </widget>
               </item>
               <item>
-               <widget class="QTreeWidget" name="subTreeWidget"/>
+               <widget class="QTreeWidget" name="subTreeWidget">
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
+               </widget>
               </item>
               <item>
                <widget class="QFrame" name="frame_9">
@@ -605,7 +611,13 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QTreeWidget" name="scoreSubTreeWidget"/>
+               <widget class="QTreeWidget" name="scoreSubTreeWidget">
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
+               </widget>
               </item>
               <item>
                <widget class="QFrame" name="frame_18">
@@ -727,9 +739,16 @@
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_11">
                   <item>
+                   <widget class="QPushButton" name="createIndiAssesmentBtn">
+                    <property name="text">
+                     <string>개별 평가 생성</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QPushButton" name="createAssesmentBtn">
                     <property name="text">
-                     <string>평가 생성</string>
+                     <string>전체 평가 생성</string>
                     </property>
                    </widget>
                   </item>
