@@ -17,7 +17,9 @@ class WindowClass(QMainWindow, form_class) :
         self.setupUi(self)
         self.showSub(self.subTreeWidget)
         self.showSub(self.scoreSubTreeWidget)
-        self.insertClassComboBox()
+        self.insertClassComboBox(self.classList)
+        self.insertClassComboBox(self.exlClassList)
+        self.exlShowClassList()
 
         #학급추가 탭
         self.fileUpdBtn.clicked.connect(self.uploadFile)
@@ -27,7 +29,7 @@ class WindowClass(QMainWindow, form_class) :
         self.addChildBtn.clicked.connect(self.addChildSub)
         self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
-        self.subTreeWidget.itemDoubleClicked.connect(self.searchSub)
+        self.subTreeWidget.itemClicked.connect(self.searchSub)
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdAseDelBtn.clicked.connect(self.delAse)
@@ -44,6 +46,113 @@ class WindowClass(QMainWindow, form_class) :
         self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
         self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
         self.createIndiAssesmentBtn.clicked.connect(self.insertIndiRandomAssesment)
+
+        #엑셀출력 탭
+        self.exlClassList.activated.connect(self.exlShowClassList)
+        self.exlSubAddBtn.clicked.connect(self.exlSubAddClass)
+        self.exlSubExtBtn.clicked.connect(self.exlSubExtClass)
+        self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
+    
+    ##############엑셀출력###########################
+    def returnClassAssesmentBySubId(self, subId, grade, classes):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT Student.name, Student.id, Score.asses FROM Student INNER JOIN Score ON Student.id = Score.stdId WHERE Score.subId = ? and Student.grade = ? and Student.class = ?"
+                return conn.cursor().execute(sql, (subId, grade, classes)).fetchall()
+
+        except sqlite3.IntegrityError:
+            print("과목 조회 오류")
+
+    def returnIfSubHasGrandParent(self, parentId):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "SELECT sub.id, sub.subName AS Sub, parentSub.subName AS parentSubName, parentSub.parentId AS grandParentId FROM Subject sub INNER JOIN Subject parentSub ON sub.parentId = parentSub.id WHERE sub.id = ?"
+                return conn.cursor().execute(sql, (grade, classes)).fetchone()
+        except sqlite3.IntegrityError:
+            print("과목 조회 오류")
+
+    def returnClassSubList(self, grade, classes):
+        conn = sqlite3.connect("studentManager.db")
+        try:
+            with conn:
+                sql = "select DISTINCT Subject.id as subId, Subject.subName, Subject.parentId FROM Subject INNER JOIN Score ON Score.subId = Subject.id INNER JOIN Student ON Score.stdId = Student.id WHERE Student.grade = ? and Student.class = ?"
+                return conn.cursor().execute(sql, (grade, classes)).fetchall()
+        except sqlite3.IntegrityError:
+            print("과목 조회 오류")
+
+    #학급별 종합 평가 출력 함수
+    def exlShowTotAssesment(self):
+        self.exlClassListWidget.clearContents()
+        grade = int(self.exlClassList.currentText()[0])
+        classes = int(self.exlClassList.currentText()[4])
+        if(self.exlSubAddedWidget.count() == 0):
+            QMessageBox.about(self, "오류", "과목을 추가해주세요.")
+            return
+        subjectsIds = []
+        items = []
+        for row in range(self.exlSubAddedWidget.count()):
+            item = self.exlSubAddedWidget.item(row)
+            items.append(item)
+        for item in items:
+            subjectsIds.append(int(item.whatsThis()))
+        
+        assesments = []
+
+        for id in subjectsIds:
+            assesments.append(self.returnClassAssesmentBySubId(id, grade, classes))
+
+        print(assesments)
+        members = []
+        members = self.returnClassMemberList(grade, classes)
+        self.exlClassListWidget.setRowCount(len(members))
+        self.exlClassListWidget.setColumnCount(3)
+
+        for i in range(0,len(members)):
+            name = QTableWidgetItem(str(members[i][0]))
+            stdId = QTableWidgetItem(str(members[i][1]))
+            self.exlClassListWidget.setItem(i, 0, name)
+            self.exlClassListWidget.setItem(i, 1, stdId)
+
+
+        # for asses in assesments:
+        #     for row in asses:
+        #         print(row[0], row[1], row[2])
+
+    #학급별 평가 과목 선택 추가 함수
+    def exlSubAddClass(self):
+        if(self.exlSubListWidget.currentItem() is not None):
+            item = self.exlSubListWidget.currentItem()
+            addItem = QListWidgetItem(str(item.text()))
+            addItem.setWhatsThis(str(item.whatsThis()))
+            self.exlSubAddedWidget.addItem(addItem)
+
+
+    #학급별 평가 과목 선택 빼기 함수
+    def exlSubExtClass(self):
+        if(self.exlSubAddedWidget.currentItem() is not None):
+            row = self.exlSubAddedWidget.currentRow()
+            self.exlSubAddedWidget.takeItem(row)
+
+
+
+    #학급별 평가 과목 보여주는 함수
+    def exlShowClassList(self):
+        self.exlSubListWidget.clear()
+        self.exlSubAddedWidget.clear()
+        grade = int(self.exlClassList.currentText()[0])
+        classes = int(self.exlClassList.currentText()[4])
+        subjects = self.returnClassSubList(grade,classes)
+        subjects = sorted(subjects)
+
+        for subject in subjects:
+            parentSubName = self.returnSubNameBySubId(int(subject[2]))
+            name = parentSubName+" - "+subject[1]
+            item = QListWidgetItem(str(name))
+            item.setWhatsThis(str(subject[0]))
+            self.exlSubListWidget.addItem(item)
+
 
     ##############점수입력###########################
 
@@ -150,6 +259,12 @@ class WindowClass(QMainWindow, form_class) :
 
     #점수로 생성된 평가문 저장해주는 함수
     def saveAssesment(self):
+        if(self.scoreSubTreeWidget.currentItem() is None):
+            QMessageBox.about(self, "오류", "과목을 선택해주세요.")
+            return
+        if(self.scoreSubTreeWidget.currentItem() is not None and self.classListWidget.rowCount() == 0):
+            QMessageBox.about(self, "오류", "학급을 불러와주세요.")
+            return
         for row in range(0, self.classListWidget.rowCount()):
             if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
                 # assesId = int(self.classListWidget.item(row,3).whatsThis())
@@ -228,6 +343,9 @@ class WindowClass(QMainWindow, form_class) :
             
     #점수 등급별 랜덤 평가 생성 함수 (선택)
     def insertIndiRandomAssesment(self):
+        if(self.scoreSubTreeWidget.currentItem() is None):
+            QMessageBox.about(self, "오류", "과목을 선택해주세요.")
+            return
         clickedSub = self.scoreSubTreeWidget.currentItem().text(0)
         grdAList = []
         grdBList = []
@@ -283,6 +401,9 @@ class WindowClass(QMainWindow, form_class) :
 
     #점수 등급별 랜덤 평가 생성 함수 (전체)
     def insertRandomAssesment(self):
+        if(self.scoreSubTreeWidget.currentItem() is None):
+            QMessageBox.about(self, "오류", "과목을 선택해주세요.")
+            return
         clickedSub = self.scoreSubTreeWidget.currentItem().text(0)
         grdAList = []
         grdBList = []
@@ -330,10 +451,10 @@ class WindowClass(QMainWindow, form_class) :
                             # self.classListWidget.item(row,3).setWhatsThis(str(grdCList[randomIndex][0]))
     
     #학급 리스트 출력 함수
-    def insertClassComboBox(self):
+    def insertClassComboBox(self, combobox):
         classes = self.returnClassList()
         for i in range(0, len(classes)):
-            self.classList.addItem(str(classes[i][0])+"학년 "+str(classes[i][1])+"반")
+            combobox.addItem(str(classes[i][0])+"학년 "+str(classes[i][1])+"반")
 
     #선택 학급 조회 함수    
     def showClassMemberList(self):     
