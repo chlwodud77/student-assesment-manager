@@ -562,6 +562,8 @@ class WindowClass(QMainWindow, form_class) :
             else:
                 QMessageBox.about(self, "결과", "삭제 실패")
         self.showSub(self.subTreeWidget)
+        self.showSub(self.scoreSubTreeWidget)
+
 
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
@@ -770,6 +772,8 @@ class WindowClass(QMainWindow, form_class) :
             QMessageBox.about(self, "오류", "실패")
 
         self.showSub(self.subTreeWidget)
+        self.showSub(self.scoreSubTreeWidget)
+
         
     # 평가 내용 수정 함수
     def modAse(self):
