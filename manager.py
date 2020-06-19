@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -150,7 +152,12 @@ class WindowClass(QMainWindow, form_class) :
                     if(int(row[1]) == int(stdId)):
                         if(self.exlClassListWidget.item(i,2) is not None): #기존에 내용이 있는 경우 붙여서 추가
                             orgContent = self.exlClassListWidget.item(i,2).text()
-                            newContent = orgContent+" "+str(row[2])
+                            orgContent = orgContent.strip()
+                            newContent = ""
+                            if(orgContent == ""): 
+                                newContent = str(row[2])
+                            else:
+                                newContent = orgContent+" "+str(row[2])
                             assesItem = QTableWidgetItem(newContent)
                             self.exlClassListWidget.setItem(i,2, assesItem)
                         else: #기존에 내용이 없는 빈 칸인 경우
