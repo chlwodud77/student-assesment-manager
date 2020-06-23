@@ -23,25 +23,26 @@ def exlChangeAse(self):
 
 #최종 엑셀 파일로 저장 함수
 def exlSaveToFile(self):
-    filename = self.exlClassList.currentText()+".xlsx"
-    wb = Workbook()
-    ws = wb.active
-    content = []
-    for i in range(0, self.exlClassListWidget.rowCount()):
-        p = []
-        p.append(self.exlClassListWidget.item(i,0).text())
-        if(self.exlClassListWidget.item(i,2) is not None):
-            p.append(self.exlClassListWidget.item(i,2).text())
-        else:
-            p.append("")
-        content.append(p)
+    if(self.exlClassList.currentText() != ""):
+        filename = self.exlClassList.currentText()+".xlsx"
+        wb = Workbook()
+        ws = wb.active
+        content = []
+        for i in range(0, self.exlClassListWidget.rowCount()):
+            p = []
+            p.append(self.exlClassListWidget.item(i,0).text())
+            if(self.exlClassListWidget.item(i,2) is not None):
+                p.append(self.exlClassListWidget.item(i,2).text())
+            else:
+                p.append("")
+            content.append(p)
 
-    for x in range(1,len(content)+1):
-        for y in range(1,3):
-            ws.cell(row = x, column = y).value = content[x-1][y-1]
+        for x in range(1,len(content)+1):
+            for y in range(1,3):
+                ws.cell(row = x, column = y).value = content[x-1][y-1]
 
-    wb.save(filename)
-    QMessageBox.about(self, "결과", "저장 성공.")
+        wb.save(filename)
+        QMessageBox.about(self, "결과", "저장 성공.")
     
 #학급별 종합 평가 출력 함수
 def exlShowTotAssesment(self):
@@ -112,14 +113,15 @@ def exlSubExtClass(self):
 def exlShowClassList(self):
     self.exlSubListWidget.clear()
     self.exlSubAddedWidget.clear()
-    grade = int(self.exlClassList.currentText()[0])
-    classes = int(self.exlClassList.currentText()[4])
-    subjects = backend.returnClassSubList(grade,classes)
-    subjects = sorted(subjects)
+    if(self.exlClassList.currentText() != ""):
+        grade = int(self.exlClassList.currentText()[0])
+        classes = int(self.exlClassList.currentText()[4])
+        subjects = backend.returnClassSubList(grade,classes)
+        subjects = sorted(subjects)
 
-    for subject in subjects:
-        parentSubName = backend.returnSubNameBySubId(int(subject[2]))
-        name = parentSubName+" - "+subject[1]
-        item = QListWidgetItem(str(name))
-        item.setWhatsThis(str(subject[0]))
-        self.exlSubListWidget.addItem(item)
+        for subject in subjects:
+            parentSubName = backend.returnSubNameBySubId(int(subject[2]))
+            name = parentSubName+" - "+subject[1]
+            item = QListWidgetItem(str(name))
+            item.setWhatsThis(str(subject[0]))
+            self.exlSubListWidget.addItem(item)

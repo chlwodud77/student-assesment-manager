@@ -121,6 +121,16 @@ def deleteAssesmentBySubId(subId):
         print("점수 삭제 오류") 
         return False
 
+def deleteClass(grade, classes):
+    try:
+        with conn:
+            sql = "DELETE FROM Student WHERE grade = ? and class = ?"
+            conn.cursor().execute(sql, (grade, classes))
+            return True
+    except sqlite3.IntegrityError:
+        print("학생 삭제 오류") 
+        return False
+
 def deleteScoreById(id):
     try:
         with conn:
@@ -184,13 +194,12 @@ def createParentSubject(name):
         print("상위 과목 저장 오류")
         return False
         
-def saveStudent(name, grade, classes):
+def saveStudent(id, name, grade, classes):
     try:
         with conn:
-            sql = "insert into Student(name, grade, class) values (?,?,?)"
-            conn.cursor().execute(sql, (name, grade, classes))
+            sql = "insert into Student(id, name, grade, class) values (?,?,?,?)"
+            conn.cursor().execute(sql, (id, name, grade, classes))
             return True  
     except sqlite3.IntegrityError:
         print("과목 저장 문제 발생")
-        QMessageBox.about(self, "결과", "학생 저장 실패.")
         return False

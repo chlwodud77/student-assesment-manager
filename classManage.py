@@ -5,22 +5,81 @@ from openpyxl import load_workbook, Workbook
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 
+def deleteStdClass(self):
+    selectedItem = self.stdClassTreeWidget.currentItem()
+    if("-" in selectedItem.whatsThis(0)):
+        grade, classes = selectedItem.whatsThis(0).split("-")
+        if(backend.deleteClass(int(grade), int(classes))):
+            QMessageBox.about(self, "결과", "반 삭제 완료.")
+            showClassList(self)
+        
+def clsAddRow(self):
+    ListWidget = self.stdListWidget
+    ListWidget.insertRow(ListWidget.rowCount())
+    
+def clsDelRow(self):
+    ListWidget = self.stdListWidget
+    selectedRows = ListWidget.selectionModel().selectedRows()
+    
+    
+    for r in sorted(selectedRows, reverse=True):
+        ListWidget.removeRow(r.row())
 
+def showClassList(self):
+    classList = backend.returnClassList()
+    classTreeWidget = self.stdClassTreeWidget
+    classTreeWidget.clear()
+    classTreeWidget.setColumnCount(1)
+    classTreeWidget.setHeaderLabels(["학급"])
+    for row in classList:
+        parentItem = QTreeWidgetItem(classTreeWidget, [str(row[0])+"학년 "+str(row[1])+"반"])
+        parentItem.setWhatsThis(0, str(row[0])+"-"+str(row[1]))
+        
+    it = QTreeWidgetItemIterator(self.stdClassTreeWidget)
+    while it.value():
+        if("-" in it.value().whatsThis(0)):
+            grade, classes = it.value().whatsThis(0).split("-")
+            students = backend.returnClassMemberList(int(grade), int(classes))
+            for row in students:
+                stdName = row[0]
+                stdId = row[1]
+                childItem = QTreeWidgetItem(it.value())
+                childItem.setWhatsThis(0, str(stdId))
+                childItem.setText(0, stdName)
+        it += 1
+        
 
 def uploadCls(self):
-    rowCnt = self.stdListWidget.rowCount()
-    columnCnt = self.stdListWidget.columnCount()
+    stdList = self.stdListWidget
+    rowCnt = stdList.rowCount()
+    columnCnt = stdList.columnCount()
 
-    for col in range(0, columnCnt):
-        header = self.stdListWidget.horizontalHeaderItem(col).text()
-        grade = header[0]
-        classes = header[2]
-        for row in range(0, rowCnt):
-            name = self.stdListWidget.item(row,col).text()
-            if(name != "" or name is not None):
-                backend.saveStudent(name, grade, classes)
+    # for col in range(0, columnCnt):
+    #     header = self.stdListWidget.horizontalHeaderItem(col).text()
+    #     grade = header[0]
+    #     classes = header[2]
+    #     for row in range(0, rowCnt):
+    #         name = self.stdListWidget.item(row,col).text()
+    #         if(name != "" or name is not None):
+    #             backend.saveStudent(name, grade, classes)
+    
+    for row in range(0, rowCnt):
+        if(stdList.item(row,0) is not None and stdList.item(row,1) is not None):
+            hakbun = stdList.item(row, 0).text()
+            name = stdList.item(row, 1).text()
+            if(name != "" and hakbun != ""):
+                grade = hakbun[0]
+                classes = ""
+                if(int(hakbun[1]) == 0):
+                    classes = hakbun[2]
+                else:
+                    classes = hakbun[1]+hakbun[2]
+                if(not backend.saveStudent(int(hakbun), name, int(grade), int(classes))):
+                    QMessageBox.about(self, "결과", "학생 저장 실패.")
+                    return
                 
     QMessageBox.about(self, "결과", "학생 저장 완료.")
+    showClassList(self)
     
 #학급 구성원 엑셀 파일로 불러와서 리스트로 보여줌
 def uploadFile(self):

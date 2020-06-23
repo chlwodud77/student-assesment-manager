@@ -15,6 +15,7 @@ class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
+        self.showClassList()
         self.showSub(self.subTreeWidget)
         self.showSub(self.scoreSubTreeWidget)
         self.insertClassComboBox(self.classList)
@@ -22,7 +23,10 @@ class WindowClass(QMainWindow, form_class) :
         self.exlShowClassList()
 
         #학급추가 탭
+        self.stdClassDelBtn.clicked.connect(self.deleteStdClass)
         self.fileUpdBtn.clicked.connect(self.uploadFile)
+        self.clsRowAddBtn.clicked.connect(self.clsAddRow)
+        self.clsRowDelBtn.clicked.connect(self.clsDelRow)
         self.clsSaveBtn.clicked.connect(self.uploadCls)
 
         #과목관리 탭
@@ -175,8 +179,25 @@ class WindowClass(QMainWindow, form_class) :
     
 
     ##############학급추가###########################
+    
+    def deleteStdClass(self):
+        classManage.deleteStdClass(self)
+        self.insertClassComboBox(self.classList)
+        self.insertClassComboBox(self.exlClassList)
+        
+    def clsAddRow(self):
+        classManage.clsAddRow(self)
+        
+    def clsDelRow(self):
+        classManage.clsDelRow(self)
+    
+    def showClassList(self):
+        classManage.showClassList(self)
+    
     def uploadCls(self):
         classManage.uploadCls(self)
+        self.insertClassComboBox(self.classList)
+        self.insertClassComboBox(self.exlClassList)
         
     #학급 구성원 엑셀 파일로 불러와서 리스트로 보여줌
     def uploadFile(self):
