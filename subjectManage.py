@@ -210,6 +210,8 @@ def modAse(self):
         content = self.grdAseEdit.toPlainText()
         widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
         
+    QMessageBox.about(self, "결과", "수정 완료. db에 반영하려면 저장 버튼 클릭!")
+
 #평가 내용 선택하면 편집기에 해당 내용 보여줌
 def activateEdit(self):
     focusedTab = self.grdAseWidget.currentIndex()
@@ -243,6 +245,9 @@ def delAse(self):
         col = self.grdCAseList.currentColumn()
         self.grdCAseList.removeRow(row)
         
+    self.grdAseEdit.clear()
+    QMessageBox.about(self, "결과", "삭제 완료. db에 반영하려면 저장 버튼 클릭!")
+    
 #평가 내용 추가 함수
 def addAse(self):
     focusedTab = self.grdAseWidget.currentIndex()
@@ -273,3 +278,7 @@ def addAse(self):
         else:
             self.grdCAseList.insertRow(currentRowCnt)
             self.grdCAseList.setItem(currentRowCnt, 0, item)
+    
+    self.grdAseEdit.clear()
+    QMessageBox.about(self, "결과", "추가 완료. db에 반영하려면 저장 버튼 클릭!")
+    

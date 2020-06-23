@@ -40,14 +40,18 @@ class WindowClass(QMainWindow, form_class) :
         self.subDelBtn.clicked.connect(self.delSub)
 
         #점수입력 탭
+        self.classListWidget.clicked.connect(self.activateScoreEdit)
         self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
         self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
         self.createIndiAssesmentBtn.clicked.connect(self.insertIndiRandomAssesment)
         self.saveAssesmentBtn.clicked.connect(self.saveAssesment)
         self.scoreSubTreeWidget.itemDoubleClicked.connect(self.showSubClickedLabel)
         self.scoreSubTreeWidget.itemClicked.connect(self.showSubClickedLabel)
+        self.scoreAseEdit.textChanged.connect(self.changeScoreAse)
 
         #엑셀출력 탭
+        self.exlClassListWidget.clicked.connect(self.exlActivateEdit)
+        self.exlAseEdit.textChanged.connect(self.exlChangeAse)
         self.exlClassList.activated.connect(self.exlShowClassList)
         self.exlSubAddBtn.clicked.connect(self.exlSubAddClass)
         self.exlSubExtBtn.clicked.connect(self.exlSubExtClass)
@@ -55,6 +59,14 @@ class WindowClass(QMainWindow, form_class) :
         self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
     
     ##############엑셀출력###########################
+    
+    #엑셀 테이블 항목 선택 시 내용 표시 함수
+    def exlActivateEdit(self):
+        excelManage.exlActivateEdit(self)
+        
+    #엑셀 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
+    def exlChangeAse(self):
+        excelManage.exlChangeAse(self)
 
     #최종 엑셀 파일로 저장 함수
     def exlSaveToFile(self):
@@ -81,6 +93,12 @@ class WindowClass(QMainWindow, form_class) :
     
 
     ##############점수입력###########################
+    
+    def activateScoreEdit(self):
+        scoreManage.activateScoreEdit(self)
+    
+    def changeScoreAse(self):
+        scoreManage.changeScoreAse(self)
 
     #선택 학급 조회 함수    
     def showClassMemberList(self):     

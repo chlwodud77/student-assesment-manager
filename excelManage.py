@@ -5,6 +5,22 @@ from openpyxl import load_workbook, Workbook
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 
+#엑셀 테이블 항목 선택 시 내용 표시 함수
+def exlActivateEdit(self):
+    focusedItem = self.exlClassListWidget.currentItem()
+    if(focusedItem is None):
+        row = self.exlClassListWidget.currentRow()
+        col = self.exlClassListWidget.currentColumn()
+        self.exlClassListWidget.setItem(row, col, QTableWidgetItem(""))
+    content = self.exlClassListWidget.currentItem().text()
+    self.exlAseEdit.setPlainText(content)
+
+#엑셀 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
+def exlChangeAse(self):
+    focusedItem = self.exlClassListWidget.currentItem()
+    currentContent = self.exlAseEdit.toPlainText()
+    focusedItem.setText(currentContent)
+
 #최종 엑셀 파일로 저장 함수
 def exlSaveToFile(self):
     filename = self.exlClassList.currentText()+".xlsx"

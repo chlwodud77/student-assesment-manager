@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -586,7 +586,7 @@
                       <widget class="QTableWidget" name="grdAAseList">
                        <column>
                         <property name="text">
-                         <string>연번</string>
+                         <string>내용</string>
                         </property>
                        </column>
                       </widget>
@@ -618,7 +618,7 @@
                       <widget class="QTableWidget" name="grdCAseList">
                        <column>
                         <property name="text">
-                         <string>연번</string>
+                         <string>내용</string>
                         </property>
                        </column>
                       </widget>
@@ -824,6 +824,16 @@
                    <string>평가</string>
                   </property>
                  </column>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPlainTextEdit" name="scoreAseEdit">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>100</height>
+                  </size>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -1056,6 +1066,16 @@
                    <string>평가</string>
                   </property>
                  </column>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPlainTextEdit" name="exlAseEdit">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>100</height>
+                  </size>
+                 </property>
                 </widget>
                </item>
                <item>

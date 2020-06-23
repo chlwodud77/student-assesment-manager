@@ -4,6 +4,18 @@ import sys, backend, sqlite3, random
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 
+#점수 입력 테이블 항목 선택 시 내용 표시 함수
+def activateScoreEdit(self):
+    focusedItem = self.classListWidget.currentItem()
+    content = focusedItem.text()
+    self.scoreAseEdit.setPlainText(content)
+
+#점수 입력 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
+def changeScoreAse(self):
+    focusedItem = self.classListWidget.currentItem()
+    currentContent = self.scoreAseEdit.toPlainText()
+    focusedItem.setText(currentContent)
+
 #과목 선택 시 라벨에 선택 과목 표시 함수
 def showSubClickedLabel(self):
     self.subClickedLabel.setText(self.scoreSubTreeWidget.currentItem().text(0))
