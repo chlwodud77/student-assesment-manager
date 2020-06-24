@@ -104,93 +104,97 @@ def showSub(self, treeWidget):
                 
 #과목, 평가 등급 점수, 평가 내용 db 저장 함수
 def saveSub(self):
-    subTitleEdit = self.subTreeWidget.currentItem().text(0)
-    grdAEdit1 = self.grdAEdit1.text()
-    grdAEdit2 = self.grdAEdit2.text()
-    grdBEdit1 = self.grdBEdit1.text()
-    grdBEdit2 = self.grdBEdit2.text()
-    grdCEdit1 = self.grdCEdit1.text()
-    grdCEdit2 = self.grdCEdit2.text()
+    buttonReply = QMessageBox.question(self, '알림', "과목 상세 정보를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        if(self.subTreeWidget.currentItem() is None):
+            return QMessageBox.about(self, "주의", "정보를 저장할 과목을 선택하세요.")
+        subTitleEdit = self.subTreeWidget.currentItem().text(0)
+        grdAEdit1 = self.grdAEdit1.text()
+        grdAEdit2 = self.grdAEdit2.text()
+        grdBEdit1 = self.grdBEdit1.text()
+        grdBEdit2 = self.grdBEdit2.text()
+        grdCEdit1 = self.grdCEdit1.text()
+        grdCEdit2 = self.grdCEdit2.text()
 
-    grdAList = []
-    grdBList = []
-    grdCList = []
+        grdAList = []
+        grdBList = []
+        grdCList = []
 
-    for i in range (0,self.grdAAseList.rowCount()):
-        for j in range (0,self.grdAAseList.columnCount()):
-            grdAList.append(self.grdAAseList.item(i,j).text())
+        for i in range (0,self.grdAAseList.rowCount()):
+            for j in range (0,self.grdAAseList.columnCount()):
+                grdAList.append(self.grdAAseList.item(i,j).text())
 
-    for i in range (0,self.grdBAseList.rowCount()):
-        for j in range (0,self.grdBAseList.columnCount()):
-            grdBList.append(self.grdBAseList.item(i,j).text())
+        for i in range (0,self.grdBAseList.rowCount()):
+            for j in range (0,self.grdBAseList.columnCount()):
+                grdBList.append(self.grdBAseList.item(i,j).text())
 
-    for i in range (0,self.grdCAseList.rowCount()):
-        for j in range (0,self.grdCAseList.columnCount()):
-            grdCList.append(self.grdCAseList.item(i,j).text())
+        for i in range (0,self.grdCAseList.rowCount()):
+            for j in range (0,self.grdCAseList.columnCount()):
+                grdCList.append(self.grdCAseList.item(i,j).text())
 
-    conn = sqlite3.connect("studentManager.db")
+        #기존 과목 없으면 새로 생성
+        try:    
+            subName = self.subTitleEdit.text()
+            subId = self.subTreeWidget.currentItem().whatsThis(0)
 
-    #기존 과목 없으면 새로 생성
-    try:    
-        subName = self.subTitleEdit.text()
-        subId = self.subTreeWidget.currentItem().whatsThis(0)
+            if(not subName):
+                QMessageBox.about(self, "오류", "과목을 입력하세요")
+            else:
+                if(subId == ''): # 기존에 없던 과목인 경우
+                    if(self.subTreeWidget.currentItem().parent()): #하위 노드일 경우
+                        parent = self.subTreeWidget.currentItem().parent()
+                        parentName = parent.text(0)
+                        parentId = parent.whatsThis(0)
+                        backend.createChildSubject(subName, int(parentId))
+                        childSubId = backend.returnChildSubjectId(subName, int(parentId))
+                        backend.deleteAssesmentBySubId(int(childSubId))
+                        
+                        for i in range(0, len(grdAList)):
+                            backend.createAssesment(int(childSubId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2))
+                        for i in range(0, len(grdBList)):
+                            backend.createAssesment(int(childSubId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2))
+                        for i in range(0, len(grdCList)):
+                            backend.createAssesment(int(childSubId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2))
 
-        if(not subName):
-            QMessageBox.about(self, "오류", "과목을 입력하세요")
-        else:
-            if(subId == ''): # 기존에 없던 과목인 경우
-                if(self.subTreeWidget.currentItem().parent()): #하위 노드일 경우
-                    parent = self.subTreeWidget.currentItem().parent()
-                    parentName = parent.text(0)
-                    parentId = parent.whatsThis(0)
-                    backend.createChildSubject(subName, int(parentId))
-                    childSubId = backend.returnChildSubjectId(subName, int(parentId))
-                    backend.deleteAssesmentBySubId(int(childSubId))
+                    else: #부모 노드일 경우
+                        backend.createParentSubject(subName)
+                else: # 기존에 있던 과목인 경우
+                    #기존 과목을 참조하여 평가지를 새로 생성 및 수정 (먼저 다 삭제했다가 다시 새로 생성)
+                    backend.deleteAssesmentBySubId(int(subId))
                     
                     for i in range(0, len(grdAList)):
-                        backend.createAssesment(int(childSubId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2))
+                        backend.createAssesment(int(subId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2))
                     for i in range(0, len(grdBList)):
-                        backend.createAssesment(int(childSubId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2))
+                        backend.createAssesment(int(subId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2))
                     for i in range(0, len(grdCList)):
-                        backend.createAssesment(int(childSubId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2))
-
-                else: #부모 노드일 경우
-                    backend.createParentSubject(subName)
-            else: # 기존에 있던 과목인 경우
-                #기존 과목을 참조하여 평가지를 새로 생성 및 수정 (먼저 다 삭제했다가 다시 새로 생성)
-                backend.deleteAssesmentBySubId(int(subId))
+                        backend.createAssesment(int(subId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2))
+                        
+                QMessageBox.about(self, "결과", "성공")
                 
-                for i in range(0, len(grdAList)):
-                    backend.createAssesment(int(subId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2))
-                for i in range(0, len(grdBList)):
-                    backend.createAssesment(int(subId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2))
-                for i in range(0, len(grdCList)):
-                    backend.createAssesment(int(subId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2))
-                    
-            QMessageBox.about(self, "결과", "성공")
-            
-    except sqlite3.IntegrityError:
-        print("문제 발생")
-        QMessageBox.about(self, "오류", "실패")
-    showSub(self, self.subTreeWidget)
-    showSub(self, self.scoreSubTreeWidget)
+        except sqlite3.IntegrityError:
+            print("문제 발생")
+            QMessageBox.about(self, "오류", "실패")
+        showSub(self, self.subTreeWidget)
+        showSub(self, self.scoreSubTreeWidget)
 
 def delSub(self):
-    clickedItem = self.subTreeWidget.currentItem()
-    if(clickedItem is None):
-        QMessageBox.about(self, "결과", "삭제할 과목을 선택해주세요.")
-        return
-    if(clickedItem.whatsThis(0) == ''):
-        self.subTreeWidget.removeItemWidget(clickedItem,0)
-        showSub(self, self.subTreeWidget)
-    else:
-        clickedSubId = int(clickedItem.whatsThis(0))
-        if(backend.deleteSubById(clickedSubId)):
-            QMessageBox.about(self, "결과", "삭제 성공")   
+    buttonReply = QMessageBox.question(self, '알림', "선택 과목을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        clickedItem = self.subTreeWidget.currentItem()
+        if(clickedItem is None):
+            QMessageBox.about(self, "결과", "삭제할 과목을 선택해주세요.")
+            return
+        if(clickedItem.whatsThis(0) == ''):
+            self.subTreeWidget.removeItemWidget(clickedItem,0)
+            showSub(self, self.subTreeWidget)
         else:
-            QMessageBox.about(self, "결과", "삭제 실패")
-    showSub(self, self.subTreeWidget)
-    showSub(self, self.scoreSubTreeWidget)
+            clickedSubId = int(clickedItem.whatsThis(0))
+            if(backend.deleteSubById(clickedSubId)):
+                QMessageBox.about(self, "결과", "삭제 성공")   
+            else:
+                QMessageBox.about(self, "결과", "삭제 실패")
+        showSub(self, self.subTreeWidget)
+        showSub(self, self.scoreSubTreeWidget)
 
 # 평가 내용 수정 함수
 def modAse(self):
@@ -210,8 +214,6 @@ def modAse(self):
         content = self.grdAseEdit.toPlainText()
         widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
         
-    QMessageBox.about(self, "결과", "수정 완료. db에 반영하려면 저장 버튼 클릭!")
-
 #평가 내용 선택하면 편집기에 해당 내용 보여줌
 def activateEdit(self):
     focusedTab = self.grdAseWidget.currentIndex()
@@ -246,7 +248,6 @@ def delAse(self):
         self.grdCAseList.removeRow(row)
         
     self.grdAseEdit.clear()
-    QMessageBox.about(self, "결과", "삭제 완료. db에 반영하려면 저장 버튼 클릭!")
     
 #평가 내용 추가 함수
 def addAse(self):
@@ -280,5 +281,4 @@ def addAse(self):
             self.grdCAseList.setItem(currentRowCnt, 0, item)
     
     self.grdAseEdit.clear()
-    QMessageBox.about(self, "결과", "추가 완료. db에 반영하려면 저장 버튼 클릭!")
     

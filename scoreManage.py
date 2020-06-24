@@ -22,29 +22,30 @@ def showSubClickedLabel(self):
     
 #점수로 생성된 평가문 저장해주는 함수
 def saveAssesment(self):
-    if(self.scoreSubTreeWidget.currentItem() is None):
-        QMessageBox.about(self, "오류", "과목을 선택해주세요.")
-        return
-    if(self.scoreSubTreeWidget.currentItem() is not None and self.classListWidget.rowCount() == 0):
-        QMessageBox.about(self, "오류", "학급을 불러와주세요.")
-        return
-    for row in range(0, self.classListWidget.rowCount()):
-        if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
-            asses = self.classListWidget.item(row,3).text()
-            score = int(self.classListWidget.item(row,2).text())
-            scoreId = int(self.classListWidget.item(row,2).whatsThis())
-            stdId = int(self.classListWidget.item(row,1).text())
-            subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-            backend.deleteScoreById(scoreId) #기존 스코어 삭제 후 
-            backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
-        else: #기존에 스코어 존재 X
-            if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,2).text() != ""):
+    buttonReply = QMessageBox.question(self, '알림', "생성된 과목 평가를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        if(self.scoreSubTreeWidget.currentItem() is None):
+            return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
+        if(self.scoreSubTreeWidget.currentItem() is not None and self.classListWidget.rowCount() == 0):
+            return QMessageBox.about(self, "오류", "학급을 불러와주세요.")
+        
+        for row in range(0, self.classListWidget.rowCount()):
+            if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
                 asses = self.classListWidget.item(row,3).text()
                 score = int(self.classListWidget.item(row,2).text())
+                scoreId = int(self.classListWidget.item(row,2).whatsThis())
                 stdId = int(self.classListWidget.item(row,1).text())
                 subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-                backend.saveScore(subId, stdId, score, asses) # 새로 저장.
-    QMessageBox.about(self, "결과", "점수 저장 성공.")
+                backend.deleteScoreById(scoreId) #기존 스코어 삭제 후 
+                backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
+            else: #기존에 스코어 존재 X
+                if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,2).text() != ""):
+                    asses = self.classListWidget.item(row,3).text()
+                    score = int(self.classListWidget.item(row,2).text())
+                    stdId = int(self.classListWidget.item(row,1).text())
+                    subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+                    backend.saveScore(subId, stdId, score, asses) # 새로 저장.
+        QMessageBox.about(self, "결과", "점수 저장 성공.")
     
 #점수, 평가 리스트 보여주는 함수
 def showScoreList(self):
@@ -135,8 +136,8 @@ def insertIndiRandomAssesment(self):
 #점수 등급별 랜덤 평가 생성 함수 (전체)
 def insertRandomAssesment(self):
     if(self.scoreSubTreeWidget.currentItem() is None):
-        QMessageBox.about(self, "오류", "과목을 선택해주세요.")
-        return
+        return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
+        
     grdAList = []
     grdBList = []
     grdCList = []

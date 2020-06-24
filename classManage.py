@@ -6,12 +6,16 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 
 def deleteStdClass(self):
-    selectedItem = self.stdClassTreeWidget.currentItem()
-    if("-" in selectedItem.whatsThis(0)):
-        grade, classes = selectedItem.whatsThis(0).split("-")
-        if(backend.deleteClass(int(grade), int(classes))):
-            QMessageBox.about(self, "결과", "반 삭제 완료.")
-            showClassList(self)
+    buttonReply = QMessageBox.question(self, 'PyQt5 message', "학급을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        selectedItem = self.stdClassTreeWidget.currentItem()
+        if(selectedItem is None):
+            return QMessageBox.about(self, "주의", "삭제할 학급을 선택해주세요.")
+        if("-" in selectedItem.whatsThis(0)):
+            grade, classes = selectedItem.whatsThis(0).split("-")
+            if(backend.deleteClass(int(grade), int(classes))):
+                QMessageBox.about(self, "결과", "반 삭제 완료.")
+                showClassList(self)        
         
 def clsAddRow(self):
     ListWidget = self.stdListWidget
@@ -50,40 +54,42 @@ def showClassList(self):
         
 
 def uploadCls(self):
-    stdList = self.stdListWidget
-    rowCnt = stdList.rowCount()
-    columnCnt = stdList.columnCount()
+    buttonReply = QMessageBox.question(self, 'PyQt5 message', "학급을 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        if(self.stdListWidget.rowCount() == 0):
+            return QMessageBox.about(self, "주의", "엑셀 파일로부터 학급 리스트를 불러와주세요.")
+        stdList = self.stdListWidget
+        rowCnt = stdList.rowCount()
+        columnCnt = stdList.columnCount()
 
-    # for col in range(0, columnCnt):
-    #     header = self.stdListWidget.horizontalHeaderItem(col).text()
-    #     grade = header[0]
-    #     classes = header[2]
-    #     for row in range(0, rowCnt):
-    #         name = self.stdListWidget.item(row,col).text()
-    #         if(name != "" or name is not None):
-    #             backend.saveStudent(name, grade, classes)
-    
-    for row in range(0, rowCnt):
-        if(stdList.item(row,0) is not None and stdList.item(row,1) is not None):
-            hakbun = stdList.item(row, 0).text()
-            name = stdList.item(row, 1).text()
-            if(name != "" and hakbun != ""):
-                grade = hakbun[0]
-                classes = ""
-                if(int(hakbun[1]) == 0):
-                    classes = hakbun[2]
-                else:
-                    classes = hakbun[1]+hakbun[2]
-                if(not backend.saveStudent(int(hakbun), name, int(grade), int(classes))):
-                    QMessageBox.about(self, "결과", "학생 저장 실패.")
-                    return
-                
-    QMessageBox.about(self, "결과", "학생 저장 완료.")
-    showClassList(self)
+        # for col in range(0, columnCnt):
+        #     header = self.stdListWidget.horizontalHeaderItem(col).text()
+        #     grade = header[0]
+        #     classes = header[2]
+        #     for row in range(0, rowCnt):
+        #         name = self.stdListWidget.item(row,col).text()
+        #         if(name != "" or name is not None):
+        #             backend.saveStudent(name, grade, classes)
+        
+        for row in range(0, rowCnt):
+            if(stdList.item(row,0) is not None and stdList.item(row,1) is not None):
+                hakbun = stdList.item(row, 0).text()
+                name = stdList.item(row, 1).text()
+                if(name != "" and hakbun != ""):
+                    grade = hakbun[0]
+                    classes = ""
+                    if(int(hakbun[1]) == 0):
+                        classes = hakbun[2]
+                    else:
+                        classes = hakbun[1]+hakbun[2]
+                    if(not backend.saveStudent(int(hakbun), name, int(grade), int(classes))):
+                        return QMessageBox.about(self, "결과", "학생 저장 실패. 이미 저장한 중복된 학급 또는 학생이 있나 확인하세요.")
+        QMessageBox.about(self, "결과", "학생 저장 완료.")
+        showClassList(self)
     
 #학급 구성원 엑셀 파일로 불러와서 리스트로 보여줌
 def uploadFile(self):
-    fname = QFileDialog.getOpenFileName(self, 'Open file', './')
+    fname = QFileDialog.getOpenFileName(self, 'Open file', './', 'Excel files (*.xlsx *.xls)')
     if(fname[0]):    
         wb = load_workbook(filename = fname[0]) 
         ws = wb["Sheet1"]

@@ -48,8 +48,8 @@ def exlSaveToFile(self):
 def exlShowTotAssesment(self):
     self.exlClassListWidget.clearContents()
     if(self.exlSubAddedWidget.count() == 0):
-        QMessageBox.about(self, "오류", "과목을 추가해주세요.")
-        return
+        return QMessageBox.about(self, "오류", "과목을 추가해주세요.")
+        
     grade = int(self.exlClassList.currentText()[0])
     classes = int(self.exlClassList.currentText()[4])
     subjectsIds = []
