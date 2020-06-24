@@ -23,8 +23,9 @@ def exlChangeAse(self):
 
 #최종 엑셀 파일로 저장 함수
 def exlSaveToFile(self):
-    if(self.exlClassList.currentText() != ""):
-        filename = self.exlClassList.currentText()+".xlsx"
+    name, _ = QFileDialog.getSaveFileName(self, 'Save File','','Excel files (*.xlsx)')
+    if(name != ""):
+        filename = name
         wb = Workbook()
         ws = wb.active
         content = []
@@ -40,10 +41,9 @@ def exlSaveToFile(self):
         for x in range(1,len(content)+1):
             for y in range(1,3):
                 ws.cell(row = x, column = y).value = content[x-1][y-1]
-
         wb.save(filename)
         QMessageBox.about(self, "결과", "저장 성공.")
-    
+            
 #학급별 종합 평가 출력 함수
 def exlShowTotAssesment(self):
     self.exlClassListWidget.clearContents()
