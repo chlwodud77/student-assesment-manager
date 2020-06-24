@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>학생평가관리프로그램_v1.0</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon.ico</normaloff>icon.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>

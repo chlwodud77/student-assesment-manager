@@ -13,9 +13,11 @@ buildOptions = dict(packages = ["sys",
                 "numpydoc",
                 "numexpr",
                 "matplotlib",
+                "lxml",
                 "jupyter_client",
                 "jupyter_core",
                 "pandas",
+                "PIL",
                 "scipy"],
     include_files = ["classManage.py",
                     "backend.py",
@@ -23,14 +25,15 @@ buildOptions = dict(packages = ["sys",
                     "scoreManage.py",
                     "subjectManage.py",
                     "studentManager.db",
-                    "manager.ui"])
+                    "manager.ui",
+                    "icon.ico"])
 
 # 2
 base = None
 if sys.platform == "win32":
     base = "Win32GUI"
 
-exe = [Executable("manager.py", base=base)]
+exe = [Executable("manager.py", base=base, icon="icon.ico")]
 
 # 3
 setup(

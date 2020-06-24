@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 
 def deleteStdClass(self):
-    buttonReply = QMessageBox.question(self, 'PyQt5 message', "학급을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    buttonReply = QMessageBox.question(self, '알림', "학급을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if buttonReply == QMessageBox.Yes:
         selectedItem = self.stdClassTreeWidget.currentItem()
         if(selectedItem is None):
@@ -54,7 +54,7 @@ def showClassList(self):
         
 
 def uploadCls(self):
-    buttonReply = QMessageBox.question(self, 'PyQt5 message', "학급을 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    buttonReply = QMessageBox.question(self, '알림', "학급을 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if buttonReply == QMessageBox.Yes:
         if(self.stdListWidget.rowCount() == 0):
             return QMessageBox.about(self, "주의", "엑셀 파일로부터 학급 리스트를 불러와주세요.")
