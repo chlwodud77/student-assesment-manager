@@ -1,7 +1,64 @@
 import sqlite3
 
-conn = sqlite3.connect("studentManager.db")
+DB_FILE = "studentManager.db"
+SQL_CREATE_ASSESMENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Assesment" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"subId"	INTEGER NOT NULL,
+	"grade"	TEXT NOT NULL,
+	"content"	TEXT,
+	"greater"	INTEGER,
+	"less"	INTEGER,
+	FOREIGN KEY("subId") REFERENCES "Subject"("id")
+) """
+SQL_CREATE_SCORE_TABLE = """ CREATE TABLE IF NOT EXISTS "Score" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"subId"	INTEGER NOT NULL,
+	"stdId"	INTEGER NOT NULL,
+	"score"	INTEGER NOT NULL,
+	"asses"	TEXT,
+	FOREIGN KEY("subId") REFERENCES "Subject"("id"),
+	FOREIGN KEY("stdId") REFERENCES "Student"("id"),
+	FOREIGN KEY("asses") REFERENCES "Assesment"("id")
+) """
 
+SQL_CREATE_STUDENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Student" (
+	"id"	INTEGER,
+	"name"	TEXT NOT NULL,
+	"grade"	INTEGER NOT NULL,
+	"class"	INTEGER NOT NULL,
+	PRIMARY KEY("id")
+) """
+
+SQL_CREATE_SUBJECT_TABLE = """ CREATE TABLE IF NOT EXISTS "Subject" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"subName"	TEXT NOT NULL,
+	"parentId"	INTEGER
+) """
+
+def createConnection(DB_FILE):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        return conn
+    except Error as e:
+        print(e)
+    return conn
+
+def createTable(conn, SQL_CREATE_TABLE):
+    try:
+        c = conn.cursor()
+        c.execute(SQL_CREATE_TABLE)
+    except Error as e:
+        print(e)
+
+conn = createConnection(DB_FILE)
+
+if conn is not None:
+    createTable(conn, SQL_CREATE_STUDENT_TABLE)
+    createTable(conn, SQL_CREATE_SUBJECT_TABLE)
+    createTable(conn, SQL_CREATE_ASSESMENT_TABLE)
+    createTable(conn, SQL_CREATE_SCORE_TABLE)
+    
 
 def returnAssesmetnStandardBySubIdAndGrade(subId, grade):
     try:
