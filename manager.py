@@ -52,6 +52,7 @@ class WindowClass(QMainWindow, form_class) :
         self.scoreSubTreeWidget.itemDoubleClicked.connect(self.showSubClickedLabel)
         self.scoreSubTreeWidget.itemClicked.connect(self.showSubClickedLabel)
         self.scoreAseEdit.textChanged.connect(self.changeScoreAse)
+        self.classListWidget.installEventFilter(self)
 
         #엑셀출력 탭
         self.exlClassListWidget.clicked.connect(self.exlActivateEdit)
@@ -61,7 +62,7 @@ class WindowClass(QMainWindow, form_class) :
         self.exlSubExtBtn.clicked.connect(self.exlSubExtClass)
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
         self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
-    
+        
     ##############엑셀출력###########################
     
     #엑셀 테이블 항목 선택 시 내용 표시 함수
@@ -97,6 +98,26 @@ class WindowClass(QMainWindow, form_class) :
     
 
     ##############점수입력###########################
+    
+    def eventFilter(self, obj, event):
+        if obj == self.classListWidget:
+            col = self.classListWidget.currentColumn()
+            if event.type() == QtCore.QEvent.KeyPress and int(col) == 3:
+                if (event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier):
+                    scoreManage.copyContent(self, col)
+                    return True
+                else:
+                    return False
+            elif event.type() == QtCore.QEvent.KeyPress and int(col) == 2:
+                if (event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier):
+                    scoreManage.copyContent(self, col)
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return QMainWindow.eventFilter(self, obj, event)
     
     def activateScoreEdit(self):
         scoreManage.activateScoreEdit(self)

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys, backend, sqlite3, random
 from PyQt5.QtWidgets import *
+from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 
 #점수 입력 테이블 항목 선택 시 내용 표시 함수
@@ -9,7 +10,21 @@ def activateScoreEdit(self):
     focusedItem = self.classListWidget.currentItem()
     content = focusedItem.text()
     self.scoreAseEdit.setPlainText(content)
-
+    
+def copyContent(self, col):
+    mimeType = 'application/x-qt-windows-mime;value="Csv"'
+    clipboard = QApplication.clipboard()
+    mimeData = clipboard.mimeData()
+    if(mimeType in mimeData.formats()): # 엑셀에서 복사해온 텍스트인지 확인
+        text = clipboard.text()
+        content = text.split("\n")
+        #복사해온 텍스트 행이 기존 테이블에 있는 행과 비교시 적거나 같을 때만 붙여넣기
+        if(self.classListWidget.currentRow() == 0 and self.classListWidget.rowCount() >= len(content)-1): 
+            for i in range(0, len(content)-1):
+                item = QTableWidgetItem(str(content[i]))
+                self.classListWidget.setItem(i, col, item)
+                
+            
 #점수 입력 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
 def changeScoreAse(self):
     focusedItem = self.classListWidget.currentItem()
