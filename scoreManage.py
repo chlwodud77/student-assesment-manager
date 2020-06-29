@@ -23,7 +23,6 @@ def copyContent(self, col):
             for i in range(0, len(content)-1):
                 item = QTableWidgetItem(str(content[i]))
                 self.classListWidget.setItem(i, col, item)
-                
             
 #점수 입력 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
 def changeScoreAse(self):
@@ -51,8 +50,9 @@ def saveAssesment(self):
                 scoreId = int(self.classListWidget.item(row,2).whatsThis())
                 stdId = int(self.classListWidget.item(row,1).text())
                 subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-                backend.deleteScoreById(scoreId) #기존 스코어 삭제 후 
-                backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
+                
+                if(backend.deleteScoreById(scoreId)): #기존 스코어 삭제 후
+                    backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
             else: #기존에 스코어 존재 X
                 if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,2).text() != ""):
                     asses = self.classListWidget.item(row,3).text()
@@ -61,6 +61,7 @@ def saveAssesment(self):
                     subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
                     backend.saveScore(subId, stdId, score, asses) # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
+        showScoreList(self)
     
 #점수, 평가 리스트 보여주는 함수
 def showScoreList(self):

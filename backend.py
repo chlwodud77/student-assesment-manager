@@ -193,8 +193,10 @@ def deleteScoreById(id):
         with conn:
             sql = "DELETE FROM Score WHERE id = ?"
             conn.cursor().execute(sql, (id,))
+            return True
     except sqlite3.IntegrityError:
         print("점수 삭제 오류")
+        return False
         
 def deleteSubById(subId):
     try:
