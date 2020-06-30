@@ -2,16 +2,41 @@
 # -*- coding: utf-8 -*-
 import backend, sqlite3
 from PyQt5.QtWidgets import *
+from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
+
+deleteAssesId = []
 
 def addNewSubjectItem(self):
     QTreeWidgetItem(self.subTreeWidget, ["새과목"])
     
 def addChildSub(self):
+    if(self.subTreeWidget.currentItem().parent()):
+        return QMessageBox.about(self, "주의", "하위 과목은 한개만 생성 가능합니다.")
     parentItem = self.subTreeWidget.currentItem()
     childItem = QTreeWidgetItem(parentItem)
     childItem.setText(0, "새항목")
-
+    
+def copyContent(self, obj):
+    tableWidget = obj
+    mimeType = 'application/x-qt-windows-mime;value="Csv"'
+    clipboard = QApplication.clipboard()
+    mimeData = clipboard.mimeData()
+    if(mimeType in mimeData.formats()): # 엑셀에서 복사해온 텍스트인지 확인
+        text = clipboard.text()
+        content = text.split("\n")
+        if(obj.rowCount() == 0):
+            for i in range(0, len(content)-1):
+                obj.insertRow(obj.rowCount())
+                item = QTableWidgetItem(str(content[i])) 
+                obj.setItem(i, 0, item)
+            
+def editItem(self):
+    subTreeWidget = self.subTreeWidget
+    selectedItem = self.subTreeWidget.currentItem()
+    selectedItem.setFlags(selectedItem.flags() | QtCore.Qt.ItemIsEditable)
+    subTreeWidget.editItem(selectedItem, 0)
+    
 #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
 def searchSub(self):
     subTreeWidget = self.subTreeWidget
@@ -36,23 +61,22 @@ def searchSub(self):
             self.grdAEdit1.setText(str(grdARng[0][0]))
             self.grdAEdit2.setText(str(grdARng[0][1]))
         else:
-            self.grdAEdit1.setText(str("없음"))
-            self.grdAEdit2.setText(str("없음"))
+            self.grdAEdit1.setText(str(""))
+            self.grdAEdit2.setText(str(""))
         if(len(grdBRng) != 0):
             self.grdBEdit1.setText(str(grdBRng[0][0]))
             self.grdBEdit2.setText(str(grdBRng[0][1]))
         else:
-            self.grdBEdit1.setText(str("없음"))
-            self.grdBEdit2.setText(str("없음"))
+            self.grdBEdit1.setText(str(""))
+            self.grdBEdit2.setText(str(""))
         if(len(grdCRng) != 0):
             self.grdCEdit1.setText(str(grdCRng[0][0]))
             self.grdCEdit2.setText(str(grdCRng[0][1]))
         else:
-            self.grdCEdit1.setText(str("없음"))
-            self.grdCEdit2.setText(str("없음"))
+            self.grdCEdit1.setText(str(""))
+            self.grdCEdit2.setText(str(""))
 
         #조회된 과목 이름 및 평가 출력
-        self.subTitleEdit.setText(self.subTreeWidget.currentItem().text(0))
         grdAAse = []
         grdBAse = []
         grdCAse = []
@@ -68,11 +92,17 @@ def searchSub(self):
         self.grdCAseList.setColumnCount(1)
 
         for i in range(0, len(grdAAse)):
-            self.grdAAseList.setItem(i, 0, QTableWidgetItem(grdAAse[i]))
+            item = QTableWidgetItem(grdAAse[i][1])
+            item.setWhatsThis(str(grdAAse[i][0]))
+            self.grdAAseList.setItem(i, 0, item)
         for i in range(0, len(grdBAse)):
-            self.grdBAseList.setItem(i, 0, QTableWidgetItem(grdBAse[i]))
+            item = QTableWidgetItem(grdBAse[i][1])
+            item.setWhatsThis(str(grdBAse[i][0]))
+            self.grdBAseList.setItem(i, 0, item)
         for i in range(0, len(grdCAse)):
-            self.grdCAseList.setItem(i, 0, QTableWidgetItem(grdCAse[i]))
+            item = QTableWidgetItem(grdCAse[i][1])
+            item.setWhatsThis(str(grdCAse[i][0]))
+            self.grdCAseList.setItem(i, 0, item)
 
 def showSub(self, treeWidget):
     subList = backend.returnSubList()
@@ -108,6 +138,7 @@ def saveSub(self):
     if buttonReply == QMessageBox.Yes:
         if(self.subTreeWidget.currentItem() is None):
             return QMessageBox.about(self, "주의", "정보를 저장할 과목을 선택하세요.")
+
         subTitleEdit = self.subTreeWidget.currentItem().text(0)
         grdAEdit1 = self.grdAEdit1.text()
         grdAEdit2 = self.grdAEdit2.text()
@@ -116,25 +147,29 @@ def saveSub(self):
         grdCEdit1 = self.grdCEdit1.text()
         grdCEdit2 = self.grdCEdit2.text()
 
+        if(self.subTreeWidget.currentItem().parent()):
+            if("" in [grdAEdit1, grdAEdit2, grdBEdit1, grdBEdit2, grdCEdit1, grdCEdit2]):
+                return QMessageBox.about(self, "주의", "과목의 평가 기준 점수를 입력하세요.")
+
         grdAList = []
         grdBList = []
         grdCList = []
 
         for i in range (0,self.grdAAseList.rowCount()):
             for j in range (0,self.grdAAseList.columnCount()):
-                grdAList.append(self.grdAAseList.item(i,j).text())
+                grdAList.append(self.grdAAseList.item(i,j))
 
         for i in range (0,self.grdBAseList.rowCount()):
             for j in range (0,self.grdBAseList.columnCount()):
-                grdBList.append(self.grdBAseList.item(i,j).text())
+                grdBList.append(self.grdBAseList.item(i,j))
 
         for i in range (0,self.grdCAseList.rowCount()):
             for j in range (0,self.grdCAseList.columnCount()):
-                grdCList.append(self.grdCAseList.item(i,j).text())
+                grdCList.append(self.grdCAseList.item(i,j))
 
         #기존 과목 없으면 새로 생성
         try:    
-            subName = self.subTitleEdit.text()
+            subName = self.subTreeWidget.currentItem().text(0)
             subId = self.subTreeWidget.currentItem().whatsThis(0)
 
             if(not subName):
@@ -150,24 +185,40 @@ def saveSub(self):
                         backend.deleteAssesmentBySubId(int(childSubId))
                         
                         for i in range(0, len(grdAList)):
-                            backend.createAssesment(int(childSubId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2))
+                            backend.createAssesment(int(childSubId), "A", grdAList[i].text(), int(grdAEdit1), int(grdAEdit2))
                         for i in range(0, len(grdBList)):
-                            backend.createAssesment(int(childSubId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2))
+                            backend.createAssesment(int(childSubId), "B", grdBList[i].text(), int(grdBEdit1), int(grdBEdit2))
                         for i in range(0, len(grdCList)):
-                            backend.createAssesment(int(childSubId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2))
+                            backend.createAssesment(int(childSubId), "C", grdCList[i].text(), int(grdCEdit1), int(grdCEdit2))
 
                     else: #부모 노드일 경우
                         backend.createParentSubject(subName)
                 else: # 기존에 있던 과목인 경우
-                    #기존 과목을 참조하여 평가지를 새로 생성 및 수정 (먼저 다 삭제했다가 다시 새로 생성)
-                    backend.deleteAssesmentBySubId(int(subId))
-                    
+                    backend.updateSubNameBySubId(int(subId), subName)
+
+                    for assesId in deleteAssesId:
+                        backend.deleteAssesmentById(int(assesId))
+                    for i in range(len(deleteAssesId)):
+                        del deleteAssesId[0]
+
                     for i in range(0, len(grdAList)):
-                        backend.createAssesment(int(subId), "A", grdAList[i], int(grdAEdit1), int(grdAEdit2))
+                        if(grdAList[i].whatsThis() != ""):
+                            assesId = grdAList[i].whatsThis()
+                            backend.updateAssesment(int(assesId), grdAList[i].text(), int(grdAEdit1), int(grdAEdit2))
+                        else:
+                            backend.createAssesment(int(subId), "A", grdAList[i].text(), int(grdAEdit1), int(grdAEdit2))
                     for i in range(0, len(grdBList)):
-                        backend.createAssesment(int(subId), "B", grdBList[i], int(grdBEdit1), int(grdBEdit2))
+                        if(grdBList[i].whatsThis() != ""):
+                            assesId = grdBList[i].whatsThis()
+                            backend.updateAssesment(int(assesId), grdBList[i].text(), int(grdBEdit1), int(grdBEdit2))
+                        else:
+                            backend.createAssesment(int(subId), "B", grdBList[i].text(), int(grdBEdit1), int(grdBEdit2))
                     for i in range(0, len(grdCList)):
-                        backend.createAssesment(int(subId), "C", grdCList[i], int(grdCEdit1), int(grdCEdit2))
+                        if(grdCList[i].whatsThis() != ""):
+                            assesId = grdCList[i].whatsThis()
+                            backend.updateAssesment(int(assesId), grdCList[i].text(), int(grdCEdit1), int(grdCEdit2))
+                        else:
+                            backend.createAssesment(int(subId), "C", grdCList[i].text(), int(grdCEdit1), int(grdCEdit2))
                         
                 QMessageBox.about(self, "결과", "성공")
                 
@@ -235,16 +286,34 @@ def delAse(self):
     if(focusedTab == 0):
         row = self.grdAAseList.currentRow()
         col = self.grdAAseList.currentColumn()
+        selectedItem = self.grdAAseList.item(row,col)
+        if(selectedItem is None):
+            return
+        if(selectedItem.whatsThis() != ""):
+            if(selectedItem.whatsThis() not in deleteAssesId):
+                deleteAssesId.append(selectedItem.whatsThis())
         self.grdAAseList.removeRow(row)
     
     elif(focusedTab == 1):
         row = self.grdBAseList.currentRow()
         col = self.grdBAseList.currentColumn()
+        selectedItem = self.grdBAseList.item(row,col)
+        if(selectedItem is None):
+            return
+        if(selectedItem.whatsThis() != ""):
+            if(selectedItem.whatsThis() not in deleteAssesId):
+                deleteAssesId.append(selectedItem.whatsThis())
         self.grdBAseList.removeRow(row)
 
     elif(focusedTab == 2):
         row = self.grdCAseList.currentRow()
         col = self.grdCAseList.currentColumn()
+        selectedItem = self.grdCAseList.item(row,col)
+        if(selectedItem is None):
+            return
+        if(selectedItem.whatsThis() != ""):
+            if(selectedItem.whatsThis() not in deleteAssesId):
+                deleteAssesId.append(selectedItem.whatsThis())
         self.grdCAseList.removeRow(row)
         
     self.grdAseEdit.clear()

@@ -40,8 +40,12 @@ class WindowClass(QMainWindow, form_class) :
         self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemClicked.connect(self.searchSub)
+        self.subTreeWidget.itemDoubleClicked.connect(self.editItem)
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
+        self.grdAAseList.installEventFilter(self)
+        self.grdBAseList.installEventFilter(self)
+        self.grdCAseList.installEventFilter(self)
 
         #점수입력 탭
         self.classListWidget.clicked.connect(self.activateScoreEdit)
@@ -100,7 +104,20 @@ class WindowClass(QMainWindow, form_class) :
     ##############점수입력###########################
     
     def eventFilter(self, obj, event):
-        if obj == self.classListWidget:
+        AseList = []
+        AseList.append(self.grdAAseList)
+        AseList.append(self.grdBAseList)
+        AseList.append(self.grdCAseList)
+        if obj in AseList:
+            if event.type() == QtCore.QEvent.KeyPress:
+                if (event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier):
+                    subjectManage.copyContent(self, obj)
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        elif obj == self.classListWidget:
             col = self.classListWidget.currentColumn()
             if event.type() == QtCore.QEvent.KeyPress and int(col) == 3:
                 if (event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier):
@@ -175,6 +192,9 @@ class WindowClass(QMainWindow, form_class) :
     
     def delSub(self):
         subjectManage.delSub(self)
+        
+    def editItem(self):
+        subjectManage.editItem(self)
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):
