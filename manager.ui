@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>학생평가관리프로그램_v1.0</string>
+   <string>학생평가관리프로그램_v1.0.1</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -102,6 +102,13 @@
                   </widget>
                  </item>
                  <item>
+                  <widget class="QPushButton" name="clsResetBtn">
+                   <property name="text">
+                    <string>내용 초기화</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QPushButton" name="clsSaveBtn">
                    <property name="minimumSize">
                     <size>
@@ -175,7 +182,7 @@
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>삭제</string>
+                 <string>선택 학급 삭제</string>
                 </property>
                </widget>
               </item>

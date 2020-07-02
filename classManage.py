@@ -24,10 +24,20 @@ def clsAddRow(self):
 def clsDelRow(self):
     ListWidget = self.stdListWidget
     selectedRows = ListWidget.selectionModel().selectedRows()
-    
-    
     for r in sorted(selectedRows, reverse=True):
         ListWidget.removeRow(r.row())
+        
+def clsContentReset(self):
+    stdListWidget = self.stdListWidget
+    stdListWidget.clearContents()
+    
+def clsSetHeaders(self):
+    headers = ["학번","이름"]
+    widget = self.stdListWidget
+    col = 2
+    widget.setColumnCount(col)
+    widget.setHorizontalHeaderLabels(headers)
+    
 
 def showClassList(self):
     classList = backend.returnClassList()
@@ -47,9 +57,10 @@ def showClassList(self):
             for row in students:
                 stdName = row[0]
                 stdId = row[1]
+                stdInfo = str(stdId)+" "+str(stdName)
                 childItem = QTreeWidgetItem(it.value())
                 childItem.setWhatsThis(0, str(stdId))
-                childItem.setText(0, stdName)
+                childItem.setText(0, stdInfo)
         it += 1
         
 
@@ -94,14 +105,12 @@ def uploadFile(self):
         wb = load_workbook(filename = fname[0]) 
         ws = wb["Sheet1"]
         max_row = ws.max_row
-        max_col = ws.max_column
+        max_col = 2
 
         widget = self.stdListWidget
         widget.setRowCount(max_row-1)
         widget.setColumnCount(max_col)
-        headers = []
-        for i in range(1, max_col+1):
-            headers.append(str(ws.cell(row=1, column= i).value))
+        headers = ["학번","이름"]
         widget.setHorizontalHeaderLabels(headers)
 
         for i in range(2, max_row+1):

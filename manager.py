@@ -21,6 +21,7 @@ class WindowClass(QMainWindow, form_class) :
         self.insertClassComboBox(self.classList)
         self.insertClassComboBox(self.exlClassList)
         self.exlShowClassList()
+        self.clsSetHeaders()
 
         #학급추가 탭
         self.stdClassDelBtn.clicked.connect(self.deleteStdClass)
@@ -28,6 +29,7 @@ class WindowClass(QMainWindow, form_class) :
         self.clsRowAddBtn.clicked.connect(self.clsAddRow)
         self.clsRowDelBtn.clicked.connect(self.clsDelRow)
         self.clsSaveBtn.clicked.connect(self.uploadCls)
+        self.clsResetBtn.clicked.connect(self.clsContentReset)
 
         #과목관리 탭
         self.addChildBtn.clicked.connect(self.addChildSub)
@@ -231,6 +233,12 @@ class WindowClass(QMainWindow, form_class) :
         
     def clsDelRow(self):
         classManage.clsDelRow(self)
+    
+    def clsContentReset(self):
+        classManage.clsContentReset(self)
+    
+    def clsSetHeaders(self):
+        classManage.clsSetHeaders(self)
     
     def showClassList(self):
         classManage.showClassList(self)
