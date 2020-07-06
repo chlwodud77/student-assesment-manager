@@ -4,6 +4,7 @@ import backend, sqlite3
 from PyQt5.QtWidgets import *
 from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
+from operator import itemgetter
 
 deleteAssesId = []
 
@@ -37,6 +38,43 @@ def editItem(self):
     selectedItem.setFlags(selectedItem.flags() | QtCore.Qt.ItemIsEditable)
     subTreeWidget.editItem(selectedItem, 0)
     
+def showAssesment(self):
+    List = self.grdStndList
+    aseList = self.grdAseList
+    stndName = self.grdAseScoreName
+    stndGre = self.grdAseScoreGre
+    stndLess = self.grdAseScoreLess
+    clickedStndItem = List.currentItem()
+    if(len(clickedStndItem.whatsThis().split(",")) == 4):
+        subId, grade, greater, less = clickedStndItem.whatsThis().split(",")
+        count = aseList.rowCount()
+        
+        stndName.setPlainText(grade)
+        stndGre.setPlainText(greater)
+        stndLess.setPlainText(less)
+        for i in range(0, count):
+            aseList.removeRow(0)
+        
+        assesments = backend.returnAssesmentContentBySubIdAndGrade(int(subId), grade)
+        row = 0
+        for assesment in assesments:
+            col = 0
+            content = assesment[1]
+            aseList.insertRow(row)
+            item = QTableWidgetItem(content)
+            aseList.setItem(row, col, item)
+            row += 1
+            
+    elif(len(clickedStndItem.whatsThis().split(",")) == 2):
+        greater, less = clickedStndItem.whatsThis().split(",")
+        count = aseList.rowCount()
+        grade = List.currentItem().text()
+        stndName.setPlainText(grade)
+        stndGre.setPlainText(greater)
+        stndLess.setPlainText(less)
+        for i in range(0, count):
+            aseList.removeRow(0)
+            
 #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
 def searchSub(self):
     subTreeWidget = self.subTreeWidget
@@ -47,62 +85,23 @@ def searchSub(self):
         clickedSubId = -1
 
     subId = int(clickedSubId)
-    grdARng = []
-    grdBRng = []
-    grdCRng = []
+    grdStndList = []
     
     if(subId):
         #조회된 과목 등급 점수표 조회 및 출력
-        grdARng = backend.returnAssesmetnStandardBySubIdAndGrade(subId,"A")
-        grdBRng = backend.returnAssesmetnStandardBySubIdAndGrade(subId,"B")
-        grdCRng = backend.returnAssesmetnStandardBySubIdAndGrade(subId,"C")
-
-        if(len(grdARng) != 0):
-            self.grdAEdit1.setText(str(grdARng[0][0]))
-            self.grdAEdit2.setText(str(grdARng[0][1]))
-        else:
-            self.grdAEdit1.setText(str(""))
-            self.grdAEdit2.setText(str(""))
-        if(len(grdBRng) != 0):
-            self.grdBEdit1.setText(str(grdBRng[0][0]))
-            self.grdBEdit2.setText(str(grdBRng[0][1]))
-        else:
-            self.grdBEdit1.setText(str(""))
-            self.grdBEdit2.setText(str(""))
-        if(len(grdCRng) != 0):
-            self.grdCEdit1.setText(str(grdCRng[0][0]))
-            self.grdCEdit2.setText(str(grdCRng[0][1]))
-        else:
-            self.grdCEdit1.setText(str(""))
-            self.grdCEdit2.setText(str(""))
-
-        #조회된 과목 이름 및 평가 출력
-        grdAAse = []
-        grdBAse = []
-        grdCAse = []
-        grdAAse = backend.returnAssesmentContentBySubIdAndGrade(subId, "A")
-        grdBAse = backend.returnAssesmentContentBySubIdAndGrade(subId, "B")
-        grdCAse = backend.returnAssesmentContentBySubIdAndGrade(subId, "C")
-
-        self.grdAAseList.setRowCount(len(grdAAse))
-        self.grdAAseList.setColumnCount(1)
-        self.grdBAseList.setRowCount(len(grdBAse))
-        self.grdBAseList.setColumnCount(1)
-        self.grdCAseList.setRowCount(len(grdCAse))
-        self.grdCAseList.setColumnCount(1)
-
-        for i in range(0, len(grdAAse)):
-            item = QTableWidgetItem(grdAAse[i][1])
-            item.setWhatsThis(str(grdAAse[i][0]))
-            self.grdAAseList.setItem(i, 0, item)
-        for i in range(0, len(grdBAse)):
-            item = QTableWidgetItem(grdBAse[i][1])
-            item.setWhatsThis(str(grdBAse[i][0]))
-            self.grdBAseList.setItem(i, 0, item)
-        for i in range(0, len(grdCAse)):
-            item = QTableWidgetItem(grdCAse[i][1])
-            item.setWhatsThis(str(grdCAse[i][0]))
-            self.grdCAseList.setItem(i, 0, item)
+        List = self.grdStndList
+        grdStndList = self.grdStndList
+        StndList = backend.returnAssesmentStandardBySubId(subId)
+        StndList = sorted(StndList, key=itemgetter(1), reverse=True)
+        print(StndList)
+        List.clear()
+        
+        for standard in StndList:
+            subId, name, greater, less = standard
+            whats = str(subId) + "," + str(name) + "," + str(greater) + "," + str(less)
+            item = QListWidgetItem(name)
+            item.setWhatsThis(whats)
+            List.addItem(item)
 
 def showSub(self, treeWidget):
     subList = backend.returnSubList()
@@ -267,18 +266,26 @@ def modAse(self):
         
 #평가 내용 선택하면 편집기에 해당 내용 보여줌
 def activateEdit(self):
-    focusedTab = self.grdAseWidget.currentIndex()
-    if(focusedTab == 0):
-        widget = self.grdAAseList
-        self.grdAseEdit.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
+    widget = self.grdAseList
+    Editor = self.grdAseEdit
+    Editor.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
 
-    elif(focusedTab == 1):
-        widget = self.grdBAseList
-        self.grdAseEdit.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
-
-    elif(focusedTab == 2):
-        widget = self.grdCAseList
-        self.grdAseEdit.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
+def addGrdStnd(self):
+    List = self.grdStndList
+    customName = self.grdAseScoreName.toPlainText()
+    greater = self.grdAseScoreGre.toPlainText()
+    less = self.grdAseScoreLess.toPlainText()
+    if(customName != ""):
+        whats = ""
+        if(greater != "" and less != ""):
+            if(int(greater) >= int(less)):
+                return QMessageBox.about(self, "주의", "점수 범위 입력 오류.")
+        whats = greater + "," + less
+        item = QListWidgetItem(customName)
+        item.setWhatsThis(whats)
+        List.addItem(item)
+    else:  
+        return QMessageBox.about(self, "주의", "이름을 입력하세요.")
         
 #평가 내용 항목 지우는 함수
 def delAse(self):

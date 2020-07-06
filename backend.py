@@ -87,10 +87,10 @@ def returnAssesmentContentById(id):
     except sqlite3.IntegrityError:
         print("과목 평가문 조회 오류")
         
-def returnAssementStandardBySubId(subId):
+def returnAssesmentStandardBySubId(subId):
     try:
         with conn:
-            sql = "SELECT DISTINCT grade, greater, less FROM Assesment WHERE subId = ?"
+            sql = "SELECT DISTINCT subId, grade, greater, less FROM Assesment WHERE subId = ?"
             return conn.cursor().execute(sql, (subId,)).fetchall()
     except sqlite3.IntegrityError:
         print("과목 조회 오류")

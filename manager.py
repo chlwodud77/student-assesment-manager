@@ -36,18 +36,17 @@ class WindowClass(QMainWindow, form_class) :
         self.grdAseDelBtn.clicked.connect(self.delAse)
         self.grdAseAddBtn.clicked.connect(self.addAse)
         self.grdAseModBtn.clicked.connect(self.modAse)
-        self.grdAAseList.clicked.connect(self.activateEdit)
-        self.grdBAseList.clicked.connect(self.activateEdit)
-        self.grdCAseList.clicked.connect(self.activateEdit)
+        self.grdAseList.clicked.connect(self.activateEdit)
+        self.grdStndAddBtn.clicked.connect(self.addGrdStnd)
         self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemClicked.connect(self.searchSub)
         self.subTreeWidget.itemDoubleClicked.connect(self.editItem)
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
-        self.grdAAseList.installEventFilter(self)
-        self.grdBAseList.installEventFilter(self)
-        self.grdCAseList.installEventFilter(self)
+        self.grdStndList.clicked.connect(self.showAssesment)
+        self.grdAseList.installEventFilter(self)
+
 
         #점수입력 탭
         self.classListWidget.clicked.connect(self.activateScoreEdit)
@@ -106,11 +105,7 @@ class WindowClass(QMainWindow, form_class) :
     ##############점수입력###########################
     
     def eventFilter(self, obj, event):
-        AseList = []
-        AseList.append(self.grdAAseList)
-        AseList.append(self.grdBAseList)
-        AseList.append(self.grdCAseList)
-        if obj in AseList:
+        if obj == self.grdAseList:
             if event.type() == QtCore.QEvent.KeyPress:
                 if (event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier):
                     subjectManage.copyContent(self, obj)
@@ -192,6 +187,9 @@ class WindowClass(QMainWindow, form_class) :
     def addChildSub(self):
         subjectManage.addChildSub(self)
     
+    def addGrdStnd(self):
+        subjectManage.addGrdStnd(self)
+    
     def delSub(self):
         subjectManage.delSub(self)
         
@@ -204,6 +202,9 @@ class WindowClass(QMainWindow, form_class) :
 
     def showSub(self, treeWidget):
         subjectManage.showSub(self, treeWidget)
+        
+    def showAssesment(self):
+        subjectManage.showAssesment(self)
 
     #과목, 평가 등급 점수, 평가 내용 db 저장 함수
     def saveSub(self):
