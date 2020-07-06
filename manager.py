@@ -45,6 +45,7 @@ class WindowClass(QMainWindow, form_class) :
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdStndList.clicked.connect(self.showAssesment)
+        self.grdAseList.cellChanged.connect(self.occurChange)
         self.grdAseList.installEventFilter(self)
 
 
@@ -195,6 +196,9 @@ class WindowClass(QMainWindow, form_class) :
         
     def editItem(self):
         subjectManage.editItem(self)
+
+    def occurChange(self, row, column):
+        subjectManage.occurChange(self, row, column)
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):

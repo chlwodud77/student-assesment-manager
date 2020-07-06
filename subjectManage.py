@@ -7,6 +7,33 @@ from PyQt5 import QtCore
 from operator import itemgetter
 
 deleteAssesId = []
+previousSubId = -1
+previousStndId = -1
+currentSubId = -1
+currentStndId = -1
+
+class subjectStore:
+    def __init__(self):
+        self.standard = []
+
+    def addStandard(self, subId, grade, greater, less):
+        container = [subId, grade, greater, less]
+        if( container not in self.standard):
+            self.standard.append(container)
+
+    def modifyStandard(self, subId, grade, greater, less):
+        pass
+    
+    def addAssesment(self, assesId, subId, grade, greater, less, content):
+        pass
+    
+    def modifyAssesment(self, assesId, subId, grade, greater, less, content):
+        pass
+    
+    def reset(self):
+        self.standard = []
+
+store = subjectStore()
 
 def addNewSubjectItem(self):
     QTreeWidgetItem(self.subTreeWidget, ["새과목"])
@@ -37,8 +64,12 @@ def editItem(self):
     selectedItem = self.subTreeWidget.currentItem()
     selectedItem.setFlags(selectedItem.flags() | QtCore.Qt.ItemIsEditable)
     subTreeWidget.editItem(selectedItem, 0)
+
+def occurChange(self, row, column):
+    print(row)
     
 def showAssesment(self):
+    global previousStndId, currentStndId
     List = self.grdStndList
     aseList = self.grdAseList
     stndName = self.grdAseScoreName
@@ -59,9 +90,10 @@ def showAssesment(self):
         row = 0
         for assesment in assesments:
             col = 0
-            content = assesment[1]
+            assesId, content = assesment
             aseList.insertRow(row)
             item = QTableWidgetItem(content)
+            item.setWhatsThis(str(assesId))
             aseList.setItem(row, col, item)
             row += 1
             
@@ -83,8 +115,10 @@ def searchSub(self):
     clickedSubId = subTreeWidget.currentItem().whatsThis(0)
     if(clickedSubId == ''):
         clickedSubId = -1
-
+    global currentSubId, previousSubId
+    previousSubId = currentSubId
     subId = int(clickedSubId)
+    currentSubId = subId
     grdStndList = []
     
     if(subId):
@@ -97,11 +131,16 @@ def searchSub(self):
         List.clear()
         
         for standard in StndList:
-            subId, name, greater, less = standard
-            whats = str(subId) + "," + str(name) + "," + str(greater) + "," + str(less)
-            item = QListWidgetItem(name)
+            subId, grade, greater, less = standard
+            store.addStandard(subId, grade, greater, less)
+            whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
+            item = QListWidgetItem(grade)
             item.setWhatsThis(whats)
             List.addItem(item)
+
+    # print("previous: ",str(previousSubId), "current: ",str(currentSubId))
+    print("store: ",store.standard)
+
 
 def showSub(self, treeWidget):
     subList = backend.returnSubList()
@@ -138,7 +177,6 @@ def saveSub(self):
         if(self.subTreeWidget.currentItem() is None):
             return QMessageBox.about(self, "주의", "정보를 저장할 과목을 선택하세요.")
 
-        subTitleEdit = self.subTreeWidget.currentItem().text(0)
         grdAEdit1 = self.grdAEdit1.text()
         grdAEdit2 = self.grdAEdit2.text()
         grdBEdit1 = self.grdBEdit1.text()
@@ -248,21 +286,9 @@ def delSub(self):
 
 # 평가 내용 수정 함수
 def modAse(self):
-    focusedTab = self.grdAseWidget.currentIndex()
-    if(focusedTab == 0):
-        widget = self.grdAAseList
-        content = self.grdAseEdit.toPlainText()
-        widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
-
-    elif(focusedTab == 1):
-        widget = self.grdBAseList
-        content = self.grdAseEdit.toPlainText()
-        widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
-
-    elif(focusedTab == 2):
-        widget = self.grdCAseList
-        content = self.grdAseEdit.toPlainText()
-        widget.setItem(widget.currentRow(), widget.currentColumn(), QTableWidgetItem(content))
+    assesList = self.grdAseList
+    content = self.grdAseEdit.toPlainText()
+    assesList.setItem(assesList.currentRow(), assesList.currentColumn(), QTableWidgetItem(content))
         
 #평가 내용 선택하면 편집기에 해당 내용 보여줌
 def activateEdit(self):
@@ -289,72 +315,28 @@ def addGrdStnd(self):
         
 #평가 내용 항목 지우는 함수
 def delAse(self):
-    focusedTab = self.grdAseWidget.currentIndex()
-    if(focusedTab == 0):
-        row = self.grdAAseList.currentRow()
-        col = self.grdAAseList.currentColumn()
-        selectedItem = self.grdAAseList.item(row,col)
-        if(selectedItem is None):
-            return
-        if(selectedItem.whatsThis() != ""):
-            if(selectedItem.whatsThis() not in deleteAssesId):
-                deleteAssesId.append(selectedItem.whatsThis())
-        self.grdAAseList.removeRow(row)
-    
-    elif(focusedTab == 1):
-        row = self.grdBAseList.currentRow()
-        col = self.grdBAseList.currentColumn()
-        selectedItem = self.grdBAseList.item(row,col)
-        if(selectedItem is None):
-            return
-        if(selectedItem.whatsThis() != ""):
-            if(selectedItem.whatsThis() not in deleteAssesId):
-                deleteAssesId.append(selectedItem.whatsThis())
-        self.grdBAseList.removeRow(row)
+    assesList = self.grdAseList
+    row = assesList.currentRow()
+    col = assesList.currentColumn()
+    item = assesList.item(row,col)
+    if(item is None):
+        return
+    if(item.whatsThis() != ""):
+        if(item.whatsThis() not in deleteAssesId):
+            deleteAssesId.append(item.whatsThis())
+    assesList.removeRow(row)
 
-    elif(focusedTab == 2):
-        row = self.grdCAseList.currentRow()
-        col = self.grdCAseList.currentColumn()
-        selectedItem = self.grdCAseList.item(row,col)
-        if(selectedItem is None):
-            return
-        if(selectedItem.whatsThis() != ""):
-            if(selectedItem.whatsThis() not in deleteAssesId):
-                deleteAssesId.append(selectedItem.whatsThis())
-        self.grdCAseList.removeRow(row)
-        
     self.grdAseEdit.clear()
     
 #평가 내용 추가 함수
 def addAse(self):
-    focusedTab = self.grdAseWidget.currentIndex()
+    assesList = self.grdAseList
     content = self.grdAseEdit.toPlainText()
     item = QTableWidgetItem(content)
             
-    if(focusedTab == 0):
-        currentRowCnt = self.grdAAseList.rowCount()
-        if(currentRowCnt == 0):
-            self.grdAAseList.insertRow(currentRowCnt)
-            self.grdAAseList.setItem(currentRowCnt, 0, item)
-        else:
-            self.grdAAseList.insertRow(currentRowCnt)
-            self.grdAAseList.setItem(currentRowCnt, 0, item)
-    elif(focusedTab == 1):
-        currentRowCnt = self.grdBAseList.rowCount()
-        if(currentRowCnt == 0):
-            self.grdBAseList.insertRow(currentRowCnt)
-            self.grdBAseList.setItem(currentRowCnt, 0, item)
-        else:
-            self.grdBAseList.insertRow(currentRowCnt)
-            self.grdBAseList.setItem(currentRowCnt, 0, item)
-    elif(focusedTab == 2):
-        currentRowCnt = self.grdCAseList.rowCount()
-        if(currentRowCnt == 0):
-            self.grdCAseList.insertRow(currentRowCnt)
-            self.grdCAseList.setItem(currentRowCnt, 0, item)
-        else:
-            self.grdCAseList.insertRow(currentRowCnt)
-            self.grdCAseList.setItem(currentRowCnt, 0, item)
-    
+    row = assesList.rowCount()
+    assesList.insertRow(row)
+    assesList.setItem(row, 0, item)
+
     self.grdAseEdit.clear()
     
