@@ -6,7 +6,7 @@ from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 from operator import itemgetter
 
-deleteAssesId = []
+deleteAssesment = []
 previousSubId = -1
 previousStndId = -1
 currentSubId = -1
@@ -15,20 +15,49 @@ currentStndId = -1
 class subjectStore:
     def __init__(self):
         self.standard = []
+        self.assesment = []
 
-    def addStandard(self, subId, grade, greater, less):
+    def getStandard(self):
+        return self.standard
+    
+    def addStandard(self, subId ="", grade="", greater="", less=""):
         container = [subId, grade, greater, less]
-        if( container not in self.standard):
+        if(container not in self.standard):
             self.standard.append(container)
+        print(self.standard)
 
     def modifyStandard(self, subId, grade, greater, less):
         pass
     
-    def addAssesment(self, assesId, subId, grade, greater, less, content):
-        pass
+    def findAssesment(self, assesId):
+        for asses in self.assesment:
+            if(str(asses[0]) == str(assesId)):
+                return asses
+            
+    def findAssesmentBySubIdAndGrade(self, subId, grade):
+        for asses in self.assesment:
+            if(str(asses[1]) == str(subId) and str(asses[2]) == str(grade)):
+                return asses
     
-    def modifyAssesment(self, assesId, subId, grade, greater, less, content):
-        pass
+    def getAssesment(self):
+        return self.assesment
+    
+    def addAssesment(self, assesId="", subId="", grade="", greater="", less="", content=""):
+        container = [assesId, subId, grade, greater, less, content]
+        if(container not in self.assesment):
+            self.assesment.append(container)
+            print("assesments: ",self.assesment)
+    
+    def deleteAssesment(self, container):
+        if(container in self.assesment):
+            self.assesment.remove(container)
+            print("assesments : ",self.assesment)
+    
+    def modifyAssesment(self, assesId, content):
+        for asses in self.assesment:
+            if(asses[0] == assesId):
+                asses[5] = content
+        print("assesments: ",self.assesment)
     
     def reset(self):
         self.standard = []
@@ -66,8 +95,8 @@ def editItem(self):
     subTreeWidget.editItem(selectedItem, 0)
 
 def occurChange(self, row, column):
-    print(row)
-    
+    pass
+
 def showAssesment(self):
     global previousStndId, currentStndId
     List = self.grdStndList
@@ -76,8 +105,10 @@ def showAssesment(self):
     stndGre = self.grdAseScoreGre
     stndLess = self.grdAseScoreLess
     clickedStndItem = List.currentItem()
+    
     if(len(clickedStndItem.whatsThis().split(",")) == 4):
         subId, grade, greater, less = clickedStndItem.whatsThis().split(",")
+        print(subId, grade)
         count = aseList.rowCount()
         
         stndName.setPlainText(grade)
@@ -88,24 +119,50 @@ def showAssesment(self):
         
         assesments = backend.returnAssesmentContentBySubIdAndGrade(int(subId), grade)
         row = 0
+        
+        if(assesments is None):
+            col = 0
+            newAsses = store.findAssesmentBySubIdAndGrade(str(subId), str(grade))
+            for asses in newAsses:
+                aseList.insertRow(row)
+                assesId, subId, grade, greater, less, content = asses
+                item = QTableWidgetItem(content)
+                item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade) 
+                        + "," + str(greater) + "," + str(less) + "," + str(content))
+                aseList.setItem(row, col, item)
+                row += 1
+                
         for assesment in assesments:
+            isDeleted = False
+            isExist = False
             col = 0
             assesId, content = assesment
-            aseList.insertRow(row)
-            item = QTableWidgetItem(content)
-            item.setWhatsThis(str(assesId))
-            aseList.setItem(row, col, item)
-            row += 1
-            
-    elif(len(clickedStndItem.whatsThis().split(",")) == 2):
-        greater, less = clickedStndItem.whatsThis().split(",")
-        count = aseList.rowCount()
-        grade = List.currentItem().text()
-        stndName.setPlainText(grade)
-        stndGre.setPlainText(greater)
-        stndLess.setPlainText(less)
-        for i in range(0, count):
-            aseList.removeRow(0)
+            for delete in deleteAssesment:
+                if(str(delete[0]) == str(assesId)):
+                    isDeleted = True
+                    
+            for asses in store.assesment:
+                if(str(asses[0]) == str(assesId)):
+                    isExist = True
+                    
+            if(not isDeleted):
+                if(isExist):
+                    aseList.insertRow(row)
+                    existAsses = store.findAssesment(str(assesId))
+                    assesId, subId, grade, greater, less, content = existAsses
+                    item = QTableWidgetItem(content)
+                    item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade) 
+                                    + "," + str(greater) + "," + str(less) + "," + str(content))
+                    aseList.setItem(row, col, item)
+                    row += 1
+                else:
+                    store.addAssesment(str(assesId), str(subId), str(grade), str(greater), str(less), str(content))
+                    aseList.insertRow(row)
+                    item = QTableWidgetItem(content)
+                    item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade) 
+                                    + "," + str(greater) + "," + str(less) + "," + str(content))
+                    aseList.setItem(row, col, item)
+                    row += 1
             
 #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
 def searchSub(self):
@@ -127,20 +184,22 @@ def searchSub(self):
         grdStndList = self.grdStndList
         StndList = backend.returnAssesmentStandardBySubId(subId)
         StndList = sorted(StndList, key=itemgetter(1), reverse=True)
-        print(StndList)
+        # print(StndList)
         List.clear()
         
         for standard in StndList:
             subId, grade, greater, less = standard
-            store.addStandard(subId, grade, greater, less)
-            whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
-            item = QListWidgetItem(grade)
-            item.setWhatsThis(whats)
-            List.addItem(item)
-
-    # print("previous: ",str(previousSubId), "current: ",str(currentSubId))
-    print("store: ",store.standard)
-
+            store.addStandard(str(subId), str(grade), str(greater), str(less))
+        
+        standards = store.getStandard()
+        
+        for stand in standards:
+            if(stand[0] == str(subId)):
+                subId, grade, greater, less = stand
+                whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
+                item = QListWidgetItem(grade)
+                item.setWhatsThis(whats)
+                List.addItem(item)
 
 def showSub(self, treeWidget):
     subList = backend.returnSubList()
@@ -233,10 +292,10 @@ def saveSub(self):
                 else: # 기존에 있던 과목인 경우
                     backend.updateSubNameBySubId(int(subId), subName)
 
-                    for assesId in deleteAssesId:
+                    for assesId in deleteAssesment:
                         backend.deleteAssesmentById(int(assesId))
-                    for i in range(len(deleteAssesId)):
-                        del deleteAssesId[0]
+                    for i in range(len(deleteAssesment)):
+                        del deleteAssesment[0]
 
                     for i in range(0, len(grdAList)):
                         if(grdAList[i].whatsThis() != ""):
@@ -288,7 +347,21 @@ def delSub(self):
 def modAse(self):
     assesList = self.grdAseList
     content = self.grdAseEdit.toPlainText()
-    assesList.setItem(assesList.currentRow(), assesList.currentColumn(), QTableWidgetItem(content))
+    item = assesList.currentItem()
+    
+    if(item is None):
+        return
+    
+    if(item.whatsThis()[0] != ""):
+        assesId = item.whatsThis().split(",")[0]
+        store.modifyAssesment(str(assesId), content)
+        assesId, subId, grade, greater, less, content = store.findAssesment(str(assesId))
+        item = QTableWidgetItem(content)
+        item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade)
+        + "," + str(greater) + "," + str(less) + "," + str(content))
+        assesList.setItem(assesList.currentRow(), assesList.currentColumn(), item)
+    else:
+        assesList.setItem(assesList.currentRow(), assesList.currentColumn(), QTableWidgetItem(content))
         
 #평가 내용 선택하면 편집기에 해당 내용 보여줌
 def activateEdit(self):
@@ -298,18 +371,20 @@ def activateEdit(self):
 
 def addGrdStnd(self):
     List = self.grdStndList
-    customName = self.grdAseScoreName.toPlainText()
+    subId = self.subTreeWidget.currentItem().whatsThis(0)
+    grade = self.grdAseScoreName.toPlainText()
     greater = self.grdAseScoreGre.toPlainText()
     less = self.grdAseScoreLess.toPlainText()
-    if(customName != ""):
+    if(grade != ""):
         whats = ""
         if(greater != "" and less != ""):
             if(int(greater) >= int(less)):
                 return QMessageBox.about(self, "주의", "점수 범위 입력 오류.")
-        whats = greater + "," + less
-        item = QListWidgetItem(customName)
+        whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
+        item = QListWidgetItem(grade)
         item.setWhatsThis(whats)
         List.addItem(item)
+        store.addStandard(str(subId), str(grade), str(greater), str(less))
     else:  
         return QMessageBox.about(self, "주의", "이름을 입력하세요.")
         
@@ -321,22 +396,37 @@ def delAse(self):
     item = assesList.item(row,col)
     if(item is None):
         return
-    if(item.whatsThis() != ""):
-        if(item.whatsThis() not in deleteAssesId):
-            deleteAssesId.append(item.whatsThis())
+    if(item.whatsThis() not in deleteAssesment):
+        assesId, subId, grade, greater, less, content = item.whatsThis().split(",")
+        if(assesId != ""):
+            container = [assesId, subId, grade, greater, less, content]
+            if(container not in deleteAssesment):
+                deleteAssesment.append(container)
+            store.deleteAssesment(container)
+        else:
+            container = [assesId, subId, grade, greater, less, content]
+            store.deleteAssesment(container)
+            
     assesList.removeRow(row)
+    print("deleteAssesment: ",deleteAssesment)
 
     self.grdAseEdit.clear()
     
 #평가 내용 추가 함수
 def addAse(self):
+    stndList = self.grdStndList
     assesList = self.grdAseList
+    attributes = stndList.currentItem().whatsThis().split(",")
+    subId, grade, greater, less = attributes
+    assesId = ""
     content = self.grdAseEdit.toPlainText()
-    item = QTableWidgetItem(content)
-            
     row = assesList.rowCount()
+    
+    store.addAssesment(assesId, subId, grade, greater, less, content)
+    item = QTableWidgetItem(content)
+    item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade) 
+                    + "," + str(greater) + "," + str(less) + "," + str(content))
     assesList.insertRow(row)
     assesList.setItem(row, 0, item)
 
     self.grdAseEdit.clear()
-    
