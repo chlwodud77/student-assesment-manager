@@ -158,7 +158,7 @@ def insertRandomAssesment(self):
     grdBList = []
     grdCList = []
     subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    grdStandard = backend.returnAssementStandardBySubId(subId)
+    grdStandard = backend.returnAssesmentStandardBySubId(subId)
     assementList = backend.returnAssesmentBySubId(subId)
     for i in range(0, len(assementList)):
         if(assementList[i][1] == "A"):
@@ -202,11 +202,21 @@ def insertClassComboBox(self, combobox):
     for i in range(0, len(classes)):
         combobox.addItem(str(classes[i][0])+"학년 "+str(classes[i][1])+"반")
         
+        
+def returnClassInteger(classes):
+    classes = classes.replace(" ","")
+    grade, ban = classes.split("학년")
+    ban = ban.replace("반","")
+    return int(grade), int(ban)
+    
+        
 #선택 학급 조회 함수    
-def showClassMemberList(self):     
-    grade = int(self.classList.currentText()[0])
-    classes = int(self.classList.currentText()[4])
-    members = backend.returnClassMemberList(grade, classes)
+def showClassMemberList(self):
+    grade, classes = returnClassInteger(self.classList.currentText())     
+    # grade = int(self.classList.currentText()[0])
+    # classes = int(self.classList.currentText()[4])
+    print(grade, classes)
+    members = backend.returnClassMemberList(grade, classes) 
     headers = ["이름", "학번", "점수", "평가"]
 
     self.classListWidget.setRowCount(len(members))

@@ -50,8 +50,9 @@ def exlShowTotAssesment(self):
     if(self.exlSubAddedWidget.count() == 0):
         return QMessageBox.about(self, "오류", "과목을 추가해주세요.")
         
-    grade = int(self.exlClassList.currentText()[0])
-    classes = int(self.exlClassList.currentText()[4])
+    grade, classes = returnClassInteger(self.exlClassList.currentText())    
+    # grade = int(self.exlClassList.currentText()[0])
+    # classes = int(self.exlClassList.currentText()[4])
     subjectsIds = []
     assesments = []
     members = []
@@ -109,13 +110,20 @@ def exlSubExtClass(self):
         row = self.exlSubAddedWidget.currentRow()
         self.exlSubAddedWidget.takeItem(row)
         
+def returnClassInteger(classes):
+    classes = classes.replace(" ","")
+    grade, ban = classes.split("학년")
+    ban = ban.replace("반","")
+    return int(grade), int(ban)
+        
 #학급별 평가 과목 보여주는 함수
 def exlShowClassList(self):
     self.exlSubListWidget.clear()
     self.exlSubAddedWidget.clear()
     if(self.exlClassList.currentText() != ""):
-        grade = int(self.exlClassList.currentText()[0])
-        classes = int(self.exlClassList.currentText()[4])
+        grade, classes = returnClassInteger(self.exlClassList.currentText())
+        # grade = int(self.exlClassList.currentText()[0])
+        # classes = int(self.exlClassList.currentText()[4])
         subjects = backend.returnClassSubList(grade,classes)
         subjects = sorted(subjects)
 

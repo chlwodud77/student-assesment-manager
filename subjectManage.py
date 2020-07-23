@@ -21,32 +21,33 @@ class subjectStore:
         return self.standard
     
     def addStandard(self, subId ="", grade="", greater="", less=""):
-        container = [subId, grade, greater, less]
+        # container = [subId, grade, greater, less]
+        container = dict(subId=subId, grade=grade, greater=greater, less=less)
         if(container not in self.standard):
             self.standard.append(container)
-        print(self.standard)
 
     def modifyStandard(self, subId, grade, greater, less):
         pass
     
     def findAssesment(self, assesId):
         for asses in self.assesment:
-            if(str(asses[0]) == str(assesId)):
+            if(str(asses["assesId"]) == str(assesId)):
                 return asses
             
     def findAssesmentBySubIdAndGrade(self, subId, grade):
         for asses in self.assesment:
-            if(str(asses[1]) == str(subId) and str(asses[2]) == str(grade)):
+            if(str(asses["subId"]) == str(subId) and str(asses["grade"]) == str(grade)):
                 return asses
     
     def getAssesment(self):
         return self.assesment
     
     def addAssesment(self, assesId="", subId="", grade="", greater="", less="", content=""):
-        container = [assesId, subId, grade, greater, less, content]
+        # container = [assesId, subId, grade, greater, less, content]
+        container = dict(assesId=assesId, subId=subId, grade=grade,
+                        greater=greater, less=less, content=content)
         if(container not in self.assesment):
             self.assesment.append(container)
-            print("assesments: ",self.assesment)
     
     def deleteAssesment(self, container):
         if(container in self.assesment):
@@ -55,8 +56,8 @@ class subjectStore:
     
     def modifyAssesment(self, assesId, content):
         for asses in self.assesment:
-            if(asses[0] == assesId):
-                asses[5] = content
+            if(asses["assesId"] == assesId):
+                asses["content"] = content
         print("assesments: ",self.assesment)
     
     def reset(self):
@@ -125,10 +126,16 @@ def showAssesment(self):
             newAsses = store.findAssesmentBySubIdAndGrade(str(subId), str(grade))
             for asses in newAsses:
                 aseList.insertRow(row)
-                assesId, subId, grade, greater, less, content = asses
+                assesId = asses["assesId"]
+                subId   = asses["subId"]
+                grade   = asses["grade"]
+                greater = asses["greater"]
+                less    = asses["less"]
+                content = asses["content"]
+                # assesId, subId, grade, greater, less, content = asses
                 item = QTableWidgetItem(content)
                 item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade) 
-                        + "," + str(greater) + "," + str(less) + "," + str(content))
+                        + "," + str(greater) + "," + str(less))
                 aseList.setItem(row, col, item)
                 row += 1
                 
@@ -138,21 +145,27 @@ def showAssesment(self):
             col = 0
             assesId, content = assesment
             for delete in deleteAssesment:
-                if(str(delete[0]) == str(assesId)):
+                if(str(delete["assesId"]) == str(assesId)):
                     isDeleted = True
                     
             for asses in store.assesment:
-                if(str(asses[0]) == str(assesId)):
+                if(str(asses["assesId"]) == str(assesId)):
                     isExist = True
                     
             if(not isDeleted):
                 if(isExist):
                     aseList.insertRow(row)
                     existAsses = store.findAssesment(str(assesId))
-                    assesId, subId, grade, greater, less, content = existAsses
+                    assesId = existAsses["assesId"]
+                    subId   = existAsses["subId"]
+                    grade   = existAsses["grade"]
+                    greater = existAsses["greater"]
+                    less    = existAsses["less"]
+                    content = existAsses["content"]
+                    # assesId, subId, grade, greater, less, content = existAsses
                     item = QTableWidgetItem(content)
                     item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade) 
-                                    + "," + str(greater) + "," + str(less) + "," + str(content))
+                                    + "," + str(greater) + "," + str(less))
                     aseList.setItem(row, col, item)
                     row += 1
                 else:
@@ -160,7 +173,7 @@ def showAssesment(self):
                     aseList.insertRow(row)
                     item = QTableWidgetItem(content)
                     item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade) 
-                                    + "," + str(greater) + "," + str(less) + "," + str(content))
+                                    + "," + str(greater) + "," + str(less))
                     aseList.setItem(row, col, item)
                     row += 1
             
@@ -194,8 +207,12 @@ def searchSub(self):
         standards = store.getStandard()
         
         for stand in standards:
-            if(stand[0] == str(subId)):
-                subId, grade, greater, less = stand
+            if(stand["subId"] == str(subId)):
+                subId   = stand["subId"]
+                grade   = stand["grade"]
+                greater = stand["greater"]
+                less    = stand["less"]
+                # subId, grade, greater, less = stand
                 whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
                 item = QListWidgetItem(grade)
                 item.setWhatsThis(whats)
@@ -355,7 +372,14 @@ def modAse(self):
     if(item.whatsThis()[0] != ""):
         assesId = item.whatsThis().split(",")[0]
         store.modifyAssesment(str(assesId), content)
-        assesId, subId, grade, greater, less, content = store.findAssesment(str(assesId))
+        tempAsses = store.findAssesment(str(assesId))
+        assesId = tempAsses["assesId"]
+        subId   = tempAsses["subId"]
+        grade   = tempAsses["grade"]
+        greater = tempAsses["greater"]
+        less    = tempAsses["less"]
+        content = tempAsses["content"]
+        # assesId, subId, grade, greater, less, content = store.findAssesment(str(assesId))
         item = QTableWidgetItem(content)
         item.setWhatsThis(str(assesId) + "," + str(subId) + "," + str(grade)
         + "," + str(greater) + "," + str(less) + "," + str(content))
@@ -398,13 +422,18 @@ def delAse(self):
         return
     if(item.whatsThis() not in deleteAssesment):
         assesId, subId, grade, greater, less, content = item.whatsThis().split(",")
+        assesId, subId, grade, greater, less = item.whatsThis().split(",")
         if(assesId != ""):
-            container = [assesId, subId, grade, greater, less, content]
+            # container = [assesId, subId, grade, greater, less]
+            container = dict(assesId=assesId, subId=subId, grade=grade,
+                            greater=greater, less=less)
             if(container not in deleteAssesment):
                 deleteAssesment.append(container)
             store.deleteAssesment(container)
         else:
-            container = [assesId, subId, grade, greater, less, content]
+            # container = [assesId, subId, grade, greater, less]
+            container = dict(assesId=assesId, subId=subId, grade=grade,
+                            greater=greater, less=less)
             store.deleteAssesment(container)
             
     assesList.removeRow(row)
