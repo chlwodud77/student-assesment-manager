@@ -11,12 +11,21 @@ from operator import itemgetter
 class subjectStore:
     def __init__(self):
         self.standard        = []
+        self.newStandard     = []
         self.assesment       = []
         self.newAssesment    = []
         self.deleteAssesment = []
 
     def getStandard(self):
         return self.standard
+    
+    def addStandard(self, subId ="", grade="", greater="", less=""):
+        container = dict(subId=subId, grade=grade, greater=greater, less=less)
+        if(container not in self.standard):
+            self.standard.append(container)
+            
+    def modifyStandard(self, subId, grade, greater, less):
+        pass
     
     def getDeleteAssesment(self):
         return self.deleteAssesment
@@ -38,23 +47,18 @@ class subjectStore:
         if(container not in self.deleteAssesment):
             self.deleteAssesment.append(container)
     
-    def addStandard(self, subId ="", grade="", greater="", less=""):
-        container = dict(subId=subId, grade=grade, greater=greater, less=less)
-        if(container not in self.standard):
-            self.standard.append(container)
-
-    def modifyStandard(self, subId, grade, greater, less):
-        pass
-    
     def findAssesment(self, assesId):
         for asses in self.assesment:
             if(str(asses["assesId"]) == str(assesId)):
                 return asses
     
     def findAssesmentsBySubId(self, subId):
+        assesments = []
         for asses in self.assesment:
             if(asses["subId"] == subId):
-                return asses
+                assesments.append(asses)
+        return assesments
+                
             
     def findAssesmentBySubIdAndGrade(self, subId, grade):
         for asses in self.assesment:
@@ -89,6 +93,8 @@ class subjectStore:
     def reset(self):
         self.standard  = []
         self.assesment = []
+        self.newAssesment = []
+        self.deleteAssesment = []
 
 store = subjectStore()
 
@@ -207,7 +213,7 @@ def showAssesment(self):
                     
 #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
 def searchSub(self):
-    store.reset()
+    # store.reset()
     subTreeWidget = self.subTreeWidget
     if(subTreeWidget.currentItem() is None):
         return 
@@ -292,30 +298,31 @@ def saveSub(self):
             else:
                 if(subId == ''): # 기존에 없던 과목인 경우
                     if(self.subTreeWidget.currentItem().parent()): #하위 노드일 경우
-                        parent = self.subTreeWidget.currentItem().parent()
-                        parentName = parent.text(0)
-                        parentId = parent.whatsThis(0)
-                        backend.createChildSubject(subName, int(parentId))
-                        childSubId = backend.returnChildSubjectId(subName, int(parentId))
-                        backend.deleteAssesmentBySubId(int(childSubId))
-                        for asses in newAssesments:
-                            assesSubId   = asses["subId"]
-                            grade   = asses["grade"]
-                            content = asses["content"]
-                            greater = asses["greater"]
-                            less    = asses["less"]
-                            backend.createAssesment(int(assesSubIs), grade, content, int(greater), int(less))
+                        return QMessageBox.about(self, "주의", "상위과목을 먼저 저장해주세요.")
+                        # parent = self.subTreeWidget.currentItem().parent()
+                        # parentName = parent.text(0)
+                        # parentId = parent.whatsThis(0)
+                        # backend.createChildSubject(subName, int(parentId))
+                        # childSubId = backend.returnChildSubjectId(subName, int(parentId))
+                        # backend.deleteAssesmentBySubId(int(childSubId))
+                        # for asses in newAssesments:
+                        #     assesSubId   = asses["subId"]
+                        #     grade   = asses["grade"]
+                        #     content = asses["content"]
+                        #     greater = asses["greater"]
+                        #     less    = asses["less"]
+                        #     backend.createAssesment(int(assesSubIs), grade, content, int(greater), int(less))
                         
                     else: #부모 노드일 경우
                         backend.createParentSubject(subName)
                 else: # 기존에 있던 과목인 경우
                     backend.updateSubNameBySubId(int(subId), subName)
                     
-                    for asses in deleteAssesment:
+                    for asses in deleteAssesment: # 삭제할 평가 수행
                         assesId = int(asses["assesId"])
                         backend.deleteAssesmentById(assesId)
-                        
-                    for asses in newAssesments:
+                            
+                    for asses in newAssesments: # 추가된 새로운 평가 생성
                         assesSubId   = asses["subId"]
                         grade   = asses["grade"]
                         content = asses["content"]
@@ -323,7 +330,7 @@ def saveSub(self):
                         less    = asses["less"]
                         backend.createAssesment(int(assesSubId), grade, content, int(greater), int(less))
                         
-                    for asses in store.findAssesmentsBySubId(subId):
+                    for asses in store.findAssesmentsBySubId(subId): #기존 평가 업데이트
                         assesId = asses["assesId"]
                         grade   = asses["grade"]
                         greater = asses["greater"]
@@ -331,12 +338,6 @@ def saveSub(self):
                         content = asses["content"]
                         backend.updateAssesment(int(assesId), content, int(greater), int(less))
                     
-                    for stnd in standards:
-                        stndsubId   = stnd["subId"]
-                        grade   = stnd["grade"]
-                        greater = stnd["greater"]
-                        less    = stnd["less"]
-                        backend.
                         
                 QMessageBox.about(self, "결과", "성공")
                 store.reset()
