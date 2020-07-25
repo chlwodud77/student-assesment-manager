@@ -107,7 +107,7 @@ def insertIndiRandomAssesment(self):
     grdBList = []
     grdCList = []
     subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    grdStandard = backend.returnAssementStandardBySubId(subId)
+    grdStandard = backend.returnAssesmentStandardBySubId(subId)
     assementList = backend.returnAssesmentBySubId(subId)
     for i in range(0, len(assementList)):
         if(assementList[i][1] == "A"):

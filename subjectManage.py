@@ -1,112 +1,44 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import backend, sqlite3
+import backend, sqlite3, store
 from PyQt5.QtWidgets import *
 from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 from operator import itemgetter
+from subjectInputDialog import SubjectInput
+
 
 # deleteAssesment = []
 
-class subjectStore:
-    def __init__(self):
-        self.standard        = []
-        self.newStandard     = []
-        self.assesment       = []
-        self.newAssesment    = []
-        self.deleteAssesment = []
 
-    def getStandard(self):
-        return self.standard
-    
-    def addStandard(self, subId ="", grade="", greater="", less=""):
-        container = dict(subId=subId, grade=grade, greater=greater, less=less)
-        if(container not in self.standard):
-            self.standard.append(container)
-            
-    def modifyStandard(self, subId, grade, greater, less):
-        pass
-    
-    def getDeleteAssesment(self):
-        return self.deleteAssesment
-    
-    def delNewAsssesment(self, assesId="", subId="", grade="", greater="", less="", content=""):
-        container = dict(assesId=assesId, subId=subId, grade=grade,
-                        greater=greater, less=less, content=content)
-        if(container in self.newAssesment):
-            self.newAssesment.remove(container)
-        
-    def getNewAssesment(self):
-        return self.newAssesment
-    
-    def addnewAssesment(self, container):
-        if(container not in self.newAssesment):
-            self.newAssesment.append(container)
-    
-    def addDeleteAssesment(self, container):
-        if(container not in self.deleteAssesment):
-            self.deleteAssesment.append(container)
-    
-    def findAssesment(self, assesId):
-        for asses in self.assesment:
-            if(str(asses["assesId"]) == str(assesId)):
-                return asses
-    
-    def findAssesmentsBySubId(self, subId):
-        assesments = []
-        for asses in self.assesment:
-            if(asses["subId"] == subId):
-                assesments.append(asses)
-        return assesments
-                
-            
-    def findAssesmentBySubIdAndGrade(self, subId, grade):
-        for asses in self.assesment:
-            if(str(asses["subId"]) == str(subId) and str(asses["grade"]) == str(grade)):
-                return asses
-    
-    def getAssesment(self):
-        return self.assesment
-    
-    def addAssesment(self, assesId="", subId="", grade="", greater="", less="", content=""):
-        container = dict(assesId=assesId, subId=subId, grade=grade,
-                        greater=greater, less=less, content=content)
-        if(container not in self.assesment):
-            self.assesment.append(container)
-    
-    def delAssesment(self, container):
-        if(container in self.assesment):
-            self.assesment.remove(container)
-            print("assesments : ",self.assesment)
-            
-    def modifyNewAssesment(self, subId, grade, content, newContent):
-        for asses in self.newAssesment:
-            if(asses["subId"] == subId and asses["grade"] == grade and asses["content"] == content):
-                asses["content"] = newContent
-    
-    def modifyAssesment(self, assesId, content):
-        for asses in self.assesment:
-            if(asses["assesId"] == assesId):
-                asses["content"] = content
-        print("assesments: ",self.assesment)
-    
-    def reset(self):
-        self.standard  = []
-        self.assesment = []
-        self.newAssesment = []
-        self.deleteAssesment = []
+store = store.subjectStore()
 
-store = subjectStore()
+def getTextFromSubjectInput():
+    win = SubjectInput()
+    r = win.showModal()
+    if r:
+        text = win.edit.text()
+        return text
 
 def addNewSubjectItem(self):
-    QTreeWidgetItem(self.subTreeWidget, ["새과목"])
+    subName = getTextFromSubjectInput()
+    subId = backend.createParentSubject(subName)
+    item = QTreeWidgetItem(self.subTreeWidget, [subName])
+    item.setWhatsThis(0, str(subId))
+
     
 def addChildSub(self):
+    if(self.subTreeWidget.currentItem() is None):
+        return QMessageBox.about(self, "주의", "하위 과목을 생성할 상위 과목을 선택해주세요.")
     if(self.subTreeWidget.currentItem().parent()):
         return QMessageBox.about(self, "주의", "하위 과목은 한개만 생성 가능합니다.")
+    subName = getTextFromSubjectInput()
     parentItem = self.subTreeWidget.currentItem()
+    parentItemSubId = parentItem.whatsThis(0)
+    childSubId = backend.createChildSubject(subName, int(parentItemSubId))
     childItem  = QTreeWidgetItem(parentItem)
-    childItem.setText(0, "새항목")
+    childItem.setWhatsThis(0, str(childSubId))
+    childItem.setText(0, subName)
     
 def copyContent(self, obj):
     tableWidget = obj
@@ -132,7 +64,6 @@ def occurChange(self, row, column):
     pass
 
 def showAssesment(self):
-    print("show!")
     List            = self.grdStndList
     aseList         = self.grdAseList
     stndName        = self.grdAseScoreName
@@ -296,26 +227,30 @@ def saveSub(self):
             if(not subName):
                 QMessageBox.about(self, "오류", "과목을 입력하세요")
             else:
-                if(subId == ''): # 기존에 없던 과목인 경우
-                    if(self.subTreeWidget.currentItem().parent()): #하위 노드일 경우
-                        return QMessageBox.about(self, "주의", "상위과목을 먼저 저장해주세요.")
-                        # parent = self.subTreeWidget.currentItem().parent()
-                        # parentName = parent.text(0)
-                        # parentId = parent.whatsThis(0)
-                        # backend.createChildSubject(subName, int(parentId))
-                        # childSubId = backend.returnChildSubjectId(subName, int(parentId))
-                        # backend.deleteAssesmentBySubId(int(childSubId))
-                        # for asses in newAssesments:
-                        #     assesSubId   = asses["subId"]
-                        #     grade   = asses["grade"]
-                        #     content = asses["content"]
-                        #     greater = asses["greater"]
-                        #     less    = asses["less"]
-                        #     backend.createAssesment(int(assesSubIs), grade, content, int(greater), int(less))
+                # if(subId == ''): # 기존에 없던 과목인 경우
+                #     if(self.subTreeWidget.currentItem().parent()): #하위 노드일 경우
+                #         parentItemSubId = self.subTreeWidget.currentItem().parent().whatsThis(0)
+                #         if(parentItemSubId == "" ):
+                #             return QMessageBox.about(self, "주의", "상위과목을 먼저 저장해주세요.")
+
+                #         parent = self.subTreeWidget.currentItem().parent()
+                #         parentName = parent.text(0)
+                #         parentId = parent.whatsThis(0)
+                #         backend.createChildSubject(subName, int(parentId))
+                #         childSubId = backend.returnChildSubjectId(subName, int(parentId))
+                #         backend.deleteAssesmentBySubId(int(childSubId))
+                #         for asses in newAssesments:
+                #             assesSubId   = asses["subId"]
+                #             grade   = asses["grade"]
+                #             content = asses["content"]
+                #             greater = asses["greater"]
+                #             less    = asses["less"]
+                #             backend.createAssesment(int(assesSubId), grade, content, int(greater), int(less))
                         
-                    else: #부모 노드일 경우
-                        backend.createParentSubject(subName)
-                else: # 기존에 있던 과목인 경우
+                #     else: #부모 노드일 경우
+                #         backend.createParentSubject(subName)
+                # else: # 기존에 있던 과목인 경우
+                if(subId != ""):
                     backend.updateSubNameBySubId(int(subId), subName)
                     
                     for asses in deleteAssesment: # 삭제할 평가 수행
@@ -340,6 +275,7 @@ def saveSub(self):
                     
                         
                 QMessageBox.about(self, "결과", "성공")
+                self.grdAseEdit.clear()
                 store.reset()
                 
         except sqlite3.IntegrityError:

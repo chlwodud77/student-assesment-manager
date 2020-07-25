@@ -246,9 +246,10 @@ def createAssesment(subId, grade, content, greater, less):
 def createChildSubject(name, parentId):
     try:
         with conn:
+            cursor = conn.cursor()
             sql = "INSERT into Subject(subName, parentId) VALUES (?,?)"
-            conn.cursor().execute(sql, (name, parentId))
-            return True
+            cursor.execute(sql, (name, parentId))
+            return cursor.lastrowid
     except sqlite3.IntegrityError:
         print("하위 과목 저장 오류")
         return False
@@ -256,9 +257,10 @@ def createChildSubject(name, parentId):
 def createParentSubject(name):
     try:
         with conn:
+            cursor = conn.cursor()
             sql = "INSERT into Subject(subName) VALUES (?)"
-            conn.cursor().execute(sql, (name,))
-            return True
+            cursor.execute(sql, (name,))
+            return cursor.lastrowid
     except sqlite3.IntegrityError:
         print("상위 과목 저장 오류")
         return False
