@@ -6,10 +6,10 @@ from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 
 #점수 입력 테이블 항목 선택 시 내용 표시 함수
-def activateScoreEdit(self):
-    focusedItem = self.classListWidget.currentItem()
-    content     = focusedItem.text()
-    self.scoreAseEdit.setPlainText(content)
+# def activateScoreEdit(self):
+#     focusedItem = self.classListWidget.currentItem()
+#     content     = focusedItem.text()
+#     self.scoreAseEdit.setPlainText(content)
     
 def copyContent(self, col):
     mimeType  = 'application/x-qt-windows-mime;value="Csv"'
@@ -45,7 +45,7 @@ def saveAssesment(self):
         
         for row in range(0, self.classListWidget.rowCount()):
             if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
-                asses   = self.classListWidget.item(row,3).text()
+                asses   = self.classListWidget.cellWidget(row,3).currentText()
                 score   = int(self.classListWidget.item(row,2).text())
                 scoreId = int(self.classListWidget.item(row,2).whatsThis())
                 stdId   = int(self.classListWidget.item(row,1).text())
@@ -55,9 +55,9 @@ def saveAssesment(self):
                     backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
             else: #기존에 스코어 존재 X
                 if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,2).text() != ""):
-                    asses = self.classListWidget.item(row,3).text()
+                    asses = self.classListWidget.cellWidget(row,3).currentText()
                     score = int(self.classListWidget.item(row,2).text())
-                    stdId = int(self.classListWidget.item(row,1).text())
+                    stdId = int(self.classListWidget.item(row,1).text())    
                     subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
                     backend.saveScore(subId, stdId, score, asses) # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
@@ -78,6 +78,9 @@ def showScoreList(self):
     subId      = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
     stdId      = []
     assesments = []
+    comboBoxAssesList = []
+    grdStandard = backend.returnAssesmentStandardBySubId(subId)
+    subAssesments = backend.returnAssesmentBySubId(subId)
     for row in range(0, self.classListWidget.rowCount()):
         stdId.append(int(self.classListWidget.item(row,1).text()))
     
@@ -96,16 +99,35 @@ def showScoreList(self):
         assesments.append(asses)
 
     for row in range(0, self.classListWidget.rowCount()):
+        score = -1
         if(scoreInfo[row][1] != ""):
+            scoreId = scoreInfo[row][0]
+            score = scoreInfo[row][1]
+            
+                    
             self.classListWidget.setItem(row, 2, QTableWidgetItem(str(scoreInfo[row][1]))) #점수입력
             self.classListWidget.item(row,2).setWhatsThis(str(scoreInfo[row][0])) #점수 id 속성
         else:
             self.classListWidget.setItem(row, 2, QTableWidgetItem(""))
 
         if(assesments[row][0] != ""):
-            self.classListWidget.setItem(row, 3, QTableWidgetItem(str(assesments[row][0]))) #평가입력
+            for stnd in grdStandard:
+                grade = stnd[1]
+                greater = int(stnd[2])
+                less = int(stnd[3])
+                if(greater <= int(score) and int(score) <= less and score != -1):
+                    gradeAsses = returnGradeAssesments(subAssesments, grade)
+                    item = QComboBox()
+                    item.addItems(gradeAsses)
+                    item.setCurrentText(assesments[row][0])
+                    item.setEditable(True)
+                    self.classListWidget.setCellWidget(row, 3, item)
+            # self.classListWidget.setItem(row, 3, QTableWidgetItem(str(assesments[row][0]))) #평가입력
         else:
-            self.classListWidget.setItem(row, 3, QTableWidgetItem(""))
+            item = QComboBox()
+            item.setEditable(True)
+            self.classListWidget.setCellWidget(row, 3, item)
+            # self.classListWidget.setItem(row, 3, QTableWidgetItem(""))
             
 #점수 등급별 랜덤 평가 생성 함수 (선택)
 def insertIndiRandomAssesment(self):
@@ -134,7 +156,12 @@ def insertIndiRandomAssesment(self):
                     if(greater <= int(score) and int(score) <= less):
                         assesments = returnGradeAssesments(assesmentList, grade)
                         randomIndex = random.randint(0, len(assesments)-1)
-                        self.classListWidget.setItem(row,3,QTableWidgetItem(assesments[randomIndex]))
+                        comboItem = QComboBox()
+                        comboItem.addItems(assesments)
+                        comboItem.setCurrentIndex(randomIndex)
+                        comboItem.setEditable(True)
+                        # self.classListWidget.setItem(row,3,QTableWidgetItem(assesments[randomIndex]))
+                        self.classListWidget.setCellWidget(row, 3, comboItem)
 
 #점수 등급별 랜덤 평가 생성 함수 (전체)
 def insertRandomAssesment(self):
@@ -157,8 +184,12 @@ def insertRandomAssesment(self):
                 if(greater <= int(score) and int(score) <= less):
                     assesments  = returnGradeAssesments(assesmentList, grade)
                     randomIndex = random.randint(0, len(assesments)-1)
-                    print(assesments)
-                    self.classListWidget.setItem(row, 3, QTableWidgetItem(assesments[randomIndex]))
+                    comboItem = QComboBox()
+                    comboItem.addItems(assesments)
+                    comboItem.setCurrentIndex(randomIndex)
+                    comboItem.setEditable(True)
+                    # self.classListWidget.setItem(row, 3, QTableWidgetItem(assesments[randomIndex]))
+                    self.classListWidget.setCellWidget(row, 3, comboItem)
 
 #학급 리스트 출력 함수
 def insertClassComboBox(self, combobox):
@@ -175,6 +206,9 @@ def returnClassInteger(classes):
     
 #선택 학급 조회 함수    
 def showClassMemberList(self):
+    if(self.scoreSubTreeWidget.currentItem() is None):
+        return  QMessageBox.about(self, "주의", "학급 리스트를 불러올 과목을 선택해주세요.")
+    
     grade, classes = returnClassInteger(self.classList.currentText())     
     members        = backend.returnClassMemberList(grade, classes) 
     headers        = ["이름", "학번", "점수", "평가"]

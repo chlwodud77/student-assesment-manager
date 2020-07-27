@@ -50,7 +50,7 @@ class WindowClass(QMainWindow, form_class) :
 
 
         #점수입력 탭
-        self.classListWidget.clicked.connect(self.activateScoreEdit)
+        # self.classListWidget.clicked.connect(self.activateScoreEdit)
         self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
         self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
         self.createIndiAssesmentBtn.clicked.connect(self.insertIndiRandomAssesment)
