@@ -8,13 +8,13 @@ from PyQt5 import QtCore
 #점수 입력 테이블 항목 선택 시 내용 표시 함수
 def activateScoreEdit(self):
     focusedItem = self.classListWidget.currentItem()
-    content = focusedItem.text()
+    content     = focusedItem.text()
     self.scoreAseEdit.setPlainText(content)
     
 def copyContent(self, col):
-    mimeType = 'application/x-qt-windows-mime;value="Csv"'
+    mimeType  = 'application/x-qt-windows-mime;value="Csv"'
     clipboard = QApplication.clipboard()
-    mimeData = clipboard.mimeData()
+    mimeData  = clipboard.mimeData()
     if(mimeType in mimeData.formats()): # 엑셀에서 복사해온 텍스트인지 확인
         text = clipboard.text()
         content = text.split("\n")
@@ -26,7 +26,7 @@ def copyContent(self, col):
             
 #점수 입력 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
 def changeScoreAse(self):
-    focusedItem = self.classListWidget.currentItem()
+    focusedItem    = self.classListWidget.currentItem()
     currentContent = self.scoreAseEdit.toPlainText()
     focusedItem.setText(currentContent)
 
@@ -45,11 +45,11 @@ def saveAssesment(self):
         
         for row in range(0, self.classListWidget.rowCount()):
             if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
-                asses = self.classListWidget.item(row,3).text()
-                score = int(self.classListWidget.item(row,2).text())
+                asses   = self.classListWidget.item(row,3).text()
+                score   = int(self.classListWidget.item(row,2).text())
                 scoreId = int(self.classListWidget.item(row,2).whatsThis())
-                stdId = int(self.classListWidget.item(row,1).text())
-                subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+                stdId   = int(self.classListWidget.item(row,1).text())
+                subId   = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
                 
                 if(backend.deleteScoreById(scoreId)): #기존 스코어 삭제 후
                     backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
@@ -63,11 +63,20 @@ def saveAssesment(self):
         QMessageBox.about(self, "결과", "점수 저장 성공.")
         showScoreList(self)
     
+def returnGradeAssesments(assesments, grade):
+    parsedAssesments = []
+    for asses in assesments:
+        assesGrade   = asses[1]
+        assesContent = asses[2]
+        if(assesGrade == grade):
+            parsedAssesments.append(assesContent)
+    return parsedAssesments
+    
 #점수, 평가 리스트 보여주는 함수
 def showScoreList(self):
-    scoreInfo = []
-    subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    stdId = []
+    scoreInfo  = []
+    subId      = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+    stdId      = []
     assesments = []
     for row in range(0, self.classListWidget.rowCount()):
         stdId.append(int(self.classListWidget.item(row,1).text()))
@@ -103,97 +112,53 @@ def insertIndiRandomAssesment(self):
     if(self.scoreSubTreeWidget.currentItem() is None):
         QMessageBox.about(self, "오류", "과목을 선택해주세요.")
         return
-    grdAList = []
-    grdBList = []
-    grdCList = []
-    subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    grdStandard = backend.returnAssesmentStandardBySubId(subId)
-    assementList = backend.returnAssesmentBySubId(subId)
-    for i in range(0, len(assementList)):
-        if(assementList[i][1] == "A"):
-            p = []
-            p.append(assementList[i][0])
-            p.append(assementList[i][2])
-            grdAList.append(p)
-        elif(assementList[i][1] == "B"):
-            p = []
-            p.append(assementList[i][0])
-            p.append(assementList[i][2])
-            grdBList.append(p)
-        elif(assementList[i][1] == "C"):
-            p = []
-            p.append(assementList[i][0])
-            p.append(assementList[i][2])
-            grdCList.append(p)
+
+    subId         = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+    grdStandard   = backend.returnAssesmentStandardBySubId(subId)
+    assesmentList = backend.returnAssesmentBySubId(subId)
     
     items = []
     items = self.classListWidget.selectedItems()
 
     for i in range(0, len(items)):
         if(self.classListWidget.selectedItems()[i].column() is 2):
-            row = self.classListWidget.selectedItems()[i].row()
+            row   = self.classListWidget.selectedItems()[i].row()
             score = self.classListWidget.item(row,2).text()
             if(score == ""):
                 self.classListWidget.setItem(row,3,QTableWidgetItem(""))
             else:
-                for j in range(0, len(grdStandard)):
-                    score = int(score)
-                    if(grdStandard[j][1] < score and score <= grdStandard[j][2]):
-                        if(grdStandard[j][0] == "A"):
-                            randomIndex = random.randint(0, len(grdAList)-1)
-                            self.classListWidget.setItem(row,3,QTableWidgetItem(grdAList[randomIndex][1]))
-                        elif(grdStandard[j][0] == "B"):
-                            randomIndex = random.randint(0, len(grdBList)-1)
-                            self.classListWidget.setItem(row,3,QTableWidgetItem(grdBList[randomIndex][1]))
-                        elif(grdStandard[j][0] == "C"):
-                            randomIndex = random.randint(0, len(grdCList)-1)
-                            self.classListWidget.setItem(row,3,QTableWidgetItem(grdCList[randomIndex][1]))
+                for stnd in grdStandard:
+                    grade   = stnd[1]
+                    greater = int(stnd[2])
+                    less    = int(stnd[3])
+                    if(greater <= int(score) and int(score) <= less):
+                        assesments = returnGradeAssesments(assesmentList, grade)
+                        randomIndex = random.randint(0, len(assesments)-1)
+                        self.classListWidget.setItem(row,3,QTableWidgetItem(assesments[randomIndex]))
 
 #점수 등급별 랜덤 평가 생성 함수 (전체)
 def insertRandomAssesment(self):
     if(self.scoreSubTreeWidget.currentItem() is None):
         return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
-        
-    grdAList = []
-    grdBList = []
-    grdCList = []
-    subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    grdStandard = backend.returnAssesmentStandardBySubId(subId)
-    assementList = backend.returnAssesmentBySubId(subId)
-    for i in range(0, len(assementList)):
-        if(assementList[i][1] == "A"):
-            p = []
-            p.append(assementList[i][0])
-            p.append(assementList[i][2])
-            grdAList.append(p)
-        elif(assementList[i][1] == "B"):
-            p = []
-            p.append(assementList[i][0])
-            p.append(assementList[i][2])
-            grdBList.append(p)
-        elif(assementList[i][1] == "C"):
-            p = []
-            p.append(assementList[i][0])
-            p.append(assementList[i][2])
-            grdCList.append(p)
+
+    subId         = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+    grdStandard   = backend.returnAssesmentStandardBySubId(subId)
+    assesmentList = backend.returnAssesmentBySubId(subId)
 
     for row in range(0, self.classListWidget.rowCount()):
         score = self.classListWidget.item(row,2).text()
         if(score == ""):
             self.classListWidget.setItem(row,3,QTableWidgetItem(""))
         else:
-            for j in range(0, len(grdStandard)):
-                score = int(score)
-                if(grdStandard[j][1] < score and score <= grdStandard[j][2]):
-                    if(grdStandard[j][0] == "A"):
-                        randomIndex = random.randint(0, len(grdAList)-1)
-                        self.classListWidget.setItem(row,3,QTableWidgetItem(grdAList[randomIndex][1]))
-                    elif(grdStandard[j][0] == "B"):
-                        randomIndex = random.randint(0, len(grdBList)-1)
-                        self.classListWidget.setItem(row,3,QTableWidgetItem(grdBList[randomIndex][1]))
-                    elif(grdStandard[j][0] == "C"):
-                        randomIndex = random.randint(0, len(grdCList)-1)
-                        self.classListWidget.setItem(row,3,QTableWidgetItem(grdCList[randomIndex][1]))
+            for stnd in grdStandard:
+                grade   = stnd[1]
+                greater = int(stnd[2])
+                less    = int(stnd[3])
+                if(greater <= int(score) and int(score) <= less):
+                    assesments  = returnGradeAssesments(assesmentList, grade)
+                    randomIndex = random.randint(0, len(assesments)-1)
+                    print(assesments)
+                    self.classListWidget.setItem(row, 3, QTableWidgetItem(assesments[randomIndex]))
 
 #학급 리스트 출력 함수
 def insertClassComboBox(self, combobox):
@@ -202,29 +167,24 @@ def insertClassComboBox(self, combobox):
     for i in range(0, len(classes)):
         combobox.addItem(str(classes[i][0])+"학년 "+str(classes[i][1])+"반")
         
-        
 def returnClassInteger(classes):
-    classes = classes.replace(" ","")
+    classes    = classes.replace(" ","")
     grade, ban = classes.split("학년")
-    ban = ban.replace("반","")
+    ban        = ban.replace("반","")
     return int(grade), int(ban)
     
-        
 #선택 학급 조회 함수    
 def showClassMemberList(self):
     grade, classes = returnClassInteger(self.classList.currentText())     
-    # grade = int(self.classList.currentText()[0])
-    # classes = int(self.classList.currentText()[4])
-    print(grade, classes)
-    members = backend.returnClassMemberList(grade, classes) 
-    headers = ["이름", "학번", "점수", "평가"]
+    members        = backend.returnClassMemberList(grade, classes) 
+    headers        = ["이름", "학번", "점수", "평가"]
 
     self.classListWidget.setRowCount(len(members))
     self.classListWidget.setColumnCount(4)
     self.classListWidget.setHorizontalHeaderLabels(headers)
 
     for i in range(0, len(members)):
-        name = QTableWidgetItem(str(members[i][0]))
+        name  = QTableWidgetItem(str(members[i][0]))
         stdId = QTableWidgetItem(str(members[i][1]))
         self.classListWidget.setItem(i, 0, name)
         self.classListWidget.setItem(i, 1, stdId)
