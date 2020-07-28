@@ -912,6 +912,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QFrame" name="frame">
+          <property name="maximumSize">
+           <size>
+            <width>300</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -1062,7 +1068,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>480</width>
+                <width>685</width>
                 <height>529</height>
                </rect>
               </property>
@@ -1082,12 +1088,27 @@
                  </column>
                  <column>
                   <property name="text">
-                   <string>학번</string>
+                   <string>학년</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>반</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>번호</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
                    <string>평가</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>글자수(바이트)</string>
                   </property>
                  </column>
                 </widget>

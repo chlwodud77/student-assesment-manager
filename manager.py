@@ -65,7 +65,9 @@ class WindowClass(QMainWindow, form_class) :
         self.exlAseEdit.textChanged.connect(self.exlChangeAse)
         self.exlClassList.activated.connect(self.exlShowClassList)
         self.exlSubAddBtn.clicked.connect(self.exlSubAddClass)
+        self.exlSubListWidget.itemDoubleClicked.connect(self.exlSubAddClass)
         self.exlSubExtBtn.clicked.connect(self.exlSubExtClass)
+        self.exlSubAddedWidget.itemDoubleClicked.connect(self.exlSubExtClass)
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
         self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
         
