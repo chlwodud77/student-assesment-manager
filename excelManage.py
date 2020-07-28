@@ -70,7 +70,7 @@ def exlSaveToFile(self):
                 ws.cell(row = x, column = y).value = headers[y-1]
                 ws.cell(row = x, column = y).alignment = align_center
                 ws.cell(row = x, column = y).border = allround_border
-        for x in range(2,len(content)+1):
+        for x in range(2,len(content)+2):
             for y in range(1,6):
                 ws.cell(row = x, column = y).value = content[x-2][y-1]
                 if(y != 5):
