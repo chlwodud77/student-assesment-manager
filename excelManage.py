@@ -72,7 +72,7 @@ def exlSaveToFile(self):
                 ws.cell(row = x, column = y).border = allround_border
         for x in range(2,len(content)+1):
             for y in range(1,6):
-                ws.cell(row = x, column = y).value = content[x-1][y-1]
+                ws.cell(row = x, column = y).value = content[x-2][y-1]
                 if(y != 5):
                     ws.cell(row = x, column = y).alignment = align_center
                 if(y == 5):
