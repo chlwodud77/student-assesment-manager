@@ -88,8 +88,8 @@ def showScoreList(self):
         if(backend.returnScore(int(subId), int(stdId[row])) is not None):
             scoreInfo.append(backend.returnScore(int(subId), int(stdId[row])))
         else:
-            scoreInfo.append(["","",""])
-    
+            scoreInfo.append(["","",""]) #scordId, score, asses
+            
     for row in range(0, self.classListWidget.rowCount()):
         asses = []
         if(scoreInfo[row][2] is not ""):
@@ -97,7 +97,7 @@ def showScoreList(self):
         else:
             asses.append("")
         assesments.append(asses)
-
+    
     for row in range(0, self.classListWidget.rowCount()):
         score = -1
         if(scoreInfo[row][1] != ""):
@@ -117,11 +117,14 @@ def showScoreList(self):
                 less = int(stnd[3])
                 if(greater <= int(score) and int(score) <= less and score != -1):
                     gradeAsses = returnGradeAssesments(subAssesments, grade)
+                    asses = assesments[row][0]
+                    if(asses not in gradeAsses):
+                        gradeAsses.append(asses)
                     item = QComboBox()
                     item.addItems(gradeAsses)
-                    item.setCurrentText(assesments[row][0])
-                    item.setEditable(True)
+                    item.setCurrentText(asses)
                     self.classListWidget.setCellWidget(row, 3, item)
+                    item.setEditable(True)
             # self.classListWidget.setItem(row, 3, QTableWidgetItem(str(assesments[row][0]))) #평가입력
         else:
             item = QComboBox()
