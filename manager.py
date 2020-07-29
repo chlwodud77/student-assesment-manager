@@ -45,6 +45,7 @@ class WindowClass(QMainWindow, form_class) :
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdStndList.clicked.connect(self.showAssesment)
+        self.grdStndRowAddBtn.clicked.connect(self.addGrdStndRow)
         self.grdAseList.cellChanged.connect(self.occurChange)
         self.grdAseList.installEventFilter(self)
 
@@ -183,6 +184,9 @@ class WindowClass(QMainWindow, form_class) :
     #평가 내용 추가 함수
     def addAse(self):
         subjectManage.addAse(self)
+        
+    def addGrdStndRow(self):
+        subjectManage.addGrdStndRow(self)
 
     def addNewSubjectItem(self):
         subjectManage.addNewSubjectItem(self)

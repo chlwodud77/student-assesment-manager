@@ -342,8 +342,14 @@ def activateEdit(self):
     Editor = self.grdAseEdit
     Editor.setPlainText(widget.item(widget.currentRow(), widget.currentColumn()).text())
 
+def addGrdStndRow(self):
+    widget = self.grdStndAddWidget
+    widget.insertRow(widget.rowCount())
+
 def addGrdStnd(self):
     List = self.grdStndList
+    if(self.subTreeWidget.currentItem() is None):
+        return QMessageBox.about(self, "주의", "등급을 추가할 과목을 선택하세요.")
     subId = self.subTreeWidget.currentItem().whatsThis(0)
     grade = self.grdAseScoreName.toPlainText()
     greater = self.grdAseScoreGre.toPlainText()

@@ -461,6 +461,39 @@
                </widget>
               </item>
               <item>
+               <widget class="QPushButton" name="grdStndRowAddBtn">
+                <property name="text">
+                 <string>행추가</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="grdStndAddWidget">
+                <column>
+                 <property name="text">
+                  <string>등급이름</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>이상</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>이하</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="grdStndAddBtn2">
+                <property name="text">
+                 <string>등급추가</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QListWidget" name="grdStndList"/>
               </item>
              </layout>
