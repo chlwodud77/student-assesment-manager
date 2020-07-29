@@ -391,6 +391,8 @@ def delAse(self):
 def addAse(self):
     stndList = self.grdStndList
     assesList = self.grdAseList
+    if(stndList.currentItem() is None):
+        return QMessageBox.about(self, "주의", "평가를 추가할 과목 또는 등급을 선택해주세요.")
     attributes = stndList.currentItem().whatsThis().split(",")
     subId, grade, greater, less = attributes
     assesId = ""
