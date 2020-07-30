@@ -7,6 +7,13 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 
 CELL_WIDTH = 50
+GRADE_COL = 0
+CLASS_COL = 1
+STDNUM_COL = 2
+NAME_COL = 3
+ASSES_COL = 4
+LENGTH_COL = 5
+
 
 align_center        = Alignment(horizontal='center', vertical='center')
 wrap_text           = Alignment(vertical="center", wrapText=True)
@@ -22,7 +29,10 @@ allround_border     = Border(left =Side(border_style="thin",
 #엑셀 테이블 항목 선택 시 내용 표시 함수
 def exlActivateEdit(self):
     focusedItem = self.exlClassListWidget.currentItem()
-    if(focusedItem.column() == 4):
+    if(focusedItem is None):
+        self.exlAseEdit.setPlainText("")
+        return 
+    if(focusedItem.column() == ASSES_COL):
         content = self.exlClassListWidget.currentItem().text()
         self.exlAseEdit.setPlainText(content)
         
@@ -31,14 +41,16 @@ def showAssesLengthAndState(self, currentContent, row):
     contentLengthByte = len(currentContent.encode("utf-8"))
     lengthItem = QTableWidgetItem(str(contentLength)+" 자 ("+str(contentLengthByte)
                                     +"바이트)" )
-    self.exlClassListWidget.setItem(row, 5, lengthItem)
+    self.exlClassListWidget.setItem(row, LENGTH_COL, lengthItem)
     if(contentLength > 1000 or contentLengthByte > 3000):
-        self.exlClassListWidget.item(row, 5).setBackground(QtGui.QColor(255,0,0))
+        self.exlClassListWidget.item(row, LENGTH_COL).setBackground(QtGui.QColor(255,0,0))
 
 #엑셀 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
 def exlChangeAse(self):
     focusedItem = self.exlClassListWidget.currentItem()
-    if(focusedItem.column() == 4):
+    if(focusedItem is None):
+        return
+    if(focusedItem.column() == ASSES_COL):
         currentContent = self.exlAseEdit.toPlainText()
         focusedItem.setText(currentContent)
         focusedRow = focusedItem.row()
@@ -56,12 +68,12 @@ def exlSaveToFile(self):
         content = []
         for i in range(0, self.exlClassListWidget.rowCount()):
             p = []
-            p.append(self.exlClassListWidget.item(i,0).text())
-            p.append(int(self.exlClassListWidget.item(i,1).text()))
-            p.append(int(self.exlClassListWidget.item(i,2).text()))
-            p.append(int(self.exlClassListWidget.item(i,3).text()))
-            if(self.exlClassListWidget.item(i,4) is not None):
-                p.append(self.exlClassListWidget.item(i,4).text())
+            p.append(self.exlClassListWidget.item(i,NAME_COL).text())
+            p.append(int(self.exlClassListWidget.item(i,GRADE_COL).text()))
+            p.append(int(self.exlClassListWidget.item(i,CLASS_COL).text()))
+            p.append(int(self.exlClassListWidget.item(i,STDNUM_COL).text()))
+            if(self.exlClassListWidget.item(i,ASSES_COL) is not None):
+                p.append(self.exlClassListWidget.item(i,ASSES_COL).text())
             else:
                 p.append("")
             content.append(p)
@@ -89,9 +101,9 @@ def exlShowTotAssesment(self):
         
     grade, classes = returnClassInteger(self.exlClassList.currentText())    
     subjectsIds = []
-    assesments = []
-    members = []
-    items = []
+    assesments  = []
+    members     = []
+    items       = []
     for row in range(self.exlSubAddedWidget.count()):
         item = self.exlSubAddedWidget.item(row)
         items.append(item)
@@ -105,12 +117,12 @@ def exlShowTotAssesment(self):
     self.exlClassListWidget.setRowCount(len(members))
     self.exlClassListWidget.setColumnCount(6)
     header = self.exlClassListWidget.horizontalHeader() 
-    header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-    header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-    header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-    header.setSectionResizeMode(4, QHeaderView.Stretch)
-    header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(NAME_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(GRADE_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(CLASS_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(STDNUM_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(ASSES_COL, QHeaderView.Stretch)
+    header.setSectionResizeMode(LENGTH_COL, QHeaderView.ResizeToContents)
 
     for i in range(0,len(members)):
         stdName = str(members[i][0])
@@ -121,18 +133,18 @@ def exlShowTotAssesment(self):
         gradeItem = QTableWidgetItem(str(grade))
         classItem = QTableWidgetItem(str(classes))
         stdNumItem = QTableWidgetItem(stdNum)
-        self.exlClassListWidget.setItem(i, 0, nameItem)
-        self.exlClassListWidget.setItem(i, 1, gradeItem)
-        self.exlClassListWidget.setItem(i, 2, classItem)
-        self.exlClassListWidget.setItem(i, 3, stdNumItem)
+        self.exlClassListWidget.setItem(i, NAME_COL, nameItem)
+        self.exlClassListWidget.setItem(i, GRADE_COL, gradeItem)
+        self.exlClassListWidget.setItem(i, CLASS_COL, classItem)
+        self.exlClassListWidget.setItem(i, STDNUM_COL, stdNumItem)
         
     for i in range(0,len(members)):
-        stdId = self.exlClassListWidget.item(i,0).whatsThis()
+        stdId = self.exlClassListWidget.item(i,NAME_COL).whatsThis()
         for asses in assesments:
             for row in asses:
                 if(int(row[1]) == int(stdId)):
-                    if(self.exlClassListWidget.item(i,4) is not None): #기존에 내용이 있는 경우 붙여서 추가
-                        orgContent = self.exlClassListWidget.item(i,4).text()
+                    if(self.exlClassListWidget.item(i,ASSES_COL) is not None): #기존에 내용이 있는 경우 붙여서 추가
+                        orgContent = self.exlClassListWidget.item(i,ASSES_COL).text()
                         orgContent = orgContent.strip()
                         newContent = ""
                         contentLength = 0
@@ -143,13 +155,17 @@ def exlShowTotAssesment(self):
                             newContent = orgContent+" "+str(row[2])
                         assesItem = QTableWidgetItem(newContent)
                         showAssesLengthAndState(self, newContent, i)
-                        self.exlClassListWidget.setItem(i,4, assesItem)
+                        self.exlClassListWidget.setItem(i,ASSES_COL, assesItem)
                         
                     else: #기존에 내용이 없는 빈 칸인 경우
                         content = str(row[2])
                         assesItem = QTableWidgetItem(content)
                         showAssesLengthAndState(self, content, i)
-                        self.exlClassListWidget.setItem(i,4, assesItem)
+                        self.exlClassListWidget.setItem(i,ASSES_COL, assesItem)
+        if(self.exlClassListWidget.item(i,ASSES_COL) is None):
+            assesItem = QTableWidgetItem("")
+            showAssesLengthAndState(self, "", i)
+            self.exlClassListWidget.setItem(i,ASSES_COL, assesItem)
 
 #학급별 평가 과목 선택 추가 함수
 def exlSubAddClass(self):
