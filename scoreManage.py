@@ -5,12 +5,25 @@ from PyQt5.QtWidgets import *
 from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 
+NAME_COL   = 0
+HAKBUN_COL = 1
+SCORE_COL  = 2
+ASSES_COL  = 3
+
+def resizeColumnWidth(self):
+    header = self.classListWidget.horizontalHeader()
+    header.setSectionResizeMode(ASSES_COL, QHeaderView.Stretch)
+    header.setSectionResizeMode(NAME_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(HAKBUN_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(SCORE_COL, QHeaderView.ResizeToContents)
+    
+
 #점수 입력 테이블 항목 선택 시 내용 표시 함수
 # def activateScoreEdit(self):
 #     focusedItem = self.classListWidget.currentItem()
 #     content     = focusedItem.text()
 #     self.scoreAseEdit.setPlainText(content)
-    
+
 def copyContent(self, col):
     mimeType  = 'application/x-qt-windows-mime;value="Csv"'
     clipboard = QApplication.clipboard()
@@ -44,20 +57,20 @@ def saveAssesment(self):
             return QMessageBox.about(self, "오류", "학급을 불러와주세요.")
         
         for row in range(0, self.classListWidget.rowCount()):
-            if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
-                asses   = self.classListWidget.cellWidget(row,3).currentText()
-                score   = int(self.classListWidget.item(row,2).text())
-                scoreId = int(self.classListWidget.item(row,2).whatsThis())
+            if(self.classListWidget.item(row, SCORE_COL).whatsThis() != ""): #기존 스코어 존재
+                asses   = self.classListWidget.cellWidget(row, ASSES_COL).currentText()
+                score   = int(self.classListWidget.item(row, SCORE_COL).text())
+                scoreId = int(self.classListWidget.item(row, SCORE_COL).whatsThis())
                 stdId   = int(self.classListWidget.item(row,1).text())
                 subId   = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
                 
                 if(backend.deleteScoreById(scoreId)): #기존 스코어 삭제 후
                     backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
             else: #기존에 스코어 존재 X
-                if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,2).text() != ""):
-                    asses = self.classListWidget.cellWidget(row,3).currentText()
-                    score = int(self.classListWidget.item(row,2).text())
-                    stdId = int(self.classListWidget.item(row,1).text())    
+                if(self.classListWidget.item(row, SCORE_COL).whatsThis() == "" and self.classListWidget.item(row, SCORE_COL).text() != ""):
+                    asses = self.classListWidget.cellWidget(row, ASSES_COL).currentText()
+                    score = int(self.classListWidget.item(row, SCORE_COL).text())
+                    stdId = int(self.classListWidget.item(row, HAKBUN_COL).text())    
                     subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
                     backend.saveScore(subId, stdId, score, asses) # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
@@ -74,15 +87,15 @@ def returnGradeAssesments(assesments, grade):
     
 #점수, 평가 리스트 보여주는 함수
 def showScoreList(self):
-    scoreInfo  = []
-    subId      = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    stdId      = []
-    assesments = []
     comboBoxAssesList = []
+    assesments        = []
+    scoreInfo         = []
+    subId             = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+    stdId             = []
     grdStandard = backend.returnAssesmentStandardBySubId(subId)
     subAssesments = backend.returnAssesmentBySubId(subId)
     for row in range(0, self.classListWidget.rowCount()):
-        stdId.append(int(self.classListWidget.item(row,1).text()))
+        stdId.append(int(self.classListWidget.item(row, HAKBUN_COL).text()))
     
     for row in range(0, self.classListWidget.rowCount()):
         if(backend.returnScore(int(subId), int(stdId[row])) is not None):
@@ -105,10 +118,10 @@ def showScoreList(self):
             score = scoreInfo[row][1]
             
                     
-            self.classListWidget.setItem(row, 2, QTableWidgetItem(str(scoreInfo[row][1]))) #점수입력
-            self.classListWidget.item(row,2).setWhatsThis(str(scoreInfo[row][0])) #점수 id 속성
+            self.classListWidget.setItem(row, SCORE_COL, QTableWidgetItem(str(scoreInfo[row][1]))) #점수입력
+            self.classListWidget.item(row, SCORE_COL).setWhatsThis(str(scoreInfo[row][0])) #점수 id 속성
         else:
-            self.classListWidget.setItem(row, 2, QTableWidgetItem(""))
+            self.classListWidget.setItem(row, SCORE_COL, QTableWidgetItem(""))
 
         if(assesments[row][0] != ""):
             for stnd in grdStandard:
@@ -123,13 +136,13 @@ def showScoreList(self):
                     item = QComboBox()
                     item.addItems(gradeAsses)
                     item.setCurrentText(asses)
-                    self.classListWidget.setCellWidget(row, 3, item)
+                    self.classListWidget.setCellWidget(row, ASSES_COL, item)
                     item.setEditable(True)
             # self.classListWidget.setItem(row, 3, QTableWidgetItem(str(assesments[row][0]))) #평가입력
         else:
             item = QComboBox()
             item.setEditable(True)
-            self.classListWidget.setCellWidget(row, 3, item)
+            self.classListWidget.setCellWidget(row, ASSES_COL, item)
             # self.classListWidget.setItem(row, 3, QTableWidgetItem(""))
             
 #점수 등급별 랜덤 평가 생성 함수 (선택)
@@ -148,9 +161,9 @@ def insertIndiRandomAssesment(self):
     for i in range(0, len(items)):
         if(self.classListWidget.selectedItems()[i].column() is 2):
             row   = self.classListWidget.selectedItems()[i].row()
-            score = self.classListWidget.item(row,2).text()
+            score = self.classListWidget.item(row, SCORE_COL).text()
             if(score == ""):
-                self.classListWidget.setItem(row,3,QTableWidgetItem(""))
+                self.classListWidget.setItem(row, ASSES_COL, QTableWidgetItem(""))
             else:
                 for stnd in grdStandard:
                     grade   = stnd[1]
@@ -164,7 +177,7 @@ def insertIndiRandomAssesment(self):
                         comboItem.setCurrentIndex(randomIndex)
                         comboItem.setEditable(True)
                         # self.classListWidget.setItem(row,3,QTableWidgetItem(assesments[randomIndex]))
-                        self.classListWidget.setCellWidget(row, 3, comboItem)
+                        self.classListWidget.setCellWidget(row, ASSES_COL, comboItem)
 
 #점수 등급별 랜덤 평가 생성 함수 (전체)
 def insertRandomAssesment(self):
@@ -176,9 +189,9 @@ def insertRandomAssesment(self):
     assesmentList = backend.returnAssesmentBySubId(subId)
 
     for row in range(0, self.classListWidget.rowCount()):
-        score = self.classListWidget.item(row,2).text()
+        score = self.classListWidget.item(row, SCORE_COL).text()
         if(score == ""):
-            self.classListWidget.setItem(row,3,QTableWidgetItem(""))
+            self.classListWidget.setItem(row, ASSES_COL, QTableWidgetItem(""))
         else:
             for stnd in grdStandard:
                 grade   = stnd[1]
@@ -192,7 +205,7 @@ def insertRandomAssesment(self):
                     comboItem.setCurrentIndex(randomIndex)
                     comboItem.setEditable(True)
                     # self.classListWidget.setItem(row, 3, QTableWidgetItem(assesments[randomIndex]))
-                    self.classListWidget.setCellWidget(row, 3, comboItem)
+                    self.classListWidget.setCellWidget(row, ASSES_COL, comboItem)
 
 #학급 리스트 출력 함수
 def insertClassComboBox(self, combobox):
@@ -223,7 +236,8 @@ def showClassMemberList(self):
     for i in range(0, len(members)):
         name  = QTableWidgetItem(str(members[i][0]))
         stdId = QTableWidgetItem(str(members[i][1]))
-        self.classListWidget.setItem(i, 0, name)
-        self.classListWidget.setItem(i, 1, stdId)
+        self.classListWidget.setItem(i, NAME_COL, name)
+        self.classListWidget.setItem(i, HAKBUN_COL, stdId)
     
     self.showScoreList()
+    resizeColumnWidth(self)
