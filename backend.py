@@ -11,13 +11,12 @@ SQL_CREATE_ASSESMENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Assesment" (
 ) """
 SQL_CREATE_SCORE_TABLE = """ CREATE TABLE IF NOT EXISTS "Score" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"subId"	INTEGER NOT NULL,
-	"stdId"	INTEGER NOT NULL,
+	"subId"	INTEGER,
+	"stdId"	INTEGER,
 	"score"	INTEGER,
 	"asses"	TEXT,
 	FOREIGN KEY("subId") REFERENCES "Subject"("id"),
-	FOREIGN KEY("stdId") REFERENCES "Student"("id"),
-	FOREIGN KEY("asses") REFERENCES "Assesment"("id")
+	FOREIGN KEY("stdId") REFERENCES "Student"("id")
 ) """
 
 SQL_CREATE_STANDARD_TABLE = """ CREATE TABLE IF NOT EXISTS"Standard" (
@@ -68,6 +67,15 @@ if conn is not None:
     createTable(conn, SQL_CREATE_SCORE_TABLE)
     createTable(conn, SQL_CREATE_STANDARD_TABLE)
     
+
+def returnAssesmentsByStandardId(stndId):
+    try:
+        with conn:
+            sql = "SELECT id, content FROM Assesment WHERE stndId = ?"
+            return conn.cursor().execute(sql, (stndId,)).fetchall()
+    except sqlite3.IntegrityError:
+        print("과목 평가문 조회 오류")
+        return False
 
 def returnAssesmetnStandardBySubIdAndGrade(subId, grade):
     try:
@@ -215,6 +223,16 @@ def deleteAssesmentBySubId(subId):
         print("점수 삭제 오류") 
         return False
 
+def deleteAssesmentByStndId(stndId):
+    try:
+        with conn:
+            sql = "DELETE FROM Assesment WHERE stndId = ?"
+            conn.cursor().execute(sql, (stndId,))
+            return True
+    except sqlite3.IntegrityError:
+        print("평가문 삭제 오류")
+        return False
+
 def deleteClass(grade, classes):
     try:
         with conn:
@@ -270,11 +288,11 @@ def saveScore(subId, stdId, score, asses):
         print("점수 저장 오류")
         return False
         
-def createAssesment(subId, grade, content, greater, less):
+def createAssesment(subId, stndId, content):
     try:
         with conn:
-            sql = "INSERT into Assesment(subId, grade, content, greater, less) VALUES (?,?,?,?,?)"
-            conn.cursor().execute(sql, (subId, grade, content, greater, less))
+            sql = "INSERT into Assesment(subId, stndId, content) VALUES (?,?,?)"
+            conn.cursor().execute(sql, (subId, stndId, content))
             return True
     except sqlite3.IntegrityError:
         print("하위 과목 저장 오류")
@@ -333,11 +351,11 @@ def updateSubNameBySubId(id, name):
         print("과목 저장 문제 발생")
         return False
     
-def updateAssesment(id, content, greater, less):
+def updateAssesment(assesId, content):
     try:
         with conn:
-            sql = "UPDATE Assesment SET content = ?, greater = ?, less = ? WHERE id = ?"
-            conn.cursor().execute(sql, (content, greater, less, id))
+            sql = "UPDATE Assesment SET content = ? WHERE id = ?"
+            conn.cursor().execute(sql, (content, assesId))
             return True
     except sqlite3.IntegrityError:
         print("하위 과목 저장 오류")

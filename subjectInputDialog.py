@@ -1,32 +1,17 @@
 import sys
+from PyQt5 import uic
 from PyQt5.QtWidgets import *
-class SubjectInput(QDialog):
+
+form_class = uic.loadUiType("subjectInputDialog.ui")[0]
+
+class SubjectInput(QDialog, form_class):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
     def initUI(self):
-        self.setWindowTitle('과목 추가')
-        self.setGeometry(100, 100, 200, 100)
-        layout = QVBoxLayout()
-        layout.addStretch(1)
-        edit = QLineEdit()
-        font = edit.font()
-        font.setPointSize(20)
-        edit.setFont(font)
-        self.edit = edit
-        subLayout = QHBoxLayout()
-        
-        btnOK = QPushButton("확인")
-        btnOK.clicked.connect(self.onOKButtonClicked)
-        btnCancel = QPushButton("취소")
-        btnCancel.clicked.connect(self.onCancelButtonClicked)
-        layout.addWidget(edit)
-        
-        subLayout.addWidget(btnOK)
-        subLayout.addWidget(btnCancel)
-        layout.addLayout(subLayout)
-        layout.addStretch(1)
-        self.setLayout(layout)
+        self.btnOk.clicked.connect(self.onOKButtonClicked)
+        self.btnCancel.clicked.connect(self.onCancelButtonClicked)
     def onOKButtonClicked(self):
         self.accept()
     def onCancelButtonClicked(self):

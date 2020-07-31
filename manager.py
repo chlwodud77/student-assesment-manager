@@ -40,7 +40,6 @@ class WindowClass(QMainWindow, form_class) :
         self.grdStndAddBtn.clicked.connect(self.addGrdStnd)
         self.grdStndDelBtn.clicked.connect(self.delGrdStnd)
         self.grdStndModBtn.clicked.connect(self.modGrdStnd)
-        self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemClicked.connect(self.searchSub)
         self.subTreeWidget.itemDoubleClicked.connect(self.editItem)
@@ -48,7 +47,6 @@ class WindowClass(QMainWindow, form_class) :
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdStndList.clicked.connect(self.showAssesment)
         self.grdStndRowAddBtn.clicked.connect(self.addGrdStndRow)
-        self.grdAseList.cellChanged.connect(self.occurChange)
         self.grdAseList.installEventFilter(self)
 
 
@@ -211,9 +209,6 @@ class WindowClass(QMainWindow, form_class) :
     def editItem(self):
         subjectManage.editItem(self)
 
-    def occurChange(self, row, column):
-        subjectManage.occurChange(self, row, column)
-
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):
         subjectManage.searchSub(self)
@@ -224,10 +219,6 @@ class WindowClass(QMainWindow, form_class) :
     def showAssesment(self):
         subjectManage.showAssesment(self)
 
-    #과목, 평가 등급 점수, 평가 내용 db 저장 함수
-    def saveSub(self):
-        subjectManage.saveSub(self)
-        
     # 평가 내용 수정 함수
     def modAse(self):
         subjectManage.modAse(self)
