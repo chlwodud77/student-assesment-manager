@@ -6,6 +6,7 @@ from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 from operator import itemgetter
 from subjectInputDialog import SubjectInput
+from subjectStandardModifyInputDialog import StandardModifyInput
 
 
 # deleteAssesment = []
@@ -26,7 +27,6 @@ def addNewSubjectItem(self):
     item = QTreeWidgetItem(self.subTreeWidget, [subName])
     item.setWhatsThis(0, str(subId))
 
-    
 def addChildSub(self):
     if(self.subTreeWidget.currentItem() is None):
         return QMessageBox.about(self, "주의", "하위 과목을 생성할 상위 과목을 선택해주세요.")
@@ -60,9 +60,6 @@ def editItem(self):
     selectedItem.setFlags(selectedItem.flags() | QtCore.Qt.ItemIsEditable)
     subTreeWidget.editItem(selectedItem, 0)
 
-def occurChange(self, row, column):
-    pass
-
 def showAssesment(self):
     List            = self.grdStndList
     aseList         = self.grdAseList
@@ -72,18 +69,19 @@ def showAssesment(self):
     clickedStndItem = List.currentItem()
     deleteAssesment = store.getDeleteAssesment()
     
-    if(len(clickedStndItem.whatsThis().split(",")) == 4):
-        subId, grade, greater, less = clickedStndItem.whatsThis().split(",")
+    if(clickedStndItem.whatsThis() is not None):
+        stndId = int(clickedStndItem.whatsThis())
+        grade, greater, less = backend.returnStandardById(stndId)
         count = aseList.rowCount()
         
-        if(subId == ""):
-            return
         
-        stndName.setPlainText(grade)
-        stndGre.setPlainText(greater)
-        stndLess.setPlainText(less)
+        stndName.setText(grade)
+        stndGre.setText(str(greater))
+        stndLess.setText(str(less))
+        return
         for i in range(0, count):
             aseList.removeRow(0)
+        
         
         assesments = backend.returnAssesmentContentBySubIdAndGrade(int(subId), grade)
         row        = 0
@@ -141,10 +139,16 @@ def showAssesment(self):
                                 + "," + str(newAssesGreater) + "," + str(newAssesLess))
                 aseList.setItem(row, col, item)
                 row += 1
-                    
+
+def resetStndInfoLabel(self):
+    self.grdAseScoreName.setText("")
+    self.grdAseScoreGre.setText("")
+    self.grdAseScoreLess.setText("")
+
 #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
 def searchSub(self):
     # store.reset()
+    resetStndInfoLabel(self)
     subTreeWidget = self.subTreeWidget
     if(subTreeWidget.currentItem() is None):
         return 
@@ -157,27 +161,31 @@ def searchSub(self):
     if(subId):
         #조회된 과목 등급 점수표 조회 및 출력
         List        = self.grdStndList
-        grdStndList = self.grdStndList
-        StndList    = backend.returnAssesmentStandardBySubId(subId)
-        StndList    = sorted(StndList, key=itemgetter(1), reverse=True)
+        StndList    = backend.returnStandardBySubId(int(subId))
+        StndList    = sorted(StndList, key=itemgetter(2))
+        # print(StndList)
         List.clear()
         
         for standard in StndList:
-            subId, grade, greater, less = standard
-            store.addStandard(str(subId), str(grade), str(greater), str(less))
-            
-        standards = store.getStandard()
+            # store.addStandard(str(subId), str(grade), str(greater), str(less))
+            stndId, subId, grade, greater, less = standard
+            # whats = str(stndId) + "," + str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
+            whats = str(stndId)
+            item  = QListWidgetItem(grade)
+            item.setWhatsThis(whats)
+            List.addItem(item)
+        # standards = store.getStandard()
         
-        for stand in standards:
-            if(stand["subId"] == str(subId)):
-                subId   = stand["subId"]
-                grade   = stand["grade"]
-                greater = stand["greater"]
-                less    = stand["less"]
-                whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
-                item  = QListWidgetItem(grade)
-                item.setWhatsThis(whats)
-                List.addItem(item)
+        # for stand in standards:
+        #     if(stand["subId"] == str(subId)):
+        #         subId   = stand["subId"]
+        #         grade   = stand["grade"]
+        #         greater = stand["greater"]
+        #         less    = stand["less"]
+        #         whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
+        #         item  = QListWidgetItem(grade)
+        #         item.setWhatsThis(whats)
+        #         List.addItem(item)
 
 def showSub(self, treeWidget):
     subList       = backend.returnSubList()
@@ -346,26 +354,103 @@ def addGrdStndRow(self):
     widget = self.grdStndAddWidget
     widget.insertRow(widget.rowCount())
 
+def getListFromQTableWidget(self, widget):
+    tableList = []
+    totalRows = widget.rowCount()
+    totalCols = widget.columnCount()
+    
+    for row in range(0, totalRows):
+        content = []
+        for col in range(0, totalCols):
+            if(widget.item(row, col) is None):
+                return False
+            colItem = widget.item(row, col).text()
+            content.append(colItem)
+        tableList.append(content)
+    
+    return tableList
+
+def clearGrdStndAddWidget(self):
+    while(self.grdStndAddWidget.rowCount() != 0):
+        self.grdStndAddWidget.removeRow(0)
+    
 def addGrdStnd(self):
     List = self.grdStndList
     if(self.subTreeWidget.currentItem() is None):
         return QMessageBox.about(self, "주의", "등급을 추가할 과목을 선택하세요.")
-    subId = self.subTreeWidget.currentItem().whatsThis(0)
-    grade = self.grdAseScoreName.toPlainText()
-    greater = self.grdAseScoreGre.toPlainText()
-    less = self.grdAseScoreLess.toPlainText()
-    if(grade != ""):
-        whats = ""
-        if(greater != "" and less != ""):
-            if(int(greater) >= int(less)):
-                return QMessageBox.about(self, "주의", "점수 범위 입력 오류.")
-        whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
-        item = QListWidgetItem(grade)
-        item.setWhatsThis(whats)
-        List.addItem(item)
-        store.addStandard(str(subId), str(grade), str(greater), str(less))
-    else:  
-        return QMessageBox.about(self, "주의", "이름을 입력하세요.")
+    tableList = getListFromQTableWidget(self, self.grdStndAddWidget)
+    if(not tableList):
+        return QMessageBox.about(self, "주의", "등급 내용을 모두 채워주세요.")
+    
+    subId     = self.subTreeWidget.currentItem().whatsThis(0)
+    for content in tableList:
+        grade, greater, less = content
+        if(grade != ""):
+            whats = ""
+            if(greater != "" and less != ""):
+                if(int(greater) >= int(less)):
+                    return QMessageBox.about(self, "주의", "점수 범위 입력 오류.")
+            # whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
+            item = QListWidgetItem(grade)
+            # item.setWhatsThis(whats)
+            List.addItem(item)
+            # store.addStandard(str(subId), str(grade), str(greater), str(less))
+            backend.createStandard(int(subId), grade, int(greater), int(less))
+        else:
+            return QMessageBox.about(self, "주의", "이름을 입력하세요.")
+        
+    searchSub(self)
+    clearGrdStndAddWidget(self)
+        
+def delGrdStnd(self):
+    buttonReply = QMessageBox.question(self, '알림', "등급 기준을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        widget = self.grdStndList
+        clickedItem = widget.currentItem()
+        stndId = int(clickedItem.whatsThis())
+        backend.deleteStandradById(stndId)
+        searchSub(self)
+        return QMessageBox.about(self, "알림", "등급 기준 삭제완료.")
+    
+def modGrdStnd(self):
+    if(self.grdStndList.currentItem() is None):
+        return QMessageBox.about(self, "주의", "등급 기준을 선택해주세요.")
+    stndId = self.grdStndList.currentItem().whatsThis()
+    name = self.grdAseScoreName.text()
+    greater = self.grdAseScoreGre.text()
+    less = self.grdAseScoreLess.text()
+    win = StandardModifyInput(name, greater, less)
+    r = win.showModal()
+    if r:
+        name = win.stndName.toPlainText()
+        greater = win.stndGre.toPlainText()
+        less = win.stndLess.toPlainText()
+        backend.updateStandard(int(stndId), name, int(greater), int(less))
+        searchSub(self)
+        return QMessageBox.about(self, "알림", "등급 기준 수정완료.")
+
+# def addGrdStnd(self):
+    # List = self.grdStndList
+    # if(self.subTreeWidget.currentItem() is None):
+    #     return QMessageBox.about(self, "주의", "등급을 추가할 과목을 선택하세요.")
+    # tableList = getListFromQTableWidget(self.grdStndAddWidget)
+    # return print(tableList)
+    # subId = self.subTreeWidget.currentItem().whatsThis(0)
+    # grade = self.grdAseScoreName.toPlainText()
+    # greater = self.grdAseScoreGre.toPlainText()
+    # less = self.grdAseScoreLess.toPlainText()
+    # if(grade != ""):
+    #     whats = ""
+    #     if(greater != "" and less != ""):
+    #         if(int(greater) >= int(less)):
+    #             return QMessageBox.about(self, "주의", "점수 범위 입력 오류.")
+    #     whats = str(subId) + "," + str(grade) + "," + str(greater) + "," + str(less)
+    #     item = QListWidgetItem(grade)
+    #     item.setWhatsThis(whats)
+    #     List.addItem(item)
+    #     store.addStandard(str(subId), str(grade), str(greater), str(less))
+    # else:  
+    #     return QMessageBox.about(self, "주의", "이름을 입력하세요.")
         
 #평가 내용 항목 지우는 함수
 def delAse(self):

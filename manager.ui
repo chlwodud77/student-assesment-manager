@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -367,13 +367,45 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
+               <widget class="QPushButton" name="grdStndRowAddBtn">
+                <property name="text">
+                 <string>행추가</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="grdStndAddWidget">
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>등급이름</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>초과</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>이하</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+              <item>
                <widget class="QPushButton" name="grdStndAddBtn">
                 <property name="text">
                  <string>등급 추가</string>
                 </property>
                </widget>
               </item>
-              <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+              <item>
                <widget class="QFrame" name="frame_12">
                 <property name="maximumSize">
                  <size>
@@ -391,17 +423,20 @@
                  <item>
                   <widget class="QLabel" name="label_8">
                    <property name="text">
-                    <string>이름</string>
+                    <string>선택된등급</string>
                    </property>
                   </widget>
                  </item>
-                 <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-                  <widget class="QPlainTextEdit" name="grdAseScoreName">
-                   <property name="maximumSize">
+                 <item>
+                  <widget class="QLabel" name="grdAseScoreName">
+                   <property name="minimumSize">
                     <size>
-                     <width>16777215</width>
-                     <height>30</height>
+                     <width>88</width>
+                     <height>0</height>
                     </size>
+                   </property>
+                   <property name="text">
+                    <string/>
                    </property>
                   </widget>
                  </item>
@@ -423,30 +458,36 @@
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
-                 <item>
-                  <widget class="QPlainTextEdit" name="grdAseScoreGre">
-                   <property name="maximumSize">
+                 <item alignment="Qt::AlignRight">
+                  <widget class="QLabel" name="grdAseScoreGre">
+                   <property name="minimumSize">
                     <size>
-                     <width>16777215</width>
-                     <height>30</height>
+                     <width>56</width>
+                     <height>0</height>
                     </size>
+                   </property>
+                   <property name="text">
+                    <string/>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLabel" name="label_2">
                    <property name="text">
-                    <string>이상</string>
+                    <string>초과</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QPlainTextEdit" name="grdAseScoreLess">
-                   <property name="maximumSize">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="grdAseScoreLess">
+                   <property name="minimumSize">
                     <size>
-                     <width>16777215</width>
-                     <height>30</height>
+                     <width>56</width>
+                     <height>0</height>
                     </size>
+                   </property>
+                   <property name="text">
+                    <string/>
                    </property>
                   </widget>
                  </item>
@@ -461,40 +502,33 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="grdStndRowAddBtn">
-                <property name="text">
-                 <string>행추가</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QTableWidget" name="grdStndAddWidget">
-                <column>
-                 <property name="text">
-                  <string>등급이름</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>이상</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>이하</string>
-                 </property>
-                </column>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="grdStndAddBtn2">
-                <property name="text">
-                 <string>등급추가</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QListWidget" name="grdStndList"/>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_28">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <item>
+                  <widget class="QPushButton" name="grdStndDelBtn">
+                   <property name="text">
+                    <string>등급삭제</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="grdStndModBtn">
+                   <property name="text">
+                    <string>등급수정</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </item>
              </layout>
             </widget>

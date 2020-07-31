@@ -5,7 +5,7 @@ class SubjectInput(QDialog):
         super().__init__()
         self.initUI()
     def initUI(self):
-        self.setWindowTitle('Sub Window')
+        self.setWindowTitle('과목 추가')
         self.setGeometry(100, 100, 200, 100)
         layout = QVBoxLayout()
         layout.addStretch(1)

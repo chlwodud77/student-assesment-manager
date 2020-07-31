@@ -38,6 +38,8 @@ class WindowClass(QMainWindow, form_class) :
         self.grdAseModBtn.clicked.connect(self.modAse)
         self.grdAseList.clicked.connect(self.activateEdit)
         self.grdStndAddBtn.clicked.connect(self.addGrdStnd)
+        self.grdStndDelBtn.clicked.connect(self.delGrdStnd)
+        self.grdStndModBtn.clicked.connect(self.modGrdStnd)
         self.subSaveBtn.clicked.connect(self.saveSub)
         self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemClicked.connect(self.searchSub)
@@ -196,6 +198,12 @@ class WindowClass(QMainWindow, form_class) :
     
     def addGrdStnd(self):
         subjectManage.addGrdStnd(self)
+        
+    def delGrdStnd(self):
+        subjectManage.delGrdStnd(self)
+    
+    def modGrdStnd(self):
+        subjectManage.modGrdStnd(self)
     
     def delSub(self):
         subjectManage.delSub(self)
