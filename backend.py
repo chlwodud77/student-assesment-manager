@@ -4,11 +4,10 @@ DB_FILE = "studentManager.db"
 SQL_CREATE_ASSESMENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Assesment" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"subId"	INTEGER NOT NULL,
-	"grade"	TEXT,
+    "stndId"	INTEGER,
 	"content"	TEXT,
-	"greater"	INTEGER,
-	"less"	INTEGER,
 	FOREIGN KEY("subId") REFERENCES "Subject"("id")
+    FOREIGN KEY("stndId") REFERENCES "Standard"("id")
 ) """
 SQL_CREATE_SCORE_TABLE = """ CREATE TABLE IF NOT EXISTS "Score" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
