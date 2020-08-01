@@ -202,7 +202,21 @@ def returnStandardById(stndId):
     except sqlite3.IntegrityError:
         print("평가 기준 불러오기 오류")
         return False
-        
+
+def returnScoreRangeAndContentBySubId(subId):
+    try:
+        with conn:
+            sql = """
+                SELECT Assesment.subId, Standard.greater, Standard.less, Assesment.content
+                FROM Assesment INNER JOIN Standard
+                ON Assesment.subId = Standard.subId AND Assesment.stndId = Standard.id
+                WHERE Standard.subId = ?
+                """
+            return conn.cursor().execute(sql, (subId,)).fetchall()
+    except sqlite3.IntegrityError:
+        print("과목 점수별 평가문 불러오기 오류")
+        return False
+
 def deleteAssesmentById(id):
     try:
         with conn:
@@ -369,4 +383,14 @@ def updateStandard(stndId, grade, greater, less):
             return True
     except sqlite3.IntegrityError:
         print("등급 기준 업데이트 오류")
+        return False
+
+def updateScoreById(scoreId, score, asses):
+    try:
+        with conn:
+            sql = "UPDATE Score SET score = ?, asses = ? WHERE id = ?" 
+            conn.cursor().execute(sql, (score, asses, scoreId))
+            return True
+    except sqlite3.IntegrityError:
+        print("점수 업데이트 오류")
         return False
