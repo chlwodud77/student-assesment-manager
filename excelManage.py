@@ -196,6 +196,8 @@ def exlShowClassList(self):
         subjects = backend.returnClassSubList(grade,classes)
         subjects = sorted(subjects)
         for subject in subjects:
+            if(subject[2] is None):
+                continue
             parentSubName = backend.returnSubNameBySubId(int(subject[2]))
             name = parentSubName+" - "+subject[1]
             item = QListWidgetItem(str(name))
