@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>학생평가관리프로그램_v1.0.2</string>
+   <string>학생평가관리프로그램_v1.1.0</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -874,6 +874,42 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <item>
+                <widget class="QFrame" name="frame_29">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_13">
+                  <item>
+                   <widget class="QLabel" name="label_9">
+                    <property name="text">
+                     <string>선택된 과목</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="selectedSubjectLabel">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QListWidget" name="standardListWidget">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QTableWidget" name="classListWidget">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -881,34 +917,17 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <column>
-                  <property name="text">
-                   <string>이름</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>학번</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>점수</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>평가</string>
-                  </property>
-                 </column>
                 </widget>
                </item>
                <item>
                 <widget class="QPlainTextEdit" name="scoreAseEdit">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>100</height>
+                   <height>50</height>
                   </size>
                  </property>
                 </widget>

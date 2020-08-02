@@ -22,6 +22,7 @@ class WindowClass(QMainWindow, form_class) :
         self.insertClassComboBox(self.exlClassList)
         self.exlShowClassList()
         self.clsSetHeaders()
+        self.tabWidget.currentChanged.connect(self.checkChangedTab)
 
         #학급추가 탭
         self.stdClassDelBtn.clicked.connect(self.deleteStdClass)
@@ -264,7 +265,15 @@ class WindowClass(QMainWindow, form_class) :
         classManage.uploadFile(self)
         
     ################-끝-############################
-
+    
+    def checkChangedTab(self):
+        STUDENT_MANAGE = 0
+        SUBJECT_MANAGE = 1
+        SCORE_MANAGE   = 2
+        EXCEL_MANAGE   = 3
+        currentIndex   = self.tabWidget.currentIndex()
+        if(currentIndex == SCORE_MANAGE):
+            self.showSub(self.scoreSubTreeWidget)
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv) 

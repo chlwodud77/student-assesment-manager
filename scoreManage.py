@@ -49,7 +49,7 @@ def showSubClickedLabel(self):
     
 #점수로 생성된 평가문 저장해주는 함수
 def saveAssesment(self):
-    buttonReply = QMessageBox.question(self, '알림', "과목 평가를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    buttonReply = QMessageBox.question(self, '알림', "과목 평가를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
     if buttonReply == QMessageBox.Yes:
         if(self.scoreSubTreeWidget.currentItem() is None):
             return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
@@ -64,26 +64,31 @@ def saveAssesment(self):
                 score   = widget.item(row, SCORE_COL).text()
                 if(score.isdigit()):
                     score = int(score)
-                elif(score == ""):
+                elif(score.replace(" ","") == ""):
                     score = None
+                elif(not score.replace(" ","").isdigit()):
+                    return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
                 scoreId = int(widget.item(row, SCORE_COL).whatsThis())
                 stdId   = int(widget.item(row, HAKBUN_COL).text())
                 asses   = widget.cellWidget(row, ASSES_COL).currentText()
                 
                 backend.updateScoreById(scoreId, score, asses)
             else: #기존에 스코어 존재 X
-                if(widget.item(row, SCORE_COL).whatsThis() == ""):
-                    if(widget.cellWidget(row, ASSES_COL) is None):
-                        asses = widget.item(row, ASSES_COL).text()
-                    else:
-                        asses = widget.cellWidget(row, ASSES_COL).currentText()
+                score = widget.item(row, SCORE_COL).text()
+                print(score)
+                if(widget.cellWidget(row, ASSES_COL) is None):
+                    asses = widget.item(row, ASSES_COL).text()
+                else:
+                    asses = widget.cellWidget(row, ASSES_COL).currentText()
 
-                    if(widget.item(row, SCORE_COL).text().isdigit()):
-                        score = int(widget.item(row, SCORE_COL).text())
-                    elif(score == ""):
-                        score = None
-                    stdId = int(widget.item(row, HAKBUN_COL).text())    
-                    backend.saveScore(subId, stdId, score, asses) # 새로 저장.
+                if(score.isdigit()):
+                    score = int(score)
+                elif(score == ""):
+                    score = None
+                elif(not score.isdigit()):
+                    return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
+                stdId = int(widget.item(row, HAKBUN_COL).text())    
+                backend.saveScore(subId, stdId, score, asses) # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
         showScoreList(self)
     
@@ -257,12 +262,19 @@ def returnClassInteger(classes):
     
 #선택 학급 조회 함수    
 def showClassMemberList(self):
+    self.standardListWidget.clear()
     if(self.scoreSubTreeWidget.currentItem() is None):
         return  QMessageBox.about(self, "주의", "학급 리스트를 불러올 과목을 선택해주세요.")
-    
+    subId             = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
     grade, classes = returnClassInteger(self.classList.currentText())     
     members        = backend.returnClassMemberList(grade, classes) 
+    standards      = backend.returnStandardBySubId(subId)
+    print(standards)
     headers        = ["이름", "학번", "점수", "평가"]
+    self.selectedSubjectLabel.setText(self.scoreSubTreeWidget.currentItem().text(0))
+    for stnd in standards:
+        content = "기준: " + stnd[2] + "  " + str(stnd[3]) + " 초과  " + str(stnd[4]) + " 이하" 
+        self.standardListWidget.addItem(content)
 
     self.classListWidget.setRowCount(len(members))
     self.classListWidget.setColumnCount(4)
