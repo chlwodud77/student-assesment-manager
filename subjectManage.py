@@ -254,6 +254,8 @@ def modGrdStnd(self):
         return QMessageBox.about(self, "알림", "등급 기준 수정완료.")
 
 def delGrdStnd(self):
+    if(self.grdStndList.currentItem() is None):
+        return QMessageBox.about(self, "주의", "등급 기준을 선택해주세요.")
     buttonReply = QMessageBox.question(self, '알림', "등급 기준을 삭제하시겠습니까? 등급 기준 안에 있던 평가문도 같이 삭제됩니다.", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if buttonReply == QMessageBox.Yes:
         widget = self.grdStndList
@@ -284,7 +286,6 @@ def modAse(self):
     assesList = self.grdAseList
     content = self.grdAseEdit.toPlainText()
     item = assesList.currentItem()
-    
     if(item is None):
         return QMessageBox.about(self, "주의", "수정할 평가문을 선택해주세요.")
     assesId = item.whatsThis()
@@ -295,12 +296,12 @@ def modAse(self):
 
 #평가 내용 항목 지우는 함수
 def delAse(self):
+    if(self.grdAseList.currentItem() is None):
+        return QMessageBox.about(self, "주의", "삭제할 평가문을 선택하세요.")
     assesList = self.grdAseList
     currentRow = assesList.currentItem().row()
     assesItems = assesList.selectedItems()
     for item in assesItems:
-        if(item is None):
-            return QMessageBox.about(self, "주의", "삭제할 평가문을 선택하세요.")
         assesId = item.whatsThis()
         backend.deleteAssesmentById(int(assesId))
     showAssesment(self)

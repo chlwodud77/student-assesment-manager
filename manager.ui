@@ -163,7 +163,7 @@
                 <property name="maximumSize">
                  <size>
                   <width>200</width>
-                  <height>455</height>
+                  <height>16777215</height>
                  </size>
                 </property>
                 <property name="layoutDirection">
