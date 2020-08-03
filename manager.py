@@ -22,6 +22,7 @@ class WindowClass(QMainWindow, form_class) :
         self.insertClassComboBox(self.exlClassList)
         self.exlShowClassList()
         self.clsSetHeaders()
+        self.tabWidget.currentChanged.connect(self.checkChangedTab)
 
         #학급추가 탭
         self.stdClassDelBtn.clicked.connect(self.deleteStdClass)
@@ -38,7 +39,8 @@ class WindowClass(QMainWindow, form_class) :
         self.grdAseModBtn.clicked.connect(self.modAse)
         self.grdAseList.clicked.connect(self.activateEdit)
         self.grdStndAddBtn.clicked.connect(self.addGrdStnd)
-        self.subSaveBtn.clicked.connect(self.saveSub)
+        self.grdStndDelBtn.clicked.connect(self.delGrdStnd)
+        self.grdStndModBtn.clicked.connect(self.modGrdStnd)
         self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemClicked.connect(self.searchSub)
         self.subTreeWidget.itemDoubleClicked.connect(self.editItem)
@@ -46,13 +48,13 @@ class WindowClass(QMainWindow, form_class) :
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdStndList.clicked.connect(self.showAssesment)
         self.grdStndRowAddBtn.clicked.connect(self.addGrdStndRow)
-        self.grdAseList.cellChanged.connect(self.occurChange)
         self.grdAseList.installEventFilter(self)
 
 
         #점수입력 탭
         # self.classListWidget.clicked.connect(self.activateScoreEdit)
         self.callClassMemberBtn.clicked.connect(self.showClassMemberList)
+        self.scoreSubTreeWidget.itemDoubleClicked.connect(self.showClassMemberList)
         self.createAssesmentBtn.clicked.connect(self.insertRandomAssesment)
         self.createIndiAssesmentBtn.clicked.connect(self.insertIndiRandomAssesment)
         self.saveAssesmentBtn.clicked.connect(self.saveAssesment)
@@ -196,15 +198,18 @@ class WindowClass(QMainWindow, form_class) :
     
     def addGrdStnd(self):
         subjectManage.addGrdStnd(self)
+        
+    def delGrdStnd(self):
+        subjectManage.delGrdStnd(self)
+    
+    def modGrdStnd(self):
+        subjectManage.modGrdStnd(self)
     
     def delSub(self):
         subjectManage.delSub(self)
         
     def editItem(self):
         subjectManage.editItem(self)
-
-    def occurChange(self, row, column):
-        subjectManage.occurChange(self, row, column)
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):
@@ -216,10 +221,6 @@ class WindowClass(QMainWindow, form_class) :
     def showAssesment(self):
         subjectManage.showAssesment(self)
 
-    #과목, 평가 등급 점수, 평가 내용 db 저장 함수
-    def saveSub(self):
-        subjectManage.saveSub(self)
-        
     # 평가 내용 수정 함수
     def modAse(self):
         subjectManage.modAse(self)
@@ -264,7 +265,15 @@ class WindowClass(QMainWindow, form_class) :
         classManage.uploadFile(self)
         
     ################-끝-############################
-
+    
+    def checkChangedTab(self):
+        STUDENT_MANAGE = 0
+        SUBJECT_MANAGE = 1
+        SCORE_MANAGE   = 2
+        EXCEL_MANAGE   = 3
+        currentIndex   = self.tabWidget.currentIndex()
+        if(currentIndex == SCORE_MANAGE):
+            self.showSub(self.scoreSubTreeWidget)
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv) 

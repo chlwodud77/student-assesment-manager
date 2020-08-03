@@ -5,12 +5,25 @@ from PyQt5.QtWidgets import *
 from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 
+NAME_COL   = 0
+HAKBUN_COL = 1
+SCORE_COL  = 2
+ASSES_COL  = 3
+
+def resizeColumnWidth(self):
+    header = self.classListWidget.horizontalHeader()
+    header.setSectionResizeMode(ASSES_COL, QHeaderView.Stretch)
+    header.setSectionResizeMode(NAME_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(HAKBUN_COL, QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(SCORE_COL, QHeaderView.ResizeToContents)
+    
+
 #점수 입력 테이블 항목 선택 시 내용 표시 함수
 # def activateScoreEdit(self):
 #     focusedItem = self.classListWidget.currentItem()
 #     content     = focusedItem.text()
 #     self.scoreAseEdit.setPlainText(content)
-    
+
 def copyContent(self, col):
     mimeType  = 'application/x-qt-windows-mime;value="Csv"'
     clipboard = QApplication.clipboard()
@@ -36,30 +49,46 @@ def showSubClickedLabel(self):
     
 #점수로 생성된 평가문 저장해주는 함수
 def saveAssesment(self):
-    buttonReply = QMessageBox.question(self, '알림', "생성된 과목 평가를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    buttonReply = QMessageBox.question(self, '알림', "과목 평가를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
     if buttonReply == QMessageBox.Yes:
         if(self.scoreSubTreeWidget.currentItem() is None):
             return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
         if(self.scoreSubTreeWidget.currentItem() is not None and self.classListWidget.rowCount() == 0):
             return QMessageBox.about(self, "오류", "학급을 불러와주세요.")
         
-        for row in range(0, self.classListWidget.rowCount()):
-            if(self.classListWidget.item(row,2).whatsThis() != ""): #기존 스코어 존재
-                asses   = self.classListWidget.cellWidget(row,3).currentText()
-                score   = int(self.classListWidget.item(row,2).text())
-                scoreId = int(self.classListWidget.item(row,2).whatsThis())
-                stdId   = int(self.classListWidget.item(row,1).text())
-                subId   = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+        subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+        widget = self.classListWidget
+
+        for row in range(0, widget.rowCount()):
+            if(widget.item(row, SCORE_COL).whatsThis() != ""): #기존 스코어 존재
+                score   = widget.item(row, SCORE_COL).text()
+                if(score.isdigit()):
+                    score = int(score)
+                elif(score.replace(" ","") == ""):
+                    score = None
+                elif(not score.replace(" ","").isdigit()):
+                    return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
+                scoreId = int(widget.item(row, SCORE_COL).whatsThis())
+                stdId   = int(widget.item(row, HAKBUN_COL).text())
+                asses   = widget.cellWidget(row, ASSES_COL).currentText()
                 
-                if(backend.deleteScoreById(scoreId)): #기존 스코어 삭제 후
-                    backend.saveScore(subId, stdId, score, asses) # 다시 재 저장.
+                backend.updateScoreById(scoreId, score, asses)
             else: #기존에 스코어 존재 X
-                if(self.classListWidget.item(row,2).whatsThis() == "" and self.classListWidget.item(row,2).text() != ""):
-                    asses = self.classListWidget.cellWidget(row,3).currentText()
-                    score = int(self.classListWidget.item(row,2).text())
-                    stdId = int(self.classListWidget.item(row,1).text())    
-                    subId = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-                    backend.saveScore(subId, stdId, score, asses) # 새로 저장.
+                score = widget.item(row, SCORE_COL).text()
+                print(score)
+                if(widget.cellWidget(row, ASSES_COL) is None):
+                    asses = widget.item(row, ASSES_COL).text()
+                else:
+                    asses = widget.cellWidget(row, ASSES_COL).currentText()
+
+                if(score.isdigit()):
+                    score = int(score)
+                elif(score == ""):
+                    score = None
+                elif(not score.isdigit()):
+                    return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
+                stdId = int(widget.item(row, HAKBUN_COL).text())    
+                backend.saveScore(subId, stdId, score, asses) # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
         showScoreList(self)
     
@@ -74,125 +103,149 @@ def returnGradeAssesments(assesments, grade):
     
 #점수, 평가 리스트 보여주는 함수
 def showScoreList(self):
-    scoreInfo  = []
-    subId      = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    stdId      = []
-    assesments = []
     comboBoxAssesList = []
-    grdStandard = backend.returnAssesmentStandardBySubId(subId)
-    subAssesments = backend.returnAssesmentBySubId(subId)
-    for row in range(0, self.classListWidget.rowCount()):
-        stdId.append(int(self.classListWidget.item(row,1).text()))
-    
-    for row in range(0, self.classListWidget.rowCount()):
-        if(backend.returnScore(int(subId), int(stdId[row])) is not None):
-            scoreInfo.append(backend.returnScore(int(subId), int(stdId[row])))
-        else:
-            scoreInfo.append(["","",""]) #scordId, score, asses
-            
-    for row in range(0, self.classListWidget.rowCount()):
-        asses = []
-        if(scoreInfo[row][2] is not ""):
-            asses.append(scoreInfo[row][2])
-        else:
-            asses.append("")
-        assesments.append(asses)
-    
-    for row in range(0, self.classListWidget.rowCount()):
-        score = -1
-        if(scoreInfo[row][1] != ""):
-            scoreId = scoreInfo[row][0]
-            score = scoreInfo[row][1]
-            
-                    
-            self.classListWidget.setItem(row, 2, QTableWidgetItem(str(scoreInfo[row][1]))) #점수입력
-            self.classListWidget.item(row,2).setWhatsThis(str(scoreInfo[row][0])) #점수 id 속성
-        else:
-            self.classListWidget.setItem(row, 2, QTableWidgetItem(""))
+    assesments        = []
+    scoreInfo         = []
+    subId             = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+    rowCount = self.classListWidget.rowCount()
+    widget = self.classListWidget
 
-        if(assesments[row][0] != ""):
-            for stnd in grdStandard:
-                grade = stnd[1]
-                greater = int(stnd[2])
-                less = int(stnd[3])
-                if(greater <= int(score) and int(score) <= less and score != -1):
-                    gradeAsses = returnGradeAssesments(subAssesments, grade)
-                    asses = assesments[row][0]
-                    if(asses not in gradeAsses):
-                        gradeAsses.append(asses)
-                    item = QComboBox()
-                    item.addItems(gradeAsses)
-                    item.setCurrentText(asses)
-                    self.classListWidget.setCellWidget(row, 3, item)
-                    item.setEditable(True)
-            # self.classListWidget.setItem(row, 3, QTableWidgetItem(str(assesments[row][0]))) #평가입력
-        else:
-            item = QComboBox()
-            item.setEditable(True)
-            self.classListWidget.setCellWidget(row, 3, item)
-            # self.classListWidget.setItem(row, 3, QTableWidgetItem(""))
+    for row in range(0, rowCount):
+        stdId = int(widget.item(row, HAKBUN_COL).text())
+        scoreId = None
+        score = None
+        asses = None
+        if(backend.returnScore(subId, stdId) is not None):
+            scoreId, score, asses = backend.returnScore(subId, stdId)
+        print(scoreId, score, asses)
+        if(scoreId is not None): #점수표 존재
+            if(score is None and asses is not None): #점수 미존재, 평가문 존재
+                score = ""
+                scoreItem = QTableWidgetItem(str(score))
+                scoreItem.setWhatsThis(str(scoreId))
+                comboItem = QComboBox()
+                comboItem.addItem(asses)
+                comboItem.setEditable(True)
+                widget.setItem(row, SCORE_COL, scoreItem)
+                widget.setCellWidget(row, ASSES_COL, comboItem)
+            elif(score is not None and asses is None): #점수 존재, 평가문 미존재
+                asses = ""
+                scoreItem = QTableWidgetItem(str(score))
+                scoreItem.setWhatsThis(str(scoreId))
+                comboItem = QComboBox()
+                comboItem.addItem(asses)
+                comboItem.setEditable(True)
+                widget.setItem(row, SCORE_COL, scoreItem)
+                widget.setCellWidget(row, ASSES_COL, comboItem)
+            elif(score is None and asses is None): #점수 미존재, 평가문 미존재
+                score = ""
+                asses = ""
+                scoreItem = QTableWidgetItem(str(score))
+                scoreItem.setWhatsThis(str(scoreId))
+                comboItem = QComboBox()
+                comboItem.addItem(asses)
+                comboItem.setEditable(True)
+                widget.setItem(row, SCORE_COL, scoreItem)
+                widget.setCellWidget(row, ASSES_COL, comboItem)
+            elif(score is not None and asses is not None): #점수 존재, 평가문 존재
+                possibleAssesments = getPossibleAssesmentByScore(subId, int(score))
+                if(asses not in possibleAssesments):
+                    possibleAssesments.append(asses)
+                scoreItem = QTableWidgetItem(str(score))
+                scoreItem.setWhatsThis(str(scoreId))
+                comboItem = QComboBox()
+                comboItem.addItems(possibleAssesments)
+                comboItem.setCurrentText(asses)
+                comboItem.setEditable(True)
+                widget.setItem(row, SCORE_COL, scoreItem)
+                widget.setCellWidget(row, ASSES_COL, comboItem)
+        else: #점수표 미존재
+            scoreItem = QTableWidgetItem("")
+            scoreItem.setWhatsThis("")
+            comboItem = QComboBox()
+            comboItem.addItem("")
+            comboItem.setEditable(True)
+            widget.setItem(row, SCORE_COL, scoreItem)
+            widget.setCellWidget(row, ASSES_COL, comboItem)
+        
+    return
+
+def getPossibleAssesmentByScore(subId, score):
+    items = backend.returnScoreRangeAndContentBySubId(int(subId))
+    possibleAssesments = []
+    for item in items:
+        content = item[3]
+        greater = int(item[1])
+        less = int(item[2])
+        if(greater < score and score <= less):
+            possibleAssesments.append(content)
+    return possibleAssesments
             
 #점수 등급별 랜덤 평가 생성 함수 (선택)
 def insertIndiRandomAssesment(self):
+    widget = self.classListWidget
     if(self.scoreSubTreeWidget.currentItem() is None):
         QMessageBox.about(self, "오류", "과목을 선택해주세요.")
         return
-
     subId         = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    grdStandard   = backend.returnAssesmentStandardBySubId(subId)
-    assesmentList = backend.returnAssesmentBySubId(subId)
-    
     items = []
-    items = self.classListWidget.selectedItems()
+    items = widget.selectedItems()
 
     for i in range(0, len(items)):
-        if(self.classListWidget.selectedItems()[i].column() is 2):
-            row   = self.classListWidget.selectedItems()[i].row()
-            score = self.classListWidget.item(row,2).text()
+        if(widget.selectedItems()[i].column() is SCORE_COL):
+            row   = widget.selectedItems()[i].row()
+            score = widget.item(row, SCORE_COL).text()
             if(score == ""):
-                self.classListWidget.setItem(row,3,QTableWidgetItem(""))
+                comboItem = QComboBox()
+                comboItem.addItems([""])
+                comboItem.setEditable(True)
+                widget.setCellWidget(row, ASSES_COL, comboItem)
             else:
-                for stnd in grdStandard:
-                    grade   = stnd[1]
-                    greater = int(stnd[2])
-                    less    = int(stnd[3])
-                    if(greater <= int(score) and int(score) <= less):
-                        assesments = returnGradeAssesments(assesmentList, grade)
-                        randomIndex = random.randint(0, len(assesments)-1)
-                        comboItem = QComboBox()
-                        comboItem.addItems(assesments)
-                        comboItem.setCurrentIndex(randomIndex)
-                        comboItem.setEditable(True)
-                        # self.classListWidget.setItem(row,3,QTableWidgetItem(assesments[randomIndex]))
-                        self.classListWidget.setCellWidget(row, 3, comboItem)
-
-#점수 등급별 랜덤 평가 생성 함수 (전체)
-def insertRandomAssesment(self):
-    if(self.scoreSubTreeWidget.currentItem() is None):
-        return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
-
-    subId         = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
-    grdStandard   = backend.returnAssesmentStandardBySubId(subId)
-    assesmentList = backend.returnAssesmentBySubId(subId)
-
-    for row in range(0, self.classListWidget.rowCount()):
-        score = self.classListWidget.item(row,2).text()
-        if(score == ""):
-            self.classListWidget.setItem(row,3,QTableWidgetItem(""))
-        else:
-            for stnd in grdStandard:
-                grade   = stnd[1]
-                greater = int(stnd[2])
-                less    = int(stnd[3])
-                if(greater <= int(score) and int(score) <= less):
-                    assesments  = returnGradeAssesments(assesmentList, grade)
+                assesments = getPossibleAssesmentByScore(subId, int(score))
+                if(len(assesments) == 0):
+                    comboItem = QComboBox()
+                    comboItem.addItems([""])
+                    comboItem.setEditable(True)
+                    widget.setCellWidget(row, ASSES_COL, comboItem)
+                else:
                     randomIndex = random.randint(0, len(assesments)-1)
                     comboItem = QComboBox()
                     comboItem.addItems(assesments)
                     comboItem.setCurrentIndex(randomIndex)
                     comboItem.setEditable(True)
-                    # self.classListWidget.setItem(row, 3, QTableWidgetItem(assesments[randomIndex]))
-                    self.classListWidget.setCellWidget(row, 3, comboItem)
+                    widget.setCellWidget(row, ASSES_COL, comboItem)
+
+#점수 등급별 랜덤 평가 생성 함수 (전체)
+def insertRandomAssesment(self):
+    widget = self.classListWidget
+    rowCount = widget.rowCount()
+    if(self.scoreSubTreeWidget.currentItem() is None):
+        return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
+
+    subId         = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
+
+    for row in range(0, rowCount):
+        score = widget.item(row, SCORE_COL).text()
+        if(score == ""):
+            comboItem = QComboBox()
+            comboItem.addItems([""])
+            comboItem.setEditable(True)
+            widget.setCellWidget(row, ASSES_COL, comboItem)
+
+        else:
+            assesments = getPossibleAssesmentByScore(subId, int(score))
+            if(len(assesments) == 0):
+                comboItem = QComboBox()
+                comboItem.addItems([""])
+                comboItem.setEditable(True)
+                widget.setCellWidget(row, ASSES_COL, comboItem)
+            else:
+                randomIndex = random.randint(0, len(assesments)-1)
+                comboItem = QComboBox()
+                comboItem.addItems(assesments)
+                comboItem.setCurrentIndex(randomIndex)
+                comboItem.setEditable(True)
+                widget.setCellWidget(row, ASSES_COL, comboItem)
 
 #학급 리스트 출력 함수
 def insertClassComboBox(self, combobox):
@@ -209,12 +262,19 @@ def returnClassInteger(classes):
     
 #선택 학급 조회 함수    
 def showClassMemberList(self):
+    self.standardListWidget.clear()
     if(self.scoreSubTreeWidget.currentItem() is None):
         return  QMessageBox.about(self, "주의", "학급 리스트를 불러올 과목을 선택해주세요.")
-    
+    subId             = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
     grade, classes = returnClassInteger(self.classList.currentText())     
     members        = backend.returnClassMemberList(grade, classes) 
+    standards      = backend.returnStandardBySubId(subId)
+    print(standards)
     headers        = ["이름", "학번", "점수", "평가"]
+    self.selectedSubjectLabel.setText(self.scoreSubTreeWidget.currentItem().text(0))
+    for stnd in standards:
+        content = "기준: " + stnd[2] + "  " + str(stnd[3]) + " 초과  " + str(stnd[4]) + " 이하" 
+        self.standardListWidget.addItem(content)
 
     self.classListWidget.setRowCount(len(members))
     self.classListWidget.setColumnCount(4)
@@ -223,7 +283,8 @@ def showClassMemberList(self):
     for i in range(0, len(members)):
         name  = QTableWidgetItem(str(members[i][0]))
         stdId = QTableWidgetItem(str(members[i][1]))
-        self.classListWidget.setItem(i, 0, name)
-        self.classListWidget.setItem(i, 1, stdId)
+        self.classListWidget.setItem(i, NAME_COL, name)
+        self.classListWidget.setItem(i, HAKBUN_COL, stdId)
     
     self.showScoreList()
+    resizeColumnWidth(self)

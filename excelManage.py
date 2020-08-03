@@ -142,6 +142,8 @@ def exlShowTotAssesment(self):
         stdId = self.exlClassListWidget.item(i,NAME_COL).whatsThis()
         for asses in assesments:
             for row in asses:
+                if(row[2] is None):
+                    continue
                 if(int(row[1]) == int(stdId)):
                     if(self.exlClassListWidget.item(i,ASSES_COL) is not None): #기존에 내용이 있는 경우 붙여서 추가
                         orgContent = self.exlClassListWidget.item(i,ASSES_COL).text()
@@ -196,6 +198,8 @@ def exlShowClassList(self):
         subjects = backend.returnClassSubList(grade,classes)
         subjects = sorted(subjects)
         for subject in subjects:
+            if(subject[2] is None):
+                continue
             parentSubName = backend.returnSubNameBySubId(int(subject[2]))
             name = parentSubName+" - "+subject[1]
             item = QListWidgetItem(str(name))
