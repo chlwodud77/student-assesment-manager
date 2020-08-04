@@ -62,6 +62,8 @@ class WindowClass(QMainWindow, form_class) :
         self.scoreSubTreeWidget.itemClicked.connect(self.showSubClickedLabel)
         self.scoreAseEdit.textChanged.connect(self.changeScoreAse)
         self.classListWidget.installEventFilter(self)
+        self.selectedScoreResetBtn.clicked.connect(self.resetSelectedScore)
+        self.allScoreResetBtn.clicked.connect(self.resetAllScore)
 
         #엑셀출력 탭
         self.exlClassListWidget.clicked.connect(self.exlActivateEdit)
@@ -144,6 +146,12 @@ class WindowClass(QMainWindow, form_class) :
     
     def changeScoreAse(self):
         scoreManage.changeScoreAse(self)
+        
+    def resetSelectedScore(self):
+        scoreManage.resetSelectedScore(self)
+    
+    def resetAllScore(self):
+        scoreManage.resetAllScore(self)
 
     #선택 학급 조회 함수    
     def showClassMemberList(self):     

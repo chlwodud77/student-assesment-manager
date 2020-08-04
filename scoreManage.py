@@ -42,6 +42,27 @@ def changeScoreAse(self):
     focusedItem    = self.classListWidget.currentItem()
     currentContent = self.scoreAseEdit.toPlainText()
     focusedItem.setText(currentContent)
+    
+def resetSelectedScore(self):
+    widget = self.classListWidget
+    items = widget.selectedItems()
+    if(items == []):
+        return QMessageBox.about(self, "주의", "초기화 할 점수를 선택해주세요.")
+    for item in items:
+        col = item.column()
+        if(col != SCORE_COL):
+            return QMessageBox.about(self, "주의", "초기화 할 점수만 선택해주세요.")
+        item.setText("")
+    
+    return QMessageBox.about(self, "알림", "선택된 점수 초기화 완료. 디비 반영하려면 저장 눌러주세요.")
+
+def resetAllScore(self):
+    widget = self.classListWidget
+    rowCount = widget.rowCount()
+    for row in range(0, rowCount):
+        item = widget.item(row, SCORE_COL).setText("")
+        
+    return QMessageBox.about(self, "알림", "전체 점수 초기화 완료. 디비 반영하려면 저장 눌러주세요.")
 
 #과목 선택 시 라벨에 선택 과목 표시 함수
 def showSubClickedLabel(self):
@@ -75,7 +96,6 @@ def saveAssesment(self):
                 backend.updateScoreById(scoreId, score, asses)
             else: #기존에 스코어 존재 X
                 score = widget.item(row, SCORE_COL).text()
-                print(score)
                 if(widget.cellWidget(row, ASSES_COL) is None):
                     asses = widget.item(row, ASSES_COL).text()
                 else:
@@ -117,7 +137,7 @@ def showScoreList(self):
         asses = None
         if(backend.returnScore(subId, stdId) is not None):
             scoreId, score, asses = backend.returnScore(subId, stdId)
-        print(scoreId, score, asses)
+        # print(scoreId, score, asses)
         if(scoreId is not None): #점수표 존재
             if(score is None and asses is not None): #점수 미존재, 평가문 존재
                 score = ""
@@ -185,11 +205,13 @@ def getPossibleAssesmentByScore(subId, score):
 def insertIndiRandomAssesment(self):
     widget = self.classListWidget
     if(self.scoreSubTreeWidget.currentItem() is None):
-        QMessageBox.about(self, "오류", "과목을 선택해주세요.")
-        return
+        return QMessageBox.about(self, "오류", "과목을 선택해주세요.")
+        
     subId         = int(self.scoreSubTreeWidget.currentItem().whatsThis(0))
     items = []
     items = widget.selectedItems()
+    if(items == []):
+        return QMessageBox.about(self, "주의", "평가를 생성할 점수를 선택해주세요. (중복선택가능)")
 
     for i in range(0, len(items)):
         if(widget.selectedItems()[i].column() is SCORE_COL):
@@ -214,6 +236,8 @@ def insertIndiRandomAssesment(self):
                     comboItem.setCurrentIndex(randomIndex)
                     comboItem.setEditable(True)
                     widget.setCellWidget(row, ASSES_COL, comboItem)
+        else:
+            return QMessageBox.about(self, "주의", "평가를 생성할 점수를 선택해주세요. (중복선택가능)")
 
 #점수 등급별 랜덤 평가 생성 함수 (전체)
 def insertRandomAssesment(self):
@@ -269,7 +293,6 @@ def showClassMemberList(self):
     grade, classes = returnClassInteger(self.classList.currentText())     
     members        = backend.returnClassMemberList(grade, classes) 
     standards      = backend.returnStandardBySubId(subId)
-    print(standards)
     headers        = ["이름", "학번", "점수", "평가"]
     self.selectedSubjectLabel.setText(self.scoreSubTreeWidget.currentItem().text(0))
     for stnd in standards:
