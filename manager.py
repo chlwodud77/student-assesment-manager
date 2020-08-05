@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5 import QtCore
-import sys, sqlite3, random
+from PyQt5 import QtCore, QtGui
+from pathlib import Path
+import sys, os, sqlite3, random, shutil
 import classManage, subjectManage, scoreManage, excelManage
 
 #UI파일 연결
@@ -12,6 +13,7 @@ form_class = uic.loadUiType("manager.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
 class WindowClass(QMainWindow, form_class) :
+    EXIT_CODE_REBOOT = -123
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
@@ -23,6 +25,9 @@ class WindowClass(QMainWindow, form_class) :
         self.exlShowClassList()
         self.clsSetHeaders()
         self.tabWidget.currentChanged.connect(self.checkChangedTab)
+        
+        #메뉴
+        self.actionImport_DB.triggered.connect(self.importDatabase)
 
         #학급추가 탭
         self.stdClassDelBtn.clicked.connect(self.deleteStdClass)
@@ -75,6 +80,32 @@ class WindowClass(QMainWindow, form_class) :
         self.exlSubAddedWidget.itemDoubleClicked.connect(self.exlSubExtClass)
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
         self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
+        
+    def keyPressEvent(self,e):
+        if (e.key() == QtCore.Qt.Key_R and e.modifiers() == QtCore.Qt.ControlModifier ):
+            qApp.exit( WindowClass.EXIT_CODE_REBOOT )
+        
+    ##############엑셀출력###########################
+    def importDatabase(self):
+        DB_NAME = "studentManager.db"
+        targetPath = "./"
+        addFilePath, _ = QFileDialog.getOpenFileName(self, "Open File",
+                                                "./",
+                                                "Data Base File (*.db)")
+        buttonReply = QMessageBox.question(self, 
+            '알림', "db 파일을 대체하시겠습니까? 기존 db 파일은 삭제됩니다.", 
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if(buttonReply == QMessageBox.Yes):
+            # fileName = Path(addFilePath).name
+            if(addFilePath != ""):
+                if(os.path.isfile(DB_NAME)):
+                    # os.rename(targetPath+DB_NAME, targetPath+"old_"+DB_NAME)
+                    os.remove(DB_NAME)
+                    shutil.copyfile(addFilePath, targetPath+DB_NAME)
+                    QMessageBox.about(self, "알림", "프로그램이 재실행됩니다.")
+                    qApp.exit( WindowClass.EXIT_CODE_REBOOT )
+        
+    ################-끝-############################
         
     ##############엑셀출력###########################
     
@@ -283,14 +314,17 @@ class WindowClass(QMainWindow, form_class) :
         if(currentIndex == SCORE_MANAGE):
             self.showSub(self.scoreSubTreeWidget)
 if __name__ == "__main__" :
-    #QApplication : 프로그램을 실행시켜주는 클래스
-    app = QApplication(sys.argv) 
+    currentExitCode = WindowClass.EXIT_CODE_REBOOT
+    while currentExitCode == WindowClass.EXIT_CODE_REBOOT:
+        #QApplication : 프로그램을 실행시켜주는 클래스
+        app = QApplication(sys.argv) 
 
-    #WindowClass의 인스턴스 생성
-    myWindow = WindowClass() 
+        #WindowClass의 인스턴스 생성
+        myWindow = WindowClass() 
 
-    #프로그램 화면을 보여주는 코드
-    myWindow.show()
+        #프로그램 화면을 보여주는 코드
+        myWindow.show()
 
-    #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
-    app.exec_()
+        #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
+        currentExitCode = app.exec_()
+        app = None
