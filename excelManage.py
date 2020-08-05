@@ -6,14 +6,14 @@ from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 
-CELL_WIDTH = 50
-GRADE_COL = 0
-CLASS_COL = 1
-STDNUM_COL = 2
-NAME_COL = 3
-ASSES_COL = 4
-LENGTH_COL = 5
-
+ASSES_CELL_WIDTH  = 50
+LENGTH_CELL_WIDTH = 20
+GRADE_COL         = 0
+CLASS_COL         = 1
+STDNUM_COL        = 2
+NAME_COL          = 3
+ASSES_COL         = 4
+LENGTH_COL        = 5
 
 align_center        = Alignment(horizontal='center', vertical='center')
 wrap_text           = Alignment(vertical="center", wrapText=True)
@@ -39,7 +39,7 @@ def exlActivateEdit(self):
 def showAssesLengthAndState(self, currentContent, row):
     contentLength = len(currentContent)
     contentLengthByte = len(currentContent.encode("utf-8"))
-    lengthItem = QTableWidgetItem(str(contentLength)+" 자 ("+str(contentLengthByte)
+    lengthItem = QTableWidgetItem(str(contentLength)+"자 ("+str(contentLengthByte)
                                     +"바이트)" )
     self.exlClassListWidget.setItem(row, LENGTH_COL, lengthItem)
     if(contentLength > 1000 or contentLengthByte > 3000):
@@ -59,12 +59,13 @@ def exlChangeAse(self):
 #최종 엑셀 파일로 저장 함수
 def exlSaveToFile(self):
     name, _ = QFileDialog.getSaveFileName(self, 'Save File','','Excel files (*.xlsx)')
-    headers = ["이름", "학년", "반", "번호", "평가"]
+    headers = ["이름", "학년", "반", "번호", "평가", "글자수(바이트)"]
     if(name != ""):
         filename = name
-        wb = Workbook()
-        ws = wb.active
-        ws.column_dimensions["E"].width = CELL_WIDTH
+        wb       = Workbook()
+        ws       = wb.active
+        ws.column_dimensions["E"].width = ASSES_CELL_WIDTH 
+        ws.column_dimensions["F"].width = LENGTH_CELL_WIDTH
         content = []
         for i in range(0, self.exlClassListWidget.rowCount()):
             p = []
@@ -76,14 +77,15 @@ def exlSaveToFile(self):
                 p.append(self.exlClassListWidget.item(i,ASSES_COL).text())
             else:
                 p.append("")
+            p.append(self.exlClassListWidget.item(i, LENGTH_COL).text())
             content.append(p)
         for x in range(1, 2):
-            for y in range(1,6):
-                ws.cell(row = x, column = y).value = headers[y-1]
+            for y in range(1, len(headers) + 1):
+                ws.cell(row = x, column = y).value     = headers[y-1]
                 ws.cell(row = x, column = y).alignment = align_center
-                ws.cell(row = x, column = y).border = allround_border
-        for x in range(2,len(content)+2):
-            for y in range(1,6):
+                ws.cell(row = x, column = y).border    = allround_border
+        for x in range(2, len(content)+2):
+            for y in range(1, len(headers) + 1):
                 ws.cell(row = x, column = y).value = content[x-2][y-1]
                 if(y != 5):
                     ws.cell(row = x, column = y).alignment = align_center
