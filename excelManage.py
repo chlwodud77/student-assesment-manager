@@ -59,7 +59,7 @@ def exlChangeAse(self):
 #최종 엑셀 파일로 저장 함수
 def exlSaveToFile(self):
     name, _ = QFileDialog.getSaveFileName(self, 'Save File','','Excel files (*.xlsx)')
-    headers = ["이름", "학년", "반", "번호", "평가", "글자수(바이트)"]
+    headers = ["학년", "반", "번호", "이름", "평가", "글자수(바이트)"]
     if(name != ""):
         filename = name
         wb       = Workbook()
@@ -69,10 +69,10 @@ def exlSaveToFile(self):
         content = []
         for i in range(0, self.exlClassListWidget.rowCount()):
             p = []
-            p.append(self.exlClassListWidget.item(i,NAME_COL).text())
             p.append(int(self.exlClassListWidget.item(i,GRADE_COL).text()))
             p.append(int(self.exlClassListWidget.item(i,CLASS_COL).text()))
             p.append(int(self.exlClassListWidget.item(i,STDNUM_COL).text()))
+            p.append(self.exlClassListWidget.item(i,NAME_COL).text())
             if(self.exlClassListWidget.item(i,ASSES_COL) is not None):
                 p.append(self.exlClassListWidget.item(i,ASSES_COL).text())
             else:
