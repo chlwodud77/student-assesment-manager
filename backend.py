@@ -174,6 +174,26 @@ def returnClassList():
     except sqlite3.IntegrityError:
         print("학급 조회 오류")
 
+def returnParentSubject():
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "SELECT * FROM Subject where parentId is NULL"
+            result = conn.cursor().execute(sql).fetchall()
+            return result
+    except sqlite3.IntegrityError:
+        print("상위 과목 불러오기 오류")
+
+def returnChildSubjectsFromParentId(parentId):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "SELECT * FROM Subject WHERE parentId = ?"
+            result = conn.cursor().execute(sql, (parentId,)).fetchall()
+            return result
+    except sqlite3.IntegrityError:
+        print("하위 과목 불러오기 오류")
+
 def returnChildSubjectId(name, parentId):
     conn = createConnection(DB_FILE)
     try:

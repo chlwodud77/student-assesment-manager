@@ -25,6 +25,8 @@ class WindowClass(QMainWindow, form_class) :
         self.exlShowClassList()
         self.clsSetHeaders()
         self.tabWidget.currentChanged.connect(self.checkChangedTab)
+        self.exlAllShowClassList()
+        self.exlAllShowSubList()
         
         #메뉴
         self.actionImport_DB.triggered.connect(self.importDatabase)
@@ -81,6 +83,10 @@ class WindowClass(QMainWindow, form_class) :
         self.exlSubAddedWidget.itemDoubleClicked.connect(self.exlSubExtClass)
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
         self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
+        self.exlClassAddBtn.clicked.connect(self.exlAddClassList)
+        self.exlAddedClassList.itemDoubleClicked.connect(self.exlExtClassList)
+        self.exlSubjectAddBtn.clicked.connect(self.exlAddSubList)
+        self.exlAddedSubWidget.itemDoubleClicked.connect(self.exlExtSubList)
         
     def keyPressEvent(self,e):
         if (e.key() == QtCore.Qt.Key_R and e.modifiers() == QtCore.Qt.ControlModifier ):
@@ -122,6 +128,24 @@ class WindowClass(QMainWindow, form_class) :
     ################-끝-############################
         
     ##############엑셀출력###########################
+
+    def exlAllShowClassList(self):
+        excelManage.exlAllShowClassList(self)
+
+    def exlAddClassList(self):
+        excelManage.exlAddClassList(self)
+
+    def exlExtClassList(self):
+        excelManage.exlExtClassList(self)
+
+    def exlAllShowSubList(self):
+        excelManage.exlAllShowSubList(self)
+    
+    def exlAddSubList(self):
+        excelManage.exlAddSubList(self)
+
+    def exlExtSubList(self):
+        excelManage.exlExtSubList(self)
     
     #엑셀 테이블 항목 선택 시 내용 표시 함수
     def exlActivateEdit(self):

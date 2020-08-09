@@ -207,3 +207,74 @@ def exlShowClassList(self):
             item = QListWidgetItem(str(name))
             item.setWhatsThis(str(subject[0]))
             self.exlSubListWidget.addItem(item)
+
+def exlAllShowClassList(self):
+    widget = self.exlClassWidget
+    classList = backend.returnClassList()
+
+    for grade, classes in classList:
+        item = QListWidgetItem(str(grade)+"학년 "+str(classes)+"반")
+        widget.addItem(item)
+
+def exlAddClassList(self):
+    srcWidget = self.exlClassWidget
+    targetWidget = self.exlAddedClassList
+    if(srcWidget.selectedItems() is not None):
+        items = srcWidget.selectedItems()
+        for item in items:
+            newItem = QListWidgetItem(item.text())
+            targetWidget.addItem(newItem)
+
+def exlExtClassList(self):
+    widget = self.exlAddedClassList
+    if(widget.currentItem() is not None):
+        row = widget.currentRow()
+        widget.takeItem(row)
+
+def exlAllShowSubList(self):
+    widget = self.exlSubWidget
+    widget.clear()
+    widget.setColumnCount(1)
+    widget.setHeaderLabels(["과목"])
+    parentSubjects = backend.returnParentSubject()
+    for parent in parentSubjects:
+        parentId = int(parent[0])
+        parentName = parent[1]
+        item = QTreeWidgetItem(widget, [parentName])
+        item.setWhatsThis(0, str(parentId)+"-")
+    
+    it = QTreeWidgetItemIterator(widget)
+    while it.value():
+        if("-" in it.value().whatsThis(0)):
+            parentId, trash = it.value().whatsThis(0).split("-")
+            childSubjects = backend.returnChildSubjectsFromParentId(int(parentId))
+            if(len(childSubjects) == 0):
+                it += 1
+            for child in childSubjects:
+                childId = int(child[0])
+                childName = child[1]
+                item = QTreeWidgetItem(it.value())
+                item.setWhatsThis(0, str(childId))
+                item.setText(0, childName)
+        it += 1
+
+def exlAddSubList(self):
+    srcWidget = self.exlSubWidget
+    targetWidget = self.exlAddedSubWidget
+    if(srcWidget.selectedItems() is not None):
+        items = srcWidget.selectedItems()
+        for item in items:
+            if(item.parent() is not None): #자식 노드이면
+                parentItem = item.parent()
+                parentName = parentItem.text(0)
+                childName = item.text(0)
+                childId = item.whatsThis(0)
+                newItem = QListWidgetItem(str(parentName) + " - " + str(childName))
+                newItem.setWhatsThis(str(childId))
+                targetWidget.addItem(newItem)
+
+def exlExtSubList(self):
+    widget = self.exlAddedSubWidget
+    if(widget.currentItem() is not None):
+        row = widget.currentRow()
+        widget.takeItem(row)
