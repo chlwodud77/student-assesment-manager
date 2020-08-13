@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import backend
+from pandas import Series, DataFrame
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
+from showDataFrame import ShowDataFrame
 
 ASSES_CELL_WIDTH  = 50
 LENGTH_CELL_WIDTH = 20
@@ -278,3 +280,74 @@ def exlExtSubList(self):
     if(widget.currentItem() is not None):
         row = widget.currentRow()
         widget.takeItem(row)
+
+def exlPrintMultiAsses(self):
+    classList = []
+    subjectIdList = []
+    dataFrameList = []
+    classTextList = []
+
+    classListWidget = self.exlAddedClassList
+    subjectListWidget = self.exlAddedSubWidget
+    classListCnt = classListWidget.count()
+    subjectListCnt = subjectListWidget.count()
+    
+
+    if(classListCnt == 0 or subjectListCnt == 0): return
+
+    for i in range(0, classListCnt):
+        classText = classListWidget.item(i).text()
+        classTextList.append(classText)
+        grade, classes = returnClassInteger(classText)
+        classList.append([grade, classes])
+
+    for i in range(0, subjectListCnt):
+        subjectId = subjectListWidget.item(i).whatsThis()
+        subjectIdList.append(int(subjectId))
+
+    for item in classList:
+        grade, classes = item
+        gradeList = []
+        classList = []
+        assesment = []
+        classMemberList = backend.returnClassMemberName(int(grade), int(classes))
+        studentNumberList = backend.returnClassMemberNumber(int(grade), int(classes))
+        studentIdList   = backend.returnClassMemberNumber(int(grade), int(classes))
+
+        for i in range(0, len(studentNumberList)):
+            num = str(studentNumberList[i])
+            studentNumberList[i] = num[3:]
+
+        for i in range(0, len(classMemberList)):
+            gradeList.append(grade)
+            classList.append(classes)
+        rawData = {}
+        rawData["학년"]  = gradeList
+        rawData["반"]   = classList 
+        rawData["번호"]  = studentNumberList
+        rawData["이름"]  = classMemberList
+
+        for studentId in studentIdList:
+            
+            assesText = ""
+            for subjectId in subjectIdList:
+                data = backend.returnStudentAssesmentBySubId(subjectId, studentId)
+                if(data != []):
+                    content = data[0]
+                else:
+                    content = ""
+                assesText.strip()
+                content.strip()
+                if(content != ""):
+                    assesText = assesText + " " + content
+
+            assesment.append(assesText)
+        
+        rawData["평가"] = assesment
+
+        df = DataFrame(rawData)
+        dataFrameList.append(df)
+
+    ShowDataFrame.show(self, dataFrameList, classTextList)
+                
+

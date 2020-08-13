@@ -163,7 +163,42 @@ def returnClassMemberList(grade, classes):
             return result
     except sqlite3.IntegrityError:
         print("학급 구성원 조회 오류")
+
+def returnClassMemberName(grade, classes):
+    sconn = createConnection(DB_FILE)
+    sconn.row_factory = lambda cursor, row: row[0]
+
+    try:
+        with sconn:
+            sql = "SELECT name FROM Student WHERE grade = ? and class = ?"
+            result = sconn.cursor().execute(sql, (grade, classes)).fetchall()
+            return result
+    except sqlite3.IntegrityError:
+        print("학급 구성원 조회 오류")
+
+def returnClassMemberNumber(grade, classes):
+    sconn = createConnection(DB_FILE)
+    sconn.row_factory = lambda cursor, row: row[0]
+
+    try:
+        with sconn:
+            sql = "SELECT id FROM Student WHERE grade = ? and class = ?"
+            result = sconn.cursor().execute(sql, (grade, classes)).fetchall()
+            return result
+    except sqlite3.IntegrityError:
+        print("학급 구성원 조회 오류")
         
+def returnStudentAssesmentBySubId(subId, stdId):
+    sconn = createConnection(DB_FILE)
+    sconn.row_factory = lambda cursor, row: row[0]
+    try:
+        with sconn:
+            sql = "SELECT Score.asses FROM Student INNER JOIN Score ON Student.id = Score.stdId WHERE Score.subId = ? and Student.id = ?"
+            result = sconn.cursor().execute(sql, (subId, stdId)).fetchall()
+            return result
+    except sqlite3.IntegrityError:
+        print("평가문 조회 오류")
+
 def returnClassList():
     conn = createConnection(DB_FILE)
     try:

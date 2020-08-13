@@ -87,6 +87,7 @@ class WindowClass(QMainWindow, form_class) :
         self.exlAddedClassList.itemDoubleClicked.connect(self.exlExtClassList)
         self.exlSubjectAddBtn.clicked.connect(self.exlAddSubList)
         self.exlAddedSubWidget.itemDoubleClicked.connect(self.exlExtSubList)
+        self.multiAssesPrintBtn.clicked.connect(self.exlPrintMultiAsses)
         
     def keyPressEvent(self,e):
         if (e.key() == QtCore.Qt.Key_R and e.modifiers() == QtCore.Qt.ControlModifier ):
@@ -174,6 +175,9 @@ class WindowClass(QMainWindow, form_class) :
     #학급별 평가 과목 보여주는 함수
     def exlShowClassList(self):
         excelManage.exlShowClassList(self)
+    
+    def exlPrintMultiAsses(self):
+        excelManage.exlPrintMultiAsses(self)
         
     ################-끝-############################
     

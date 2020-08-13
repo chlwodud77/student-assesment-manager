@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1190</width>
-    <height>746</height>
+    <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -886,8 +886,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>818</width>
-                <height>620</height>
+                <width>774</width>
+                <height>553</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1278,7 +1278,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="multiAssesPrintBtn">
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
@@ -1312,8 +1312,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>512</width>
-                <height>620</height>
+                <width>458</width>
+                <height>553</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -1427,7 +1427,7 @@
      <x>0</x>
      <y>0</y>
      <width>1190</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
