@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>학생평가관리프로그램_v1.1.1</string>
+   <string>학생평가관리프로그램_v1.1.2</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -169,11 +169,6 @@
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
-                <column>
-                 <property name="text">
-                  <string notr="true">1</string>
-                 </property>
-                </column>
                </widget>
               </item>
               <item>
@@ -307,13 +302,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QTreeWidget" name="subTreeWidget">
-                <column>
-                 <property name="text">
-                  <string notr="true">1</string>
-                 </property>
-                </column>
-               </widget>
+               <widget class="QTreeWidget" name="subTreeWidget"/>
               </item>
               <item>
                <widget class="QFrame" name="frame_9">
@@ -776,13 +765,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QTreeWidget" name="scoreSubTreeWidget">
-                <column>
-                 <property name="text">
-                  <string notr="true">1</string>
-                 </property>
-                </column>
-               </widget>
+               <widget class="QTreeWidget" name="scoreSubTreeWidget"/>
               </item>
               <item>
                <widget class="QFrame" name="frame_18">
@@ -1034,142 +1017,6 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QFrame" name="frame">
-          <property name="maximumSize">
-           <size>
-            <width>300</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_21">
-           <item>
-            <widget class="QFrame" name="frame_20">
-             <property name="frameShape">
-              <enum>QFrame::Box</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_18">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_15">
-                <property name="text">
-                 <string>학급선택</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="exlClassList">
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QListWidget" name="exlSubListWidget"/>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_22">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_17">
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QLabel" name="label_3">
-                   <property name="text">
-                    <string>↑</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QLabel" name="label_4">
-                   <property name="text">
-                    <string>↓</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QListWidget" name="exlSubAddedWidget"/>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_24">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_19">
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QPushButton" name="exlSubAddBtn">
-                   <property name="maximumSize">
-                    <size>
-                     <width>75</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="text">
-                    <string>+</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QPushButton" name="exlSubExtBtn">
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="text">
-                    <string>-</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QPushButton" name="printTotAssesBtn">
-                <property name="minimumSize">
-                 <size>
-                  <width>200</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>200</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="text">
-                 <string>종합 평가 출력</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
          <widget class="QFrame" name="frame_30">
           <property name="minimumSize">
            <size>
@@ -1217,11 +1064,6 @@
                 <property name="selectionMode">
                  <enum>QAbstractItemView::MultiSelection</enum>
                 </property>
-                <column>
-                 <property name="text">
-                  <string notr="true">1</string>
-                 </property>
-                </column>
                </widget>
               </item>
              </layout>
@@ -1312,58 +1154,22 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>458</width>
+                <width>774</width>
                 <height>553</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
-               <item>
-                <widget class="QTableWidget" name="exlClassListWidget">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+               <item alignment="Qt::AlignHCenter">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>종합 평가 내용</string>
                  </property>
-                 <column>
-                  <property name="text">
-                   <string>학년</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>반</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>번호</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>이름</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>평가</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>글자수(바이트)</string>
-                  </property>
-                 </column>
                 </widget>
                </item>
                <item>
-                <widget class="QPlainTextEdit" name="exlAseEdit">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>100</height>
-                  </size>
+                <widget class="QTabWidget" name="totalAssesTab">
+                 <property name="currentIndex">
+                  <number>-1</number>
                  </property>
                 </widget>
                </item>

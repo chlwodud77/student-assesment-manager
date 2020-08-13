@@ -1,18 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import backend, sqlite3, store
+import backend, sqlite3
 from PyQt5.QtWidgets import *
 from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 from operator import itemgetter
 from subjectInputDialog import SubjectInput
 from subjectStandardModifyInputDialog import StandardModifyInput
-
-
-# deleteAssesment = []
-
-
-store = store.subjectStore()
 
 def getTextFromSubjectInput():
     win = SubjectInput()
@@ -75,7 +69,6 @@ def showAssesment(self):
     stndGre         = self.grdAseScoreGre
     stndLess        = self.grdAseScoreLess
     clickedStndItem = List.currentItem()
-    deleteAssesment = store.getDeleteAssesment()
     self.grdAseEdit.clear()
     clearQTableWidget(assesWidget)
     
