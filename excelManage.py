@@ -24,9 +24,9 @@ LENGTH_COL        = 5
 dataFrameList = []
 classTextList = []
 
-align_center        = Alignment(horizontal='center', vertical='center')
-wrap_text           = Alignment(vertical="center", wrapText=True)
-allround_border     = Border(left =Side(border_style="thin",
+alignCenter        = Alignment(horizontal='center', vertical='center')
+wrapText           = Alignment(vertical="center", wrapText=True)
+allroundBorder     = Border(left =Side(border_style="thin",
                                         color='000000'),
                             right =Side(border_style="thin",
                                         color='000000'),
@@ -74,8 +74,16 @@ def exlSaveToFile(self):
             for col, i in zip(worksheet.columns, range(0, worksheet.max_column)):
                 if i != ASSES_COL:
                     for cell in col:
-                        alignmentObj = cell.alignment.copy(horizontal="center", vertical="center")
-                        cell.alignment = alignmentObj
+                        cell.alignment = alignCenter
+                        cell.border = allroundBorder
+                if i == ASSES_COL:
+                    for cell in col:
+                        if cell.row == 1:
+                            cell.alignment = alignCenter
+                            cell.border = allroundBorder
+                        else:
+                            cell.alignment = wrapText
+                            cell.border = allroundBorder
     dataFrameList = []
     classTExtList = []
         
@@ -217,17 +225,16 @@ def exlPrintMultiAsses(self):
                     content = data[0]
                 else:
                     content = ""
-                assesText.strip()
-                content.strip()
-                if(content != ""):
+                if(content is not None):
+                    content.strip()
                     assesText = assesText + " " + content
 
+            assesText = assesText.strip()
             contentLength = len(assesText)
             contentLengthByte = len(assesText.encode("utf-8"))
             contentLengthList.append(str(contentLength) + " 자 (" + 
                                     str(contentLengthByte) + " 바이트)")
-            
-            assesment.append(assesText.strip())
+            assesment.append(assesText)
         
         rawData["평가"] = assesment
         rawData["글자수(바이트)"] = contentLengthList
@@ -240,5 +247,11 @@ def exlPrintMultiAsses(self):
         model = PandasModel(df)
         view = QTableView(tab)
         view.setModel(model)
-        view.resizeColumnsToContents()
+        header = view.horizontalHeader()
+        header.setSectionResizeMode(GRADE_COL, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(CLASS_COL, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(STDNUM_COL, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(NAME_COL, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(ASSES_COL, QHeaderView.Stretch)
+        header.setSectionResizeMode(LENGTH_COL, QHeaderView.ResizeToContents)
         tabwidget.addTab(view, classText)

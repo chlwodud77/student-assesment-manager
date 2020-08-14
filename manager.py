@@ -47,13 +47,13 @@ class WindowClass(QMainWindow, form_class) :
         self.grdStndAddBtn.clicked.connect(self.addGrdStnd)
         self.grdStndDelBtn.clicked.connect(self.delGrdStnd)
         self.grdStndModBtn.clicked.connect(self.modGrdStnd)
-        self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemClicked.connect(self.searchSub)
-        self.subTreeWidget.itemDoubleClicked.connect(self.editItem)
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
+        self.subModBtn.clicked.connect(self.modSubName)
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdStndList.clicked.connect(self.showAssesment)
         self.grdStndRowAddBtn.clicked.connect(self.addGrdStndRow)
+        self.grdStndRowResetBtn.clicked.connect(self.resetGrdStndRow)
         self.grdAseList.installEventFilter(self)
 
 
@@ -252,11 +252,17 @@ class WindowClass(QMainWindow, form_class) :
     def modGrdStnd(self):
         subjectManage.modGrdStnd(self)
     
+    def modSubName(self):
+        subjectManage.modSubName(self)
+
     def delSub(self):
         subjectManage.delSub(self)
         
     def editItem(self):
         subjectManage.editItem(self)
+
+    def resetGrdStndRow(self):
+        subjectManage.resetGrdStndRow(self)
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):

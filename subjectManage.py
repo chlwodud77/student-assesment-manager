@@ -98,6 +98,10 @@ def resetStndInfoLabel(self):
     self.grdAseScoreGre.setText("")
     self.grdAseScoreLess.setText("")
 
+def resetGrdStndRow(self):
+    widget = self.grdStndAddWidget
+    clearQTableWidget(widget)
+
 #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
 def searchSub(self):
     clearQTableWidget(self.grdAseList)
@@ -154,6 +158,17 @@ def showSub(self, treeWidget):
                     childItem.setWhatsThis(0,str(subId))
                     childItem.setText(0,childName)
                 it += 1
+
+def modSubName(self):
+    widget = self.subTreeWidget
+    subId = widget.currentItem().whatsThis(0)
+    subName = getTextFromSubjectInput()
+    if(subName):
+        backend.updateSubNameBySubId(int(subId), subName)
+        showSub(self, self.subTreeWidget)
+    else:
+        return
+        
 
 def delSub(self):
     buttonReply = QMessageBox.question(self, '알림', "선택 과목을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)

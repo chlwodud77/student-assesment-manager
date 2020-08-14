@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1190</width>
-    <height>705</height>
+    <width>1210</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <normaloff>icon.ico</normaloff>icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_17">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
@@ -169,6 +169,11 @@
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
                </widget>
               </item>
               <item>
@@ -302,7 +307,16 @@
                </widget>
               </item>
               <item>
-               <widget class="QTreeWidget" name="subTreeWidget"/>
+               <widget class="QTreeWidget" name="subTreeWidget">
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
+               </widget>
               </item>
               <item>
                <widget class="QFrame" name="frame_9">
@@ -314,12 +328,9 @@
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <widget class="QPushButton" name="subSrhBtn">
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
+                  <widget class="QPushButton" name="subModBtn">
                    <property name="text">
-                    <string>조회</string>
+                    <string>수정</string>
                    </property>
                   </widget>
                  </item>
@@ -356,13 +367,32 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <widget class="QPushButton" name="grdStndRowAddBtn">
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
+               <widget class="QFrame" name="frame">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
-                <property name="text">
-                 <string>행추가</string>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_19">
+                 <item>
+                  <widget class="QPushButton" name="grdStndRowAddBtn">
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="text">
+                    <string>행추가</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="grdStndRowResetBtn">
+                   <property name="text">
+                    <string>행초기화</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -765,7 +795,13 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QTreeWidget" name="scoreSubTreeWidget"/>
+               <widget class="QTreeWidget" name="scoreSubTreeWidget">
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
+               </widget>
               </item>
               <item>
                <widget class="QFrame" name="frame_18">
@@ -869,8 +905,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>774</width>
-                <height>553</height>
+                <width>794</width>
+                <height>649</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1064,6 +1100,11 @@
                 <property name="selectionMode">
                  <enum>QAbstractItemView::MultiSelection</enum>
                 </property>
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
                </widget>
               </item>
              </layout>
@@ -1154,8 +1195,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>774</width>
-                <height>553</height>
+                <width>794</width>
+                <height>649</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -1232,7 +1273,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1190</width>
+     <width>1210</width>
      <height>22</height>
     </rect>
    </property>
