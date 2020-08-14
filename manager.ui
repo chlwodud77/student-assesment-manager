@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1057</width>
-    <height>746</height>
+    <width>1210</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>학생평가관리프로그램_v1.1.1</string>
+   <string>학생평가관리프로그램_v1.1.2</string>
   </property>
   <property name="windowIcon">
    <iconset>
     <normaloff>icon.ico</normaloff>icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_17">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
@@ -308,6 +308,9 @@
               </item>
               <item>
                <widget class="QTreeWidget" name="subTreeWidget">
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
                 <column>
                  <property name="text">
                   <string notr="true">1</string>
@@ -325,12 +328,9 @@
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <widget class="QPushButton" name="subSrhBtn">
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
+                  <widget class="QPushButton" name="subModBtn">
                    <property name="text">
-                    <string>조회</string>
+                    <string>수정</string>
                    </property>
                   </widget>
                  </item>
@@ -367,13 +367,32 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <widget class="QPushButton" name="grdStndRowAddBtn">
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
+               <widget class="QFrame" name="frame">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
-                <property name="text">
-                 <string>행추가</string>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_19">
+                 <item>
+                  <widget class="QPushButton" name="grdStndRowAddBtn">
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="text">
+                    <string>행추가</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="grdStndRowResetBtn">
+                   <property name="text">
+                    <string>행초기화</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -886,8 +905,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>685</width>
-                <height>620</height>
+                <width>794</width>
+                <height>649</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1034,7 +1053,13 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QFrame" name="frame">
+         <widget class="QFrame" name="frame_30">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
             <width>300</width>
@@ -1047,123 +1072,102 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_21">
+          <layout class="QVBoxLayout" name="verticalLayout_7">
            <item>
-            <widget class="QFrame" name="frame_20">
+            <widget class="QFrame" name="frame_32">
              <property name="frameShape">
-              <enum>QFrame::Box</enum>
+              <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_18">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_15">
-                <property name="text">
-                 <string>학급선택</string>
+             <layout class="QHBoxLayout" name="horizontalLayout_21">
+              <item>
+               <widget class="QListWidget" name="exlClassWidget">
+                <property name="dragEnabled">
+                 <bool>false</bool>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::NoDragDrop</enum>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::MultiSelection</enum>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="exlClassList">
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
+               <widget class="QTreeWidget" name="exlSubWidget">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::MultiSelection</enum>
                 </property>
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
                </widget>
               </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_33">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_23">
               <item>
-               <widget class="QListWidget" name="exlSubListWidget"/>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_22">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_17">
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QLabel" name="label_3">
-                   <property name="text">
-                    <string>↑</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QLabel" name="label_4">
-                   <property name="text">
-                    <string>↓</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QListWidget" name="exlSubAddedWidget"/>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_24">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_19">
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QPushButton" name="exlSubAddBtn">
-                   <property name="maximumSize">
-                    <size>
-                     <width>75</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="text">
-                    <string>+</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item alignment="Qt::AlignHCenter">
-                  <widget class="QPushButton" name="exlSubExtBtn">
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="text">
-                    <string>-</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QPushButton" name="printTotAssesBtn">
-                <property name="minimumSize">
-                 <size>
-                  <width>200</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>200</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
+               <widget class="QPushButton" name="exlClassAddBtn">
                 <property name="cursor">
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>종합 평가 출력</string>
+                 <string>학급추가</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="exlSubjectAddBtn">
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="text">
+                 <string>과목추가</string>
                 </property>
                </widget>
               </item>
              </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_31">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_22">
+              <item>
+               <widget class="QListWidget" name="exlAddedClassList"/>
+              </item>
+              <item>
+               <widget class="QListWidget" name="exlAddedSubWidget"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="multiAssesPrintBtn">
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="text">
+              <string>평가 출력</string>
+             </property>
             </widget>
            </item>
           </layout>
@@ -1191,58 +1195,22 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>685</width>
-                <height>620</height>
+                <width>794</width>
+                <height>649</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
-               <item>
-                <widget class="QTableWidget" name="exlClassListWidget">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+               <item alignment="Qt::AlignHCenter">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>종합 평가 내용</string>
                  </property>
-                 <column>
-                  <property name="text">
-                   <string>학년</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>반</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>번호</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>이름</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>평가</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>글자수(바이트)</string>
-                  </property>
-                 </column>
                 </widget>
                </item>
                <item>
-                <widget class="QPlainTextEdit" name="exlAseEdit">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>100</height>
-                  </size>
+                <widget class="QTabWidget" name="totalAssesTab">
+                 <property name="currentIndex">
+                  <number>-1</number>
                  </property>
                 </widget>
                </item>
@@ -1305,8 +1273,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1057</width>
-     <height>21</height>
+     <width>1210</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

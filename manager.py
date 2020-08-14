@@ -21,10 +21,10 @@ class WindowClass(QMainWindow, form_class) :
         self.showSub(self.subTreeWidget)
         self.showSub(self.scoreSubTreeWidget)
         self.insertClassComboBox(self.classList)
-        self.insertClassComboBox(self.exlClassList)
-        self.exlShowClassList()
         self.clsSetHeaders()
         self.tabWidget.currentChanged.connect(self.checkChangedTab)
+        self.exlAllShowClassList()
+        self.exlAllShowSubList()
         
         #메뉴
         self.actionImport_DB.triggered.connect(self.importDatabase)
@@ -47,13 +47,13 @@ class WindowClass(QMainWindow, form_class) :
         self.grdStndAddBtn.clicked.connect(self.addGrdStnd)
         self.grdStndDelBtn.clicked.connect(self.delGrdStnd)
         self.grdStndModBtn.clicked.connect(self.modGrdStnd)
-        self.subSrhBtn.clicked.connect(self.searchSub)
         self.subTreeWidget.itemClicked.connect(self.searchSub)
-        self.subTreeWidget.itemDoubleClicked.connect(self.editItem)
         self.subAddBtn.clicked.connect(self.addNewSubjectItem)
+        self.subModBtn.clicked.connect(self.modSubName)
         self.subDelBtn.clicked.connect(self.delSub)
         self.grdStndList.clicked.connect(self.showAssesment)
         self.grdStndRowAddBtn.clicked.connect(self.addGrdStndRow)
+        self.grdStndRowResetBtn.clicked.connect(self.resetGrdStndRow)
         self.grdAseList.installEventFilter(self)
 
 
@@ -72,15 +72,12 @@ class WindowClass(QMainWindow, form_class) :
         self.allScoreResetBtn.clicked.connect(self.resetAllScore)
 
         #엑셀출력 탭
-        self.exlClassListWidget.clicked.connect(self.exlActivateEdit)
-        self.exlAseEdit.textChanged.connect(self.exlChangeAse)
-        self.exlClassList.activated.connect(self.exlShowClassList)
-        self.exlSubAddBtn.clicked.connect(self.exlSubAddClass)
-        self.exlSubListWidget.itemDoubleClicked.connect(self.exlSubAddClass)
-        self.exlSubExtBtn.clicked.connect(self.exlSubExtClass)
-        self.exlSubAddedWidget.itemDoubleClicked.connect(self.exlSubExtClass)
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
-        self.printTotAssesBtn.clicked.connect(self.exlShowTotAssesment)
+        self.exlClassAddBtn.clicked.connect(self.exlAddClassList)
+        self.exlAddedClassList.itemDoubleClicked.connect(self.exlExtClassList)
+        self.exlSubjectAddBtn.clicked.connect(self.exlAddSubList)
+        self.exlAddedSubWidget.itemDoubleClicked.connect(self.exlExtSubList)
+        self.multiAssesPrintBtn.clicked.connect(self.exlPrintMultiAsses)
         
     def keyPressEvent(self,e):
         if (e.key() == QtCore.Qt.Key_R and e.modifiers() == QtCore.Qt.ControlModifier ):
@@ -122,34 +119,31 @@ class WindowClass(QMainWindow, form_class) :
     ################-끝-############################
         
     ##############엑셀출력###########################
-    
-    #엑셀 테이블 항목 선택 시 내용 표시 함수
-    def exlActivateEdit(self):
-        excelManage.exlActivateEdit(self)
-        
-    #엑셀 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
-    def exlChangeAse(self):
-        excelManage.exlChangeAse(self)
 
+    def exlAllShowClassList(self):
+        excelManage.exlAllShowClassList(self)
+
+    def exlAddClassList(self):
+        excelManage.exlAddClassList(self)
+
+    def exlExtClassList(self):
+        excelManage.exlExtClassList(self)
+
+    def exlAllShowSubList(self):
+        excelManage.exlAllShowSubList(self)
+    
+    def exlAddSubList(self):
+        excelManage.exlAddSubList(self)
+
+    def exlExtSubList(self):
+        excelManage.exlExtSubList(self)
+    
     #최종 엑셀 파일로 저장 함수
     def exlSaveToFile(self):
         excelManage.exlSaveToFile(self)
-
-    #학급별 종합 평가 출력 함수
-    def exlShowTotAssesment(self):
-        excelManage.exlShowTotAssesment(self)
-
-    #학급별 평가 과목 선택 추가 함수
-    def exlSubAddClass(self):
-        excelManage.exlSubAddClass(self)
-
-    #학급별 평가 과목 선택 빼기 함수
-    def exlSubExtClass(self):
-        excelManage.exlSubExtClass(self)
-
-    #학급별 평가 과목 보여주는 함수
-    def exlShowClassList(self):
-        excelManage.exlShowClassList(self)
+    
+    def exlPrintMultiAsses(self):
+        excelManage.exlPrintMultiAsses(self)
         
     ################-끝-############################
     
@@ -258,11 +252,17 @@ class WindowClass(QMainWindow, form_class) :
     def modGrdStnd(self):
         subjectManage.modGrdStnd(self)
     
+    def modSubName(self):
+        subjectManage.modSubName(self)
+
     def delSub(self):
         subjectManage.delSub(self)
         
     def editItem(self):
         subjectManage.editItem(self)
+
+    def resetGrdStndRow(self):
+        subjectManage.resetGrdStndRow(self)
 
     #과목 리스트에서 과목 선택 조회 하면 과목 세부 내용 조회 함수
     def searchSub(self):
@@ -325,8 +325,11 @@ class WindowClass(QMainWindow, form_class) :
         SCORE_MANAGE   = 2
         EXCEL_MANAGE   = 3
         currentIndex   = self.tabWidget.currentIndex()
-        if(currentIndex == SCORE_MANAGE):
-            self.showSub(self.scoreSubTreeWidget)
+        if(currentIndex == SUBJECT_MANAGE): self.showSub(self.subTreeWidget)
+        if(currentIndex == SCORE_MANAGE): self.showSub(self.scoreSubTreeWidget)
+        if(currentIndex == EXCEL_MANAGE):
+            self.exlAllShowClassList()
+            self.exlAllShowSubList()
 if __name__ == "__main__" :
     currentExitCode = WindowClass.EXIT_CODE_REBOOT
     while currentExitCode == WindowClass.EXIT_CODE_REBOOT:
