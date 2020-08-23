@@ -4,6 +4,8 @@ import sys, backend, sqlite3, random
 from PyQt5.QtWidgets import *
 from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
+from setScoreFromExcel import SetScoreFromExcel
+from multiAssesInput import MultiAssesInput
 
 NAME_COL   = 0
 HAKBUN_COL = 1
@@ -23,6 +25,14 @@ def resizeColumnWidth(self):
 #     focusedItem = self.classListWidget.currentItem()
 #     content     = focusedItem.text()
 #     self.scoreAseEdit.setPlainText(content)
+
+def openMultiAssesInput(self):
+    a = MultiAssesInput()
+    a.show()
+
+def openTotalScoreSetInput(self):
+    a = SetScoreFromExcel()
+    a.show()
 
 def copyContent(self, col):
     mimeType  = 'application/x-qt-windows-mime;value="Csv"'

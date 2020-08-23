@@ -249,6 +249,16 @@ def returnScore(subId, stdId):
     except sqlite3.IntegrityError:
         print("점수 조회 오류")
 
+def returnScoreBySubIdAndClass(subId, grade, classes):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "SELECT Score.stdId, Score.score FROM Student INNER JOIN Score ON Student.id = Score.stdId AND Score.subId = ? AND Student.grade = ? AND Student.class = ?"
+            result = conn.cursor().execute(sql, (int(subId), int(grade), int(classes))).fetchall()
+            return result
+    except sqlite3.IntegrityError:
+        print("점수 조회 오류")
+
 def returnSubNameBySubId(subId):
     conn = createConnection(DB_FILE)
     try:
@@ -289,6 +299,18 @@ def returnStandardById(stndId):
             return result
     except sqlite3.IntegrityError:
         print("평가 기준 불러오기 오류")
+        return False
+
+def returnIfStudentSubjectScoreExist(subId, stdId):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            result = []
+            sql = "SELECT score, asses FROM Score WHERE subId = ? AND stdId = ?"
+            result = conn.cursor().execute(sql, (subId, stdId)).fetchone()
+            return result
+    except sqlite3.IntegrityError:
+        print("점수 확인 오류")
         return False
 
 def returnScoreRangeAndContentBySubId(subId):
@@ -502,4 +524,26 @@ def updateScoreById(scoreId, score, asses):
             return True
     except sqlite3.IntegrityError:
         print("점수 업데이트 오류")
+        return False
+
+def updateScoreAssesBySubIdAndStdId(subId, stdId, asses):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "UPDATE Score SET asses = ? WHERE subId = ? AND stdId = ?"
+            conn.cursor().execute(sql, (asses, subId, stdId))
+            return True
+    except sqlite3.IntegrityError:
+        print("점수 업데이트 오류")
+        return False
+
+def updateScoreAndAssesBySubIdAndStdId(subId, stdId, score, asses):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "UPDATE Score SET score = ?, asses = ? WHERE subId = ? AND stdId = ?"
+            conn.cursor().execute(sql, (score, asses, subId, stdId))
+            return True
+    except sqlite3.IntegrityError:
+        print("점수 평가 업데이트 오류")
         return False

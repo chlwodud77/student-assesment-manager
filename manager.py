@@ -70,6 +70,8 @@ class WindowClass(QMainWindow, form_class) :
         self.classListWidget.installEventFilter(self)
         self.selectedScoreResetBtn.clicked.connect(self.resetSelectedScore)
         self.allScoreResetBtn.clicked.connect(self.resetAllScore)
+        self.totalScoreInput.clicked.connect(self.openTotalScoreSetInput)
+        self.multiClassAssesBtn.clicked.connect(self.openMultiAssesInput)
 
         #엑셀출력 탭
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
@@ -219,6 +221,12 @@ class WindowClass(QMainWindow, form_class) :
     #학급 리스트 출력 함수
     def insertClassComboBox(self, combobox):
         scoreManage.insertClassComboBox(self, combobox)
+
+    def openTotalScoreSetInput(self):
+        scoreManage.openTotalScoreSetInput(self)
+
+    def openMultiAssesInput(self):
+        scoreManage.openMultiAssesInput(self)
     
     ################-끝-############################
     

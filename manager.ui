@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -906,10 +906,24 @@
                 <x>0</x>
                 <y>0</y>
                 <width>794</width>
-                <height>649</height>
+                <height>648</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QPushButton" name="multiClassAssesBtn">
+                 <property name="text">
+                  <string>복수 학급 평가 생성</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="totalScoreInput">
+                 <property name="text">
+                  <string>전체 점수 입력</string>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QFrame" name="frame_29">
                  <property name="frameShape">
@@ -1196,7 +1210,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>794</width>
-                <height>649</height>
+                <height>648</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
