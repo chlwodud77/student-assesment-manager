@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>dialog</class>
+ <widget class="QDialog" name="dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>복수 학급 평가 생성</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -35,14 +35,14 @@
          <item alignment="Qt::AlignHCenter">
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>과목</string>
+            <string>과목 선택</string>
            </property>
           </widget>
          </item>
          <item alignment="Qt::AlignHCenter">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>학급</string>
+            <string>학급 선택</string>
            </property>
           </widget>
          </item>
@@ -60,6 +60,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QTreeWidget" name="subTreeWidget">
+           <property name="selectionMode">
+            <enum>QAbstractItemView::MultiSelection</enum>
+           </property>
            <column>
             <property name="text">
              <string notr="true">1</string>
@@ -68,7 +71,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="classWidget"/>
+          <widget class="QListWidget" name="classWidget">
+           <property name="selectionMode">
+            <enum>QAbstractItemView::MultiSelection</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -82,10 +89,17 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item alignment="Qt::AlignHCenter">
-          <widget class="QLabel" name="label_3">
+         <item>
+          <widget class="QPushButton" name="addSubBtn">
            <property name="text">
-            <string>항목 더블클릭</string>
+            <string>과목 추가</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addClassBtn">
+           <property name="text">
+            <string>학급 추가</string>
            </property>
           </widget>
          </item>

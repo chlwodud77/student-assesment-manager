@@ -12,12 +12,11 @@ class MultiAssesInput(QDialog, form_class):
         self.setupUi(self)
         self.showSubList()
         self.showClassList()
-        self.subTreeWidget.itemDoubleClicked.connect(self.addSubToWidget)
         self.addedSubListWidget.itemDoubleClicked.connect(self.extSubFromWidget)
-        self.classWidget.itemDoubleClicked.connect(self.addClassToWidget)
         self.addedClassWidget.itemDoubleClicked.connect(self.extClassFromWidget)
         self.assesBtn.clicked.connect(self.setAsses)
-
+        self.addSubBtn.clicked.connect(self.addSubToWidget)
+        self.addClassBtn.clicked.connect(self.addClassToWidget)
 
     def setAsses(self):
         subjectListWidget = self.addedSubListWidget
@@ -28,7 +27,7 @@ class MultiAssesInput(QDialog, form_class):
         subjectListCnt = subjectListWidget.count()
         classListCnt = classListWidget.count()
 
-        if(subjectListCnt == 0 or classListCnt == 0): return
+        if(subjectListCnt == 0 or classListCnt == 0): return QMessageBox.about(self, "주의", "평가를 생성할 과목 또는 학급을 추가해주세요.")
 
         for i in range(0, subjectListCnt):
             subjectId = subjectListWidget.item(i).whatsThis()
@@ -54,6 +53,7 @@ class MultiAssesInput(QDialog, form_class):
                             randomIndex = random.randint(0, len(assesments)-1)
                             content = assesments[randomIndex]
                             backend.updateScoreAssesBySubIdAndStdId(subId, stdId, content)
+        return QMessageBox.about(self, "알림", "평가 생성 완료.")
 
     def showSubList(self):
         widget = self.subTreeWidget

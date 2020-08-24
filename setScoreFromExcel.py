@@ -60,9 +60,15 @@ class SetScoreFromExcel(QDialog, form_class):
         currentTabIndex = tabWidget.currentIndex()
         subjectListCnt = subWidget.count()
 
+        if(currentTabIndex == -1): return QMessageBox.about(self, "주의", "점수를 입력할 엑셀 파일을 먼저 불러오세요.")
+        
+        if(subTabCol == ""): return QMessageBox.about(self, "주의", "과목 점수를 입력할 시작 열을 입력해주세요.")
+
         for i in range(0, subjectListCnt):
             subjectId = subWidget.item(i).whatsThis()
             subjectIdList.append(int(subjectId))
+        
+        if(len(subjectIdList) == 0): return QMessageBox.about(self, "주의", "점수를 입력할 과목을 추가해주세요.")
 
         if(subWidget.count() != 0 and subTabCol.isdigit()):
             stdIdList = []
