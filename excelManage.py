@@ -221,8 +221,8 @@ def exlPrintMultiAsses(self):
             assesText = ""
             for subjectId in subjectIdList:
                 data = backend.returnStudentAssesmentBySubId(subjectId, studentId)
-                if(data != []):
-                    content = data[0]
+                if(len(data) != 0):
+                    content = data[0]["asses"]
                 else:
                     content = ""
                 if(content is not None):
