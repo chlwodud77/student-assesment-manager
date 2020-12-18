@@ -225,9 +225,13 @@ def exlPrintMultiAsses(self):
                     content = data[0]
                 else:
                     content = ""
-                if(content is not None):
+                if(content != ""):
                     content.strip()
-                    assesText = assesText + " " + content
+                    #줄바꿈 모드 여부 확인
+                    if(self.lineChangeCheckBox.checkState() == False):
+                        assesText = assesText + " " + content
+                    else:
+                        assesText = assesText + " \n" + content
 
             assesText = assesText.strip()
             contentLength = len(assesText)

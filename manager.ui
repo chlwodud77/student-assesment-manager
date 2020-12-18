@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="clsAddTab">
        <attribute name="title">
@@ -906,7 +906,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>794</width>
-                <height>648</height>
+                <height>646</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1175,6 +1175,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="lineChangeCheckBox">
+             <property name="text">
+              <string>평가문 줄바꿈 여부</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="multiAssesPrintBtn">
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
@@ -1209,8 +1216,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>238</width>
-                <height>141</height>
+                <width>794</width>
+                <height>646</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -1288,7 +1295,7 @@
      <x>0</x>
      <y>0</y>
      <width>1210</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
