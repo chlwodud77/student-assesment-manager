@@ -32,6 +32,7 @@ class WindowClass(QMainWindow, form_class) :
 
         #학급추가 탭
         self.stdClassDelBtn.clicked.connect(self.deleteStdClass)
+        self.stdDelBtn.clicked.connect(self.deleteStd)
         self.fileUpdBtn.clicked.connect(self.uploadFile)
         self.clsRowAddBtn.clicked.connect(self.clsAddRow)
         self.clsRowDelBtn.clicked.connect(self.clsDelRow)
@@ -299,7 +300,10 @@ class WindowClass(QMainWindow, form_class) :
     def deleteStdClass(self):
         classManage.deleteStdClass(self)
         self.insertClassComboBox(self.classList)
-        self.insertClassComboBox(self.exlClassList)
+
+    def deleteStd(self):
+        classManage.deleteStd(self)
+        self.insertClassComboBox(self.classList)
         
     def clsAddRow(self):
         classManage.clsAddRow(self)
