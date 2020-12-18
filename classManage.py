@@ -15,7 +15,24 @@ def deleteStdClass(self):
             grade, classes = selectedItem.whatsThis(0).split("-")
             if(backend.deleteClass(int(grade), int(classes))):
                 QMessageBox.about(self, "결과", "반 삭제 완료.")
-                showClassList(self)        
+                showClassList(self)  
+            else:
+                QMessageBox.about(self, "결과", "삭제 오류.")
+                showClassList(self)      
+
+def deleteStd(self):
+    buttonReply = QMessageBox.question(self, "알림", "선택 학생을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if (buttonReply == QMessageBox.Yes):
+        selectedItem = self.stdClassTreeWidget.currentItem()
+        if(selectedItem is None):
+            return QMessageBox.about(self, "주의", "삭제할 학생을 선택해주세요.")
+        stdId = selectedItem.whatsThis(0)
+        if(backend.deleteStudent(int(stdId))):
+            QMessageBox.about(self, "결과", "해당 학생 삭제 완료.")
+            showClassList(self)
+        else:
+            QMessageBox.about(self, "결과", "삭제 오류.")
+            showClassList(self)
         
 def clsAddRow(self):
     ListWidget = self.stdListWidget

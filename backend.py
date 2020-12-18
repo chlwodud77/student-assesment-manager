@@ -370,7 +370,18 @@ def deleteClass(grade, classes):
             conn.cursor().execute(sql, (grade, classes))
             return True
     except sqlite3.IntegrityError:
-        print("학생 삭제 오류") 
+        print("학급 삭제 오류") 
+        return False
+
+def deleteStudent(id):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "DELETE FROM Student WHERE id = ?"
+            conn.cursor().execute(sql, (id,))
+            return True
+    except sqlite3.IntegrityError:
+        print("학생 삭제 오류")
         return False
 
 def deleteScoreById(id):
