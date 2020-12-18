@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import backend
+import backend, random
 import pandas as pd
 from pandas import Series, DataFrame
 from openpyxl import load_workbook, Workbook
@@ -219,19 +219,24 @@ def exlPrintMultiAsses(self):
         for studentId in studentIdList:
             
             assesText = ""
+            tmpAsses = []
             for subjectId in subjectIdList:
                 data = backend.returnStudentAssesmentBySubId(subjectId, studentId)
                 if(data != []):
-                    content = data[0]
-                else:
-                    content = ""
-                if(content != ""):
-                    content.strip()
-                    #줄바꿈 모드 여부 확인
-                    if(self.lineChangeCheckBox.checkState() == False):
-                        assesText = assesText + " " + content
+                    tmpAsses.append(data[0])
+
+            #평가위치 셔플 
+            if(self.assesmentShuffleCheckBox.isChecked()):
+                random.shuffle(tmpAsses)
+            
+            for asses in tmpAsses:
+                if(asses != ""):
+                    asses.strip()
+                    #줄바꿈모드 확인
+                    if(self.lineChangeCheckBox.isChecked()):
+                        assesText = assesText + " \n" + asses
                     else:
-                        assesText = assesText + " \n" + content
+                        assesText = assesText + " " + asses
 
             assesText = assesText.strip()
             contentLength = len(assesText)
