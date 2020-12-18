@@ -319,7 +319,6 @@ class WindowClass(QMainWindow, form_class) :
     def uploadCls(self):
         classManage.uploadCls(self)
         self.insertClassComboBox(self.classList)
-        self.insertClassComboBox(self.exlClassList)
         
     #학급 구성원 엑셀 파일로 불러와서 리스트로 보여줌
     def uploadFile(self):
