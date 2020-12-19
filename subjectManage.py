@@ -6,10 +6,20 @@ from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
 from operator import itemgetter
 from subjectInputDialog import SubjectInput
+from subjectModInputDialog import SubjectModInput
 from subjectStandardModifyInputDialog import StandardModifyInput
 
 def getTextFromSubjectInput():
     win = SubjectInput()
+    r = win.showModal()
+    if r:
+        text = win.edit.text()
+        return text
+    else:
+        return False
+
+def getTextFromSubjectModInput():
+    win = SubjectModInput()
     r = win.showModal()
     if r:
         text = win.edit.text()
@@ -162,7 +172,7 @@ def showSub(self, treeWidget):
 def modSubName(self):
     widget = self.subTreeWidget
     subId = widget.currentItem().whatsThis(0)
-    subName = getTextFromSubjectInput()
+    subName = getTextFromSubjectModInput()
     if(subName):
         backend.updateSubNameBySubId(int(subId), subName)
         showSub(self, self.subTreeWidget)
