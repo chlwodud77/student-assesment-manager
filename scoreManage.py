@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, backend, sqlite3, random
+import sys, backend, sqlite3, random, re
 from PyQt5.QtWidgets import *
 from PyQt5.Qt import QApplication, QClipboard
 from PyQt5 import QtCore
@@ -11,6 +11,8 @@ NAME_COL   = 0
 HAKBUN_COL = 1
 SCORE_COL  = 2
 ASSES_COL  = 3
+
+REGEX = re.compile('^[+-]?\d+(\.?\d+)$')
 
 def resizeColumnWidth(self):
     header = self.classListWidget.horizontalHeader()
@@ -93,8 +95,11 @@ def saveAssesment(self):
         for row in range(0, widget.rowCount()):
             if(widget.item(row, SCORE_COL).whatsThis() != ""): #기존 스코어 존재
                 score   = widget.item(row, SCORE_COL).text()
-                if(score.isdigit()):
-                    score = int(score)
+                regTest = REGEX.match(score)
+                if(regTest):
+                    score = float(score)
+                # if(score.isdigit()):
+                #     score = float(score)
                 elif(score.replace(" ","") == ""):
                     score = None
                 elif(not score.replace(" ","").isdigit()):
@@ -205,8 +210,8 @@ def getPossibleAssesmentByScore(subId, score):
     possibleAssesments = []
     for item in items:
         content = item[3]
-        greater = int(item[1])
-        less = int(item[2])
+        greater = float(item[1])
+        less = float(item[2])
         if(greater < score and score <= less):
             possibleAssesments.append(content)
     return possibleAssesments
@@ -233,7 +238,7 @@ def insertIndiRandomAssesment(self):
                 comboItem.setEditable(True)
                 widget.setCellWidget(row, ASSES_COL, comboItem)
             else:
-                assesments = getPossibleAssesmentByScore(subId, int(score))
+                assesments = getPossibleAssesmentByScore(subId, float(score))
                 if(len(assesments) == 0):
                     comboItem = QComboBox()
                     comboItem.addItems([""])
@@ -267,7 +272,7 @@ def insertRandomAssesment(self):
             widget.setCellWidget(row, ASSES_COL, comboItem)
 
         else:
-            assesments = getPossibleAssesmentByScore(subId, int(score))
+            assesments = getPossibleAssesmentByScore(subId, float(score))
             if(len(assesments) == 0):
                 comboItem = QComboBox()
                 comboItem.addItems([""])
