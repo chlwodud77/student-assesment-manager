@@ -23,8 +23,8 @@ SQL_CREATE_STANDARD_TABLE = """ CREATE TABLE IF NOT EXISTS"Standard" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"subId"	INTEGER,
 	"grade"	TEXT,
-	"greater"	INTEGER,
-	"less"	INTEGER,
+	"greater"	REAL,
+	"less"	REAL,
 	FOREIGN KEY("subId") REFERENCES "Subject"("id")
 ) """
 

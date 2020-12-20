@@ -243,11 +243,11 @@ def addGrdStnd(self):
         if(grade != ""):
             whats = ""
             if(greater != "" and less != ""):
-                if(int(greater) >= int(less)):
+                if(float(greater) >= float(less)):
                     return QMessageBox.about(self, "주의", "점수 범위 입력 오류.")
             item = QListWidgetItem(grade)
             List.addItem(item)
-            backend.createStandard(int(subId), grade, int(greater), int(less))
+            backend.createStandard(int(subId), grade, float(greater), float(less))
         else:
             return QMessageBox.about(self, "주의", "이름을 입력하세요.")
         
@@ -267,7 +267,7 @@ def modGrdStnd(self):
         name = win.stndName.toPlainText()
         greater = win.stndGre.toPlainText()
         less = win.stndLess.toPlainText()
-        backend.updateStandard(int(stndId), name, int(greater), int(less))
+        backend.updateStandard(int(stndId), name, float(greater), float(less))
         searchSub(self)
         return QMessageBox.about(self, "알림", "등급 기준 수정완료.")
 
