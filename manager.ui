@@ -39,7 +39,7 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_17">
+   <layout class="QVBoxLayout" name="verticalLayout_16">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="autoFillBackground">
@@ -49,7 +49,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -320,14 +320,17 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <property name="leftMargin">
-            <number>5</number>
+            <number>1</number>
            </property>
            <property name="topMargin">
             <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>5</number>
+            <number>1</number>
            </property>
            <property name="bottomMargin">
             <number>5</number>
@@ -356,7 +359,7 @@
                  <item>
                   <widget class="QLabel" name="subTitleLabel">
                    <property name="text">
-                    <string>새 과목 추가</string>
+                    <string>새 항목(과목) 추가</string>
                    </property>
                   </widget>
                  </item>
@@ -459,13 +462,6 @@
             </widget>
            </item>
            <item>
-            <widget class="Line" name="line_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QFrame" name="grdRngFrm">
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
@@ -476,6 +472,12 @@
              <layout class="QVBoxLayout" name="verticalLayout">
               <property name="spacing">
                <number>8</number>
+              </property>
+              <property name="leftMargin">
+               <number>1</number>
+              </property>
+              <property name="rightMargin">
+               <number>1</number>
               </property>
               <item>
                <widget class="QFrame" name="frame">
@@ -680,21 +682,30 @@
         </item>
         <item>
          <widget class="QFrame" name="frame_10">
+          <property name="maximumSize">
+           <size>
+            <width>500</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_15">
+          <layout class="QHBoxLayout" name="horizontalLayout_32">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <property name="leftMargin">
-            <number>3</number>
+            <number>1</number>
            </property>
            <property name="topMargin">
             <number>3</number>
            </property>
            <property name="rightMargin">
-            <number>3</number>
+            <number>1</number>
            </property>
            <property name="bottomMargin">
             <number>3</number>
@@ -707,7 +718,7 @@
              <property name="frameShadow">
               <enum>QFrame::Plain</enum>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QVBoxLayout" name="verticalLayout_15">
               <property name="leftMargin">
                <number>3</number>
               </property>
@@ -775,13 +786,6 @@
                   </widget>
                  </item>
                 </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="Line" name="line_3">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
                </widget>
               </item>
               <item>
@@ -1000,8 +1004,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>330</width>
-                   <height>606</height>
+                   <width>326</width>
+                   <height>565</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1148,8 +1152,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>888</width>
-                <height>723</height>
+                <width>836</width>
+                <height>695</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1306,6 +1310,247 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>점수변동비교</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <widget class="QFrame" name="frame_22">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_29">
+           <item>
+            <widget class="QFrame" name="frame_24">
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QFrame" name="frame_38">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_21">
+                 <property name="leftMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>학급선택</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="comboBox"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_39">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_23">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>4</number>
+                 </property>
+                 <item>
+                  <widget class="QFrame" name="frame_35">
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_30">
+                    <property name="leftMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>4</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>8</number>
+                    </property>
+                    <item>
+                     <widget class="QTreeWidget" name="treeWidget">
+                      <column>
+                       <property name="text">
+                        <string>비교 과목1 선택 (항목더블클릭)</string>
+                       </property>
+                      </column>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QTreeWidget" name="treeWidget_2">
+                      <column>
+                       <property name="text">
+                        <string>비교 과목2 선택 (항목더블클릭)</string>
+                       </property>
+                      </column>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="label_11">
+                   <property name="text">
+                    <string>선택된 과목</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_36">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_17">
+                    <property name="leftMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>4</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>2</number>
+                    </property>
+                    <item>
+                     <widget class="QListWidget" name="listWidget"/>
+                    </item>
+                    <item>
+                     <widget class="QListWidget" name="listWidget_2"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTreeWidget" name="treeWidget_3">
+                <column>
+                 <property name="text">
+                  <string>점수변동비교 항목(과목) 선택 (항목더블클릭)</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+              <item>
+               <widget class="QListWidget" name="listWidget_3">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_34">
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_18">
+              <item>
+               <widget class="QTableWidget" name="tableWidget">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_37">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_31">
+                 <item>
+                  <widget class="QPushButton" name="pushButton">
+                   <property name="text">
+                    <string>점수변동평가 생성</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_2">
+                   <property name="text">
+                    <string>점수변동평가 저장</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tab">
        <attribute name="title">
         <string>엑셀출력</string>
@@ -1321,7 +1566,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>450</width>
+            <width>16777215</width>
             <height>16777215</height>
            </size>
           </property>
@@ -1384,8 +1629,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>213</width>
-                   <height>294</height>
+                   <width>296</width>
+                   <height>284</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -1425,8 +1670,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>213</width>
-                   <height>294</height>
+                   <width>295</width>
+                   <height>284</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_25">
@@ -1521,8 +1766,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>213</width>
-                   <height>293</height>
+                   <width>296</width>
+                   <height>283</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1550,8 +1795,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>213</width>
-                   <height>293</height>
+                   <width>295</width>
+                   <height>283</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_27">
@@ -1623,9 +1868,9 @@
               <property name="geometry">
                <rect>
                 <x>0</x>
-                <y>0</y>
-                <width>797</width>
-                <height>706</height>
+                <y>8</y>
+                <width>587</width>
+                <height>679</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -1703,7 +1948,7 @@
      <x>0</x>
      <y>0</y>
      <width>1317</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

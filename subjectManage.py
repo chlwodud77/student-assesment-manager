@@ -171,13 +171,16 @@ def showSub(self, treeWidget):
 
 def modSubName(self):
     widget = self.subTreeWidget
-    subId = widget.currentItem().whatsThis(0)
-    subName = getTextFromSubjectModInput()
-    if(subName):
-        backend.updateSubNameBySubId(int(subId), subName)
-        showSub(self, self.subTreeWidget)
+    if(widget.currentItem()):
+        subId = widget.currentItem().whatsThis(0)
+        subName = getTextFromSubjectModInput()
+        if(subName):
+            backend.updateSubNameBySubId(int(subId), subName)
+            showSub(self, self.subTreeWidget)
+        else:
+            return
     else:
-        return
+        QMessageBox.about(self, "알림", "수정할 항목을 선택해주세요.")
         
 
 def delSub(self):
