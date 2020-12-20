@@ -13,7 +13,7 @@ SQL_CREATE_SCORE_TABLE = """ CREATE TABLE IF NOT EXISTS "Score" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"subId"	INTEGER,
 	"stdId"	INTEGER,
-	"score"	INTEGER,
+	"score"	REAL,
 	"asses"	TEXT,
 	FOREIGN KEY("subId") REFERENCES "Subject"("id"),
 	FOREIGN KEY("stdId") REFERENCES "Student"("id")
