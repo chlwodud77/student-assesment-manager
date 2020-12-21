@@ -127,11 +127,12 @@ def returnAssesmentBySubId(subId):
     conn = createConnection(DB_FILE)                  
     try:
         with conn:
-            sql = "SELECT id, grade, content FROM Assesment WHERE subId = ?"
+            sql = "SELECT id, subId, stndId, content FROM Assesment WHERE subId = ?"
             result = conn.cursor().execute(sql, (subId,)).fetchall()
             return result
     except sqlite3.IntegrityError:
         print("과목 평가문 조회 오류")
+
         
 
 def returnClassAssesmentBySubId(subId, grade, classes):
@@ -437,9 +438,11 @@ def createAssesment(subId, stndId, content):
     conn = createConnection(DB_FILE)
     try:
         with conn:
+            cursor = conn.cursor()
             sql = "INSERT into Assesment(subId, stndId, content) VALUES (?,?,?)"
-            conn.cursor().execute(sql, (subId, stndId, content))
-            return True
+            cursor.execute(sql, (subId, stndId, content))
+            lastrowId = cursor.lastrowid
+            return lastrowId
     except sqlite3.IntegrityError:
         print("하위 과목 저장 오류")
         return False
@@ -477,7 +480,8 @@ def createStandard(subId, grade, greater, less):
             cursor = conn.cursor()
             sql = "INSERT into Standard(subId, grade, greater, less) VALUES (?,?,?,?)"
             cursor.execute(sql, (subId, grade, greater, less))
-            return True
+            lastrowId = cursor.lastrowid
+            return lastrowId
     except sqlite3.IntegrityError:
         print("점수 기준 저장 오류")
         return False

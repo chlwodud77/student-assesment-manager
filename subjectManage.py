@@ -8,6 +8,7 @@ from operator import itemgetter
 from subjectInputDialog import SubjectInput
 from subjectModInputDialog import SubjectModInput
 from subjectStandardModifyInputDialog import StandardModifyInput
+from copySubjectManage import CopySubjectManage
 
 def getTextFromSubjectInput():
     win = SubjectInput()
@@ -26,6 +27,11 @@ def getTextFromSubjectModInput():
         return text
     else:
         return False
+
+def openSubjectManage(self):
+    a = CopySubjectManage()
+    a.show()
+    self.showSub(self.subTreeWidget)
 
 def addNewSubjectItem(self):
     subName = getTextFromSubjectInput()

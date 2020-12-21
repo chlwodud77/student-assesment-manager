@@ -49,7 +49,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>1</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -456,6 +456,13 @@
                   </widget>
                  </item>
                 </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="subjectCopyBtn">
+                <property name="text">
+                 <string>과목복사</string>
+                </property>
                </widget>
               </item>
              </layout>
