@@ -6,6 +6,8 @@ from PyQt5 import QtCore, QtGui
 from pathlib import Path
 import sys, os, sqlite3, random, shutil
 import classManage, subjectManage, scoreManage, excelManage
+from adapter import classComboBoxAdapter as ca
+from adapter import subjectTreeWidgetAdpater as sa
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -25,6 +27,10 @@ class WindowClass(QMainWindow, form_class) :
         self.tabWidget.currentChanged.connect(self.checkChangedTab)
         self.exlAllShowClassList()
         self.exlAllShowSubList()
+        ca.insertClassComboBox(self, self.scoreChangeComboBox)
+        sa.showSub(self, self.compareSubjectLeft)
+        sa.showSub(self, self.compareSubjectRight)
+        sa.showSub(self, self.scoreChangeSubject)
         
         #메뉴
         self.actionImport_DB.triggered.connect(self.importDatabase)
@@ -73,6 +79,11 @@ class WindowClass(QMainWindow, form_class) :
         self.allScoreResetBtn.clicked.connect(self.resetAllScore)
         self.totalScoreInput.clicked.connect(self.openTotalScoreSetInput)
         self.multiClassAssesBtn.clicked.connect(self.openMultiAssesInput)
+
+        #점수변동비교탭
+        self.compareSubjectLeft.itemDoubleClicked.connect(self.showLeftSelectedSubject)
+        self.compareSubjectRight.itemDoubleClicked.connect(self.showRightSelectedSubject)
+        self.scoreChangeSubject.itemDoubleClicked.connect(self.showSelectedSubject)
 
         #엑셀출력 탭
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
@@ -149,7 +160,20 @@ class WindowClass(QMainWindow, form_class) :
         excelManage.exlPrintMultiAsses(self)
         
     ################-끝-############################
+
+
+    def showLeftSelectedSubject(self):
+        sa.showSelectedSubjectByListWidget(
+            self, self.compareSubjectLeft, self.selectedSubjectLeft, False)
     
+    def showRightSelectedSubject(self):
+        sa.showSelectedSubjectByListWidget(
+            self, self.compareSubjectRight, self.selectedSubjectRight, False)
+        
+    def showSelectedSubject(self):
+        sa.showSelectedSubjectByListWidget(
+            self, self.scoreChangeSubject, self.selectedChangeSubject, False)
+        
     
 
     ##############점수입력###########################
@@ -331,13 +355,19 @@ class WindowClass(QMainWindow, form_class) :
     ################-끝-############################
     
     def checkChangedTab(self):
-        STUDENT_MANAGE = 0
-        SUBJECT_MANAGE = 1
-        SCORE_MANAGE   = 2
-        EXCEL_MANAGE   = 3
+        STUDENT_MANAGE      = 0
+        SUBJECT_MANAGE      = 1
+        SCORE_MANAGE        = 2
+        SCORE_CHANGE_MANAGE = 3
+        EXCEL_MANAGE        = 4
         currentIndex   = self.tabWidget.currentIndex()
         if(currentIndex == SUBJECT_MANAGE): self.showSub(self.subTreeWidget)
         if(currentIndex == SCORE_MANAGE): self.showSub(self.scoreSubTreeWidget)
+        if(currentIndex == SCORE_CHANGE_MANAGE):
+            ca.insertClassComboBox(self, self.scoreChangeComboBox)
+            sa.showSub(self, self.compareSubjectLeft)
+            sa.showSub(self, self.compareSubjectRight)
+            sa.showSub(self, self.scoreChangeSubject)
         if(currentIndex == EXCEL_MANAGE):
             self.exlAllShowClassList()
             self.exlAllShowSubList()

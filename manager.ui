@@ -1362,7 +1362,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="comboBox"/>
+                  <widget class="QComboBox" name="scoreChangeComboBox"/>
                  </item>
                 </layout>
                </widget>
@@ -1413,7 +1413,7 @@
                      <number>8</number>
                     </property>
                     <item>
-                     <widget class="QTreeWidget" name="treeWidget">
+                     <widget class="QTreeWidget" name="compareSubjectLeft">
                       <column>
                        <property name="text">
                         <string>비교 과목1 선택 (항목더블클릭)</string>
@@ -1422,7 +1422,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QTreeWidget" name="treeWidget_2">
+                     <widget class="QTreeWidget" name="compareSubjectRight">
                       <column>
                        <property name="text">
                         <string>비교 과목2 선택 (항목더블클릭)</string>
@@ -1468,10 +1468,14 @@
                      <number>2</number>
                     </property>
                     <item>
-                     <widget class="QListWidget" name="listWidget"/>
+                     <widget class="QListWidget" name="selectedSubjectLeft">
+                      <property name="batchSize">
+                       <number>100</number>
+                      </property>
+                     </widget>
                     </item>
                     <item>
-                     <widget class="QListWidget" name="listWidget_2"/>
+                     <widget class="QListWidget" name="selectedSubjectRight"/>
                     </item>
                    </layout>
                   </widget>
@@ -1480,7 +1484,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QTreeWidget" name="treeWidget_3">
+               <widget class="QTreeWidget" name="scoreChangeSubject">
                 <column>
                  <property name="text">
                   <string>점수변동비교 항목(과목) 선택 (항목더블클릭)</string>
@@ -1489,7 +1493,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QListWidget" name="listWidget_3">
+               <widget class="QListWidget" name="selectedChangeSubject">
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
@@ -1651,6 +1655,11 @@
                     <property name="wordWrap">
                      <bool>false</bool>
                     </property>
+                    <item>
+                     <property name="text">
+                      <string>학급</string>
+                     </property>
+                    </item>
                    </widget>
                   </item>
                  </layout>
