@@ -1,0 +1,25 @@
+
+class Assesment:
+    def setId(self, id):
+        self.id = id
+    
+    def setSubId(self, subId):
+        self.subId = subId
+    
+    def setStandardId(self, standardId):
+        self.standardId = standardId
+
+    def setContent(self, content):
+        self.content = content
+    
+    def getId(self):
+        return self.id
+    
+    def getSubId(self):
+        return self.subId
+    
+    def getStandardId(self):
+        return self.standardId
+
+    def getContent(self):
+        return self.content

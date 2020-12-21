@@ -62,6 +62,7 @@ class WindowClass(QMainWindow, form_class) :
         self.grdStndRowAddBtn.clicked.connect(self.addGrdStndRow)
         self.grdStndRowResetBtn.clicked.connect(self.resetGrdStndRow)
         self.grdAseList.installEventFilter(self)
+        self.subjectCopyBtn.clicked.connect(self.showSubjectCopy)
 
 
         #점수입력 탭
@@ -314,6 +315,9 @@ class WindowClass(QMainWindow, form_class) :
     #평가 내용 항목 지우는 함수
     def delAse(self):
         subjectManage.delAse(self)
+
+    def showSubjectCopy(self):
+        subjectManage.openSubjectManage(self)
         
     ################-끝-############################
     
