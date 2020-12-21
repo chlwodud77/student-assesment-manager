@@ -219,17 +219,44 @@ def exlPrintMultiAsses(self):
         for studentId in studentIdList:
             
             assesText = ""
-            tmpAsses = []
+            tmpAsses = ["" for i in range(self.exlAddedSubWidget.count())]
+            i = 0
+            
             for subjectId in subjectIdList:
                 data = backend.returnStudentAssesmentBySubId(subjectId, studentId)
                 if(data != []):
-                    tmpAsses.append(data[0])
+                    # tmpAsses.append(data[0])
+                    tmpAsses[i] = data[0]
+                    i += 1
 
+            printAsses = ["" for i in range(self.exlAddedSubWidget.count())]
             #평가위치 셔플 
+            #셔플할인덱스와 셔플안할인덱스를 분리하고 셔플 할 인덱스를 랜덤 순서 돌리고 인데스 별로 새로 평가문추가
             if(self.assesmentShuffleCheckBox.isChecked()):
-                random.shuffle(tmpAsses)
+                noShuffleIndex = []
+                tmpIndex = []
+                shuffleIndex = list(range(self.exlAddedSubWidget.count()))
+                if(self.exlAddedSubWidget.selectedItems() is not None):
+                    items = self.exlAddedSubWidget.selectedItems()
+                    for item in items:
+                        noShuffleIndex.append(self.exlAddedSubWidget.indexFromItem(item).row())
+                
+                    for rmi in noShuffleIndex:
+                        shuffleIndex.remove(rmi)
+
+                    tmpIndex = shuffleIndex[:]
+                    random.shuffle(tmpIndex)
+                    
+                    for j in range(len(noShuffleIndex)):
+                        printAsses[noShuffleIndex[j]] =  tmpAsses[noShuffleIndex[j]]
+                    
+                    for j in range(len(shuffleIndex)):
+                        printAsses[tmpIndex[j]] = tmpAsses[shuffleIndex[j]]
+                    
+            else:
+                printAsses = tmpAsses
             
-            for asses in tmpAsses:
+            for asses in printAsses:
                 if(asses != ""):
                     asses.strip()
                     #줄바꿈모드 확인
