@@ -66,7 +66,7 @@ def resetSelectedScore(self):
             return QMessageBox.about(self, "주의", "초기화 할 점수만 선택해주세요.")
         item.setText("")
     
-    return QMessageBox.about(self, "알림", "선택된 점수 초기화 완료. 디비 반영하려면 저장 눌러주세요.")
+    return QMessageBox.about(self, "알림", "선택된 점수 초기화 완료. DB 반영하려면 저장 눌러주세요.")
 
 def resetAllScore(self):
     widget = self.classListWidget
@@ -74,7 +74,7 @@ def resetAllScore(self):
     for row in range(0, rowCount):
         item = widget.item(row, SCORE_COL).setText("")
         
-    return QMessageBox.about(self, "알림", "전체 점수 초기화 완료. 디비 반영하려면 저장 눌러주세요.")
+    return QMessageBox.about(self, "알림", "전체 점수 초기화 완료. DB 반영하려면 저장 눌러주세요.")
 
 #과목 선택 시 라벨에 선택 과목 표시 함수
 def showSubClickedLabel(self):
@@ -115,12 +115,12 @@ def saveAssesment(self):
                     asses = widget.item(row, ASSES_COL).text()
                 else:
                     asses = widget.cellWidget(row, ASSES_COL).currentText()
-
-                if(score.isdigit()):
-                    score = int(score)
+                regTest = REGEX.match(score)
+                if(regTest):
+                    score = float(score)
                 elif(score == ""):
                     score = None
-                elif(not score.isdigit()):
+                elif(regTest == False):
                     return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
                 stdId = int(widget.item(row, HAKBUN_COL).text())    
                 backend.saveScore(subId, stdId, score, asses) # 새로 저장.
@@ -232,12 +232,15 @@ def insertIndiRandomAssesment(self):
         if(widget.selectedItems()[i].column() is SCORE_COL):
             row   = widget.selectedItems()[i].row()
             score = widget.item(row, SCORE_COL).text()
-            if(score == ""):
+            asses = ""
+            if(widget.item(row, ASSES_COL)):
+                asses = widget.item(row, ASSES_COL).text()
+            if(score == "" and asses != ""):
                 comboItem = QComboBox()
                 comboItem.addItems([""])
                 comboItem.setEditable(True)
                 widget.setCellWidget(row, ASSES_COL, comboItem)
-            else:
+            elif(score != "" and asses == ""):
                 assesments = getPossibleAssesmentByScore(subId, float(score))
                 if(len(assesments) == 0):
                     comboItem = QComboBox()
@@ -253,6 +256,7 @@ def insertIndiRandomAssesment(self):
                     widget.setCellWidget(row, ASSES_COL, comboItem)
         else:
             return QMessageBox.about(self, "주의", "평가를 생성할 점수를 선택해주세요. (중복선택가능)")
+    return QMessageBox.about(self,"알림", "선택 평가 생성 완료. DB에 반영하려면 저장 눌러주세요.")
 
 #점수 등급별 랜덤 평가 생성 함수 (전체)
 def insertRandomAssesment(self):
@@ -265,13 +269,16 @@ def insertRandomAssesment(self):
 
     for row in range(0, rowCount):
         score = widget.item(row, SCORE_COL).text()
-        if(score == ""):
+        asses = ""
+        if(widget.item(row, ASSES_COL)):
+            asses = widget.item(row, ASSES_COL).text()
+        if(score == "" and asses != ""):
             comboItem = QComboBox()
             comboItem.addItems([""])
             comboItem.setEditable(True)
             widget.setCellWidget(row, ASSES_COL, comboItem)
 
-        else:
+        elif(score != "" and asses == ""):
             assesments = getPossibleAssesmentByScore(subId, float(score))
             if(len(assesments) == 0):
                 comboItem = QComboBox()
@@ -285,6 +292,7 @@ def insertRandomAssesment(self):
                 comboItem.setCurrentIndex(randomIndex)
                 comboItem.setEditable(True)
                 widget.setCellWidget(row, ASSES_COL, comboItem)
+    return QMessageBox.about(self, "알림", "전체 평가 생성 완료. DB에 반영하려면 저장 눌러주세요.")
 
 #학급 리스트 출력 함수
 def insertClassComboBox(self, combobox):
