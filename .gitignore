@@ -1,3 +1,5 @@
 student-env/
 __pycache__/
 *.xlsx
+/dist/
+/build/

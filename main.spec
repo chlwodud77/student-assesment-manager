@@ -1,22 +1,32 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import sys ; sys.setrecursionlimit(sys.getrecursionlimit() * 5)
+
 block_cipher = None
 
+added_files = [
+            ( 'assets', 'assets'),
+            ( 'layout', 'layout')
+               ]
 
-a = Analysis(['manager.py'],
+excludes_modules = [
+            'alabaster','babel','bcrypt','cryptography','Cython','docutils','etc',
+            'gevent', 'IPython','jedi','jsonschema','lib2to3','notebook','nbformat',
+            'mkl','PIL','psutil','numexpr','nacl','lxml','scipy','tables','sqlalchemy',
+            'tk','matplotlib','tcl','tornado','zmq'
+            ]
+
+hidden_imports = [
+                ]
+
+a = Analysis(['main.py'],
              pathex=['C:\\Users\\jjay\\Documents\\student-manager'],
              binaries=[],
-             datas=[('manager.ui','.'),
-             ('subjectInputDialog.ui','.'),
-             ('subjectModInputDialog.ui','.'),
-             ('subjectStandardModify.ui','.'),
-             ('multiAssesInput.ui','.'),
-             ('setScoreFromExcel.ui','.'),
-             ('icon.ico','.')],
-             hiddenimports=[],
+             datas=added_files,
+             hiddenimports=hidden_imports,
              hookspath=[],
              runtime_hooks=[],
-             excludes=['babel','gevent','matplotlib','mpl-data','notebook','PIL','PyInstaller','scipy','sphinx','tk'],
+             excludes=excludes_modules,
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
@@ -27,7 +37,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='학생평가관리프로그램v1.2.1',
+          name='학생평가관리v1.2.2',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -40,4 +50,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='manager')
+               name='main')

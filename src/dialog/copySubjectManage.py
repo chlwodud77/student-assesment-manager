@@ -1,7 +1,7 @@
 from utils import backend
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
-from utils.adapter import subjectTreeWidgetAdpater as sa
+from utils.adapter import subjectTreeWidgetAdapter as sa
 from model.Subject import Subject
 from model.Standard import Standard
 

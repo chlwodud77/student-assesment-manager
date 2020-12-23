@@ -9,9 +9,15 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
 from src import classManage, scoreManage, subjectManage, scoreChangeManage, excelManage
-from utils.adapter import subjectTreeWidgetAdpater as sa, classComboBoxAdapter as ca
+from utils.adapter import subjectTreeWidgetAdapter as sa, classComboBoxAdapter as ca
 
 form_class = uic.loadUiType("layout/manager.ui")[0]
+
+try:
+    os.chdir(sys._MEIPASS)
+    print(sys._MEIPASS)
+except:
+    os.chdir(os.getcwd())
 
 
 class WindowClass(QMainWindow, form_class):
@@ -102,8 +108,8 @@ class WindowClass(QMainWindow, form_class):
 
     ##############설정메뉴###########################
     def importDatabase(self):
-        DB_NAME = "studentManager.db"
-        targetPath = "./"
+        DB_NAME = "assets/studentManager.db"
+        targetPath = ""
         addFilePath, _ = QFileDialog.getOpenFileName(self, "Open File",
                                                      "./",
                                                      "Data Base File (*.db)")
@@ -121,7 +127,7 @@ class WindowClass(QMainWindow, form_class):
 
     def exportDatabase(self):
         DB_NAME = "studentManager.db"
-        originPath = "./"
+        originPath = "assets/"
         saveFilePath, _ = QFileDialog.getSaveFileName(self, "Save File",
                                                       "",
                                                       "Data Base File (*.db)")
