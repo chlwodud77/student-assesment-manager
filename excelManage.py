@@ -1,72 +1,75 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import backend, random
 import pandas as pd
-from pandas import Series, DataFrame
-from openpyxl import load_workbook, Workbook
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
-from PyQt5 import QtCore, QtGui
-from showDataFrame import ShowDataFrame
+from openpyxl.styles import Alignment, Border, Side
+from pandas import DataFrame
+
+import backend
+import random
 from pandasModel import PandasModel
 
-ASSES_CELL_COL    = "E"
-LENGTH_CELL_COL   = "F"
-ASSES_CELL_WIDTH  = 50
+ASSES_CELL_COL = "E"
+LENGTH_CELL_COL = "F"
+ASSES_CELL_WIDTH = 50
 LENGTH_CELL_WIDTH = 20
-GRADE_COL         = 0
-CLASS_COL         = 1
-STDNUM_COL        = 2
-NAME_COL          = 3
-ASSES_COL         = 4
-LENGTH_COL        = 5
+GRADE_COL = 0
+CLASS_COL = 1
+STDNUM_COL = 2
+NAME_COL = 3
+ASSES_COL = 4
+LENGTH_COL = 5
 
 dataFrameList = []
 classTextList = []
 
-alignCenter        = Alignment(horizontal='center', vertical='center')
-wrapText           = Alignment(vertical="center", wrapText=True)
-allroundBorder     = Border(left =Side(border_style="thin",
-                                        color='000000'),
-                            right =Side(border_style="thin",
-                                        color='000000'),
-                            top   =Side(border_style="thin",
-                                        color='000000'),
-                            bottom=Side(border_style="thin",
-                                        color='000000'))
+alignCenter = Alignment(horizontal='center', vertical='center')
+wrapText = Alignment(vertical="center", wrapText=True)
+allroundBorder = Border(left=Side(border_style="thin",
+                                  color='000000'),
+                        right=Side(border_style="thin",
+                                   color='000000'),
+                        top=Side(border_style="thin",
+                                 color='000000'),
+                        bottom=Side(border_style="thin",
+                                    color='000000'))
 
-#엑셀 테이블 항목 선택 시 내용 표시 함수
+
+# 엑셀 테이블 항목 선택 시 내용 표시 함수
 def exlActivateEdit(self):
     focusedItem = self.exlClassListWidget.currentItem()
-    if(focusedItem is None):
+    if focusedItem is None:
         self.exlAseEdit.setPlainText("")
-        return 
-    if(focusedItem.column() == ASSES_COL):
+        return
+    if focusedItem.column() == ASSES_COL:
         content = self.exlClassListWidget.currentItem().text()
         self.exlAseEdit.setPlainText(content)
-        
+
+
 def showAssesLengthAndState(self, currentContent, row):
     contentLength = len(currentContent)
     contentLengthByte = len(currentContent.encode("utf-8"))
-    lengthItem = QTableWidgetItem(str(contentLength)+"자 ("+str(contentLengthByte)
-                                    +"바이트)" )
+    lengthItem = QTableWidgetItem(str(contentLength) + "자 (" + str(contentLengthByte)
+                                  + "바이트)")
     self.exlClassListWidget.setItem(row, LENGTH_COL, lengthItem)
-    if(contentLength > 1000 or contentLengthByte > 3000):
-        self.exlClassListWidget.item(row, LENGTH_COL).setBackground(QtGui.QColor(255,0,0))
+    if contentLength > 1000 or contentLengthByte > 3000:
+        self.exlClassListWidget.item(row, LENGTH_COL).setBackground(QtGui.QColor(255, 0, 0))
+
 
 def exlSaveToFile(self):
     global dataFrameList, classTextList
     dfList = dataFrameList
     clList = classTextList
-    if(dfList == []): return QMessageBox.about(self, "주의", "엑셀로 저장할 항목들을 추가해주세요.")
-    name, _ = QFileDialog.getSaveFileName(self, 'Save File','','Excel files (*.xlsx)')
-    
-    if(name == ""): return
+    if not dfList: return QMessageBox.about(self, "주의", "엑셀로 저장할 항목들을 추가해주세요.")
+    name, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Excel files (*.xlsx)')
+
+    if name == "": return
 
     with pd.ExcelWriter(name, engine="openpyxl") as writer:
         for df, cl in zip(dfList, clList):
-            df.to_excel(writer, sheet_name = cl, index=False)
-            
+            df.to_excel(writer, sheet_name=cl, index=False)
+
         for cl in clList:
             worksheet = writer.sheets[cl]
             worksheet.column_dimensions[ASSES_CELL_COL].width = ASSES_CELL_WIDTH
@@ -85,13 +88,14 @@ def exlSaveToFile(self):
                             cell.alignment = wrapText
                             cell.border = allroundBorder
     dataFrameList = []
-    classTExtList = []
-        
+
+
 def returnClassInteger(classes):
-    classes = classes.replace(" ","")
+    classes = classes.replace(" ", "")
     grade, ban = classes.split("학년")
-    ban = ban.replace("반","")
+    ban = ban.replace("반", "")
     return int(grade), int(ban)
+
 
 def exlAllShowClassList(self):
     widget = self.exlClassWidget
@@ -99,23 +103,26 @@ def exlAllShowClassList(self):
     classList = backend.returnClassList()
 
     for grade, classes in classList:
-        item = QListWidgetItem(str(grade)+"학년 "+str(classes)+"반")
+        item = QListWidgetItem(str(grade) + "학년 " + str(classes) + "반")
         widget.addItem(item)
+
 
 def exlAddClassList(self):
     srcWidget = self.exlClassWidget
     targetWidget = self.exlAddedClassList
-    if(srcWidget.selectedItems() is not None):
+    if srcWidget.selectedItems() is not None:
         items = srcWidget.selectedItems()
         for item in items:
             newItem = QListWidgetItem(item.text())
             targetWidget.addItem(newItem)
 
+
 def exlExtClassList(self):
     widget = self.exlAddedClassList
-    if(widget.currentItem() is not None):
+    if widget.currentItem() is not None:
         row = widget.currentRow()
         widget.takeItem(row)
+
 
 def exlAllShowSubList(self):
     widget = self.exlSubWidget
@@ -127,14 +134,14 @@ def exlAllShowSubList(self):
         parentId = int(parent[0])
         parentName = parent[1]
         item = QTreeWidgetItem(widget, [parentName])
-        item.setWhatsThis(0, str(parentId)+"-")
-    
+        item.setWhatsThis(0, str(parentId) + "-")
+
     it = QTreeWidgetItemIterator(widget)
     while it.value():
-        if("-" in it.value().whatsThis(0)):
+        if "-" in it.value().whatsThis(0):
             parentId, trash = it.value().whatsThis(0).split("-")
             childSubjects = backend.returnChildSubjectsFromParentId(int(parentId))
-            if(len(childSubjects) == 0):
+            if len(childSubjects) == 0:
                 it += 1
             for child in childSubjects:
                 childId = int(child[0])
@@ -144,13 +151,14 @@ def exlAllShowSubList(self):
                 item.setText(0, childName)
         it += 1
 
+
 def exlAddSubList(self):
     srcWidget = self.exlSubWidget
     targetWidget = self.exlAddedSubWidget
-    if(srcWidget.selectedItems() is not None):
+    if srcWidget.selectedItems() is not None:
         items = srcWidget.selectedItems()
         for item in items:
-            if(item.parent() is not None): #자식 노드이면
+            if item.parent() is not None:  # 자식 노드이면
                 parentItem = item.parent()
                 parentName = parentItem.text(0)
                 childName = item.text(0)
@@ -159,12 +167,14 @@ def exlAddSubList(self):
                 newItem.setWhatsThis(str(childId))
                 targetWidget.addItem(newItem)
 
+
 def exlExtSubList(self):
     widget = self.exlAddedSubWidget
-    if(widget.currentItem() is not None):
+    if widget.currentItem() is not None:
         row = widget.currentRow()
         widget.takeItem(row)
-                
+
+
 def exlPrintMultiAsses(self):
     tabwidget = self.totalAssesTab
     tabwidget.clear()
@@ -180,8 +190,8 @@ def exlPrintMultiAsses(self):
     subjectListWidget = self.exlAddedSubWidget
     classListCnt = classListWidget.count()
     subjectListCnt = subjectListWidget.count()
-    
-    if(classListCnt == 0 or subjectListCnt == 0): return
+
+    if classListCnt == 0 or subjectListCnt == 0: return
 
     for i in range(0, classListCnt):
         classText = classListWidget.item(i).text()
@@ -201,7 +211,7 @@ def exlPrintMultiAsses(self):
         contentLengthList = []
         classMemberList = backend.returnClassMemberName(int(grade), int(classes))
         studentNumberList = backend.returnClassMemberNumber(int(grade), int(classes))
-        studentIdList   = backend.returnClassMemberNumber(int(grade), int(classes))
+        studentIdList = backend.returnClassMemberNumber(int(grade), int(classes))
 
         for i in range(0, len(studentNumberList)):
             num = str(studentNumberList[i])
@@ -210,58 +220,52 @@ def exlPrintMultiAsses(self):
         for i in range(0, len(classMemberList)):
             gradeList.append(grade)
             classList.append(classes)
-        rawData = {}
-        rawData["학년"]  = gradeList
-        rawData["반"]   = classList 
-        rawData["번호"]  = studentNumberList
-        rawData["이름"]  = classMemberList
+        rawData = {"학년": gradeList, "반": classList, "번호": studentNumberList, "이름": classMemberList}
 
         for studentId in studentIdList:
-            
+
             assesText = ""
-            tmpAsses = ["" for i in range(self.exlAddedSubWidget.count())]
+            tmpAsses = ["" for _ in range(self.exlAddedSubWidget.count())]
             i = 0
-            
+
             for subjectId in subjectIdList:
                 data = backend.returnStudentAssesmentBySubId(subjectId, studentId)
-                if(data != []):
-                    # tmpAsses.append(data[0])
+                if data:
                     tmpAsses[i] = data[0]
                     i += 1
 
-            printAsses = ["" for i in range(self.exlAddedSubWidget.count())]
-            #평가위치 셔플 
-            #셔플할인덱스와 셔플안할인덱스를 분리하고 셔플 할 인덱스를 랜덤 순서 돌리고 인데스 별로 새로 평가문추가
-            if(self.assesmentShuffleCheckBox.isChecked()):
+            printAsses = ["" for _ in range(self.exlAddedSubWidget.count())]
+            # 평가위치 셔플
+            # 셔플할인덱스와 셔플안할인덱스를 분리하고 셔플 할 인덱스를 랜덤 순서 돌리고 인데스 별로 새로 평가문추가
+            if self.assesmentShuffleCheckBox.isChecked():
                 noShuffleIndex = []
-                tmpIndex = []
                 shuffleIndex = list(range(self.exlAddedSubWidget.count()))
-                if(self.exlAddedSubWidget.selectedItems() is not None):
+                if self.exlAddedSubWidget.selectedItems() is not None:
                     items = self.exlAddedSubWidget.selectedItems()
-                    for item in items:
-                        noShuffleIndex.append(self.exlAddedSubWidget.indexFromItem(item).row())
-                
+                    for it in items:
+                        noShuffleIndex.append(self.exlAddedSubWidget.indexFromItem(it).row())
+
                     for rmi in noShuffleIndex:
                         shuffleIndex.remove(rmi)
 
                     tmpIndex = shuffleIndex[:]
                     random.shuffle(tmpIndex)
-                    
+
                     for j in range(len(noShuffleIndex)):
-                        printAsses[noShuffleIndex[j]] =  tmpAsses[noShuffleIndex[j]]
-                    
+                        printAsses[noShuffleIndex[j]] = tmpAsses[noShuffleIndex[j]]
+
                     for j in range(len(shuffleIndex)):
                         printAsses[tmpIndex[j]] = tmpAsses[shuffleIndex[j]]
-                    
+
             else:
                 printAsses = tmpAsses
-            
+
             for asses in printAsses:
-                if(asses != ""):
-                    if(asses is None): asses = ""
+                if asses != "":
+                    if asses is None: continue
                     asses.strip()
-                    #줄바꿈모드 확인
-                    if(self.lineChangeCheckBox.isChecked()):
+                    # 줄바꿈모드 확인
+                    if self.lineChangeCheckBox.isChecked():
                         assesText = assesText + "\n" + asses
                     else:
                         assesText = assesText + " " + asses
@@ -269,10 +273,10 @@ def exlPrintMultiAsses(self):
             assesText = assesText.strip()
             contentLength = len(assesText)
             contentLengthByte = len(assesText.encode("utf-8"))
-            contentLengthList.append(str(contentLength) + " 자 (" + 
-                                    str(contentLengthByte) + " 바이트)")
+            contentLengthList.append(str(contentLength) + " 자 (" +
+                                     str(contentLengthByte) + " 바이트)")
             assesment.append(assesText)
-        
+
         rawData["평가"] = assesment
         rawData["글자수(바이트)"] = contentLengthList
 

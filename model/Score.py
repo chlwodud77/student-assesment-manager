@@ -1,9 +1,10 @@
 import backend
 
+
 class Score:
     def setId(self, id):
         self.id = id
-    
+
     def setSubId(self, subId):
         self.subId = subId
 
@@ -18,10 +19,10 @@ class Score:
 
     def getId(self):
         return self.id
-    
+
     def getSubId(self):
         return self.subId
-    
+
     def getStdId(self):
         return self.stdId
 
@@ -30,6 +31,7 @@ class Score:
 
     def getAsses(self):
         return self.asses
+
 
 def getScoreBySubIdAndClass(subId, grade, classes):
     try:
@@ -56,26 +58,33 @@ def getScoreBySubIdAndClass(subId, grade, classes):
         print(e)
         return []
 
+
 def saveScore(subId, stdId, score, asses):
     try:
         result = backend.saveScore(subId, stdId, score, asses)
-        if(result == True): return True
-        else: return False
+        if result:
+            return True
+        else:
+            return False
     except Exception as e:
         print(e)
+
 
 def updateScore(subId, stdId, score, asses):
     try:
         result = backend.updateScoreAndAssesBySubIdAndStdId(subId, stdId, score, asses)
-        if(result == True): return True
-        else: return False
+        if result:
+            return True
+        else:
+            return False
     except Exception as e:
         print(e)
+
 
 def isScoreExist(subId, stdId):
     try:
         result = backend.returnScore(subId, stdId)
-        if(result == None): return True
+        if result is None: return True
         return False
     except Exception as e:
         print(e)

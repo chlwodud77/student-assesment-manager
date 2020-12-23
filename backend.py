@@ -1,6 +1,6 @@
 import sqlite3
 
-DB_FILE = "studentManager.db"
+DB_FILE = "assets/studentManager.db"
 SQL_CREATE_ASSESMENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Assesment" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"subId"	INTEGER NOT NULL,
@@ -42,6 +42,7 @@ SQL_CREATE_SUBJECT_TABLE = """ CREATE TABLE IF NOT EXISTS "Subject" (
 	"parentId"	INTEGER
 ) """
 
+
 def createConnection(DB_FILE):
     conn = None
     try:
@@ -51,12 +52,14 @@ def createConnection(DB_FILE):
         print(e)
     return conn
 
+
 def createTable(conn, SQL_CREATE_TABLE):
     try:
         c = conn.cursor()
         c.execute(SQL_CREATE_TABLE)
     except sqlite3.Error as e:
         print(e)
+
 
 conn = createConnection(DB_FILE)
 
@@ -68,7 +71,7 @@ if conn is not None:
     createTable(conn, SQL_CREATE_STANDARD_TABLE)
     conn.commit()
     conn.close()
-    
+
 
 def returnAssesmentsByStandardId(stndId):
     conn = createConnection(DB_FILE)
@@ -81,6 +84,7 @@ def returnAssesmentsByStandardId(stndId):
         print("과목 평가문 조회 오류")
         return False
 
+
 def returnAssesmetnStandardBySubIdAndGrade(subId, grade):
     conn = createConnection(DB_FILE)
     try:
@@ -91,8 +95,9 @@ def returnAssesmetnStandardBySubIdAndGrade(subId, grade):
     except sqlite3.IntegrityError:
         print("과목 평가문 조회 오류")
 
+
 def returnAssesmentContentBySubIdAndGrade(subId, grade):
-    sconn = sqlite3.connect("studentManager.db")
+    sconn = sqlite3.connect("assets/studentManager.db")
     # sconn.row_factory = lambda cursor, row: row[0]
     try:
         with sconn:
@@ -101,7 +106,7 @@ def returnAssesmentContentBySubIdAndGrade(subId, grade):
             return result
     except sqlite3.IntegrityError:
         print("과목 평가문 조회 오류")
-    
+
 
 def returnAssesmentContentById(id):
     conn = createConnection(DB_FILE)
@@ -112,7 +117,8 @@ def returnAssesmentContentById(id):
             return result
     except sqlite3.IntegrityError:
         print("과목 평가문 조회 오류")
-        
+
+
 def returnAssesmentStandardBySubId(subId):
     conn = createConnection(DB_FILE)
     try:
@@ -122,9 +128,10 @@ def returnAssesmentStandardBySubId(subId):
             return result
     except sqlite3.IntegrityError:
         print("과목 조회 오류")
-        
-def returnAssesmentBySubId(subId):       
-    conn = createConnection(DB_FILE)                  
+
+
+def returnAssesmentBySubId(subId):
+    conn = createConnection(DB_FILE)
     try:
         with conn:
             sql = "SELECT id, subId, stndId, content FROM Assesment WHERE subId = ?"
@@ -133,28 +140,32 @@ def returnAssesmentBySubId(subId):
     except sqlite3.IntegrityError:
         print("과목 평가문 조회 오류")
 
-        
 
 def returnClassAssesmentBySubId(subId, grade, classes):
     conn = createConnection(DB_FILE)
     try:
         with conn:
-            sql = "SELECT Student.name, Student.id, Score.asses FROM Student INNER JOIN Score ON Student.id = Score.stdId WHERE Score.subId = ? and Student.grade = ? and Student.class = ?"
+            sql = "SELECT Student.name, Student.id, Score.asses FROM Student INNER JOIN Score ON Student.id = " \
+                  "Score.stdId WHERE Score.subId = ? and Student.grade = ? and Student.class = ? "
             result = conn.cursor().execute(sql, (subId, grade, classes)).fetchall()
             return result
     except sqlite3.IntegrityError:
         print("과목 조회 오류")
 
+
 def returnClassSubList(grade, classes):
     conn = createConnection(DB_FILE)
     try:
         with conn:
-            sql = "select DISTINCT Subject.id as subId, Subject.subName, Subject.parentId FROM Subject INNER JOIN Score ON Score.subId = Subject.id INNER JOIN Student ON Score.stdId = Student.id WHERE Student.grade = ? and Student.class = ?"
+            sql = "select DISTINCT Subject.id as subId, Subject.subName, Subject.parentId FROM Subject INNER JOIN " \
+                  "Score ON Score.subId = Subject.id INNER JOIN Student ON Score.stdId = Student.id WHERE " \
+                  "Student.grade = ? and Student.class = ? "
             result = conn.cursor().execute(sql, (grade, classes)).fetchall()
             return result
     except sqlite3.IntegrityError:
         print("과목 조회 오류")
-        
+
+
 def returnClassMemberList(grade, classes):
     conn = createConnection(DB_FILE)
     try:
@@ -164,6 +175,7 @@ def returnClassMemberList(grade, classes):
             return result
     except sqlite3.IntegrityError:
         print("학급 구성원 조회 오류")
+
 
 def returnClassMemberName(grade, classes):
     sconn = createConnection(DB_FILE)
@@ -177,6 +189,7 @@ def returnClassMemberName(grade, classes):
     except sqlite3.IntegrityError:
         print("학급 구성원 조회 오류")
 
+
 def returnClassMemberNumber(grade, classes):
     sconn = createConnection(DB_FILE)
     sconn.row_factory = lambda cursor, row: row[0]
@@ -188,17 +201,20 @@ def returnClassMemberNumber(grade, classes):
             return result
     except sqlite3.IntegrityError:
         print("학급 구성원 조회 오류")
-        
+
+
 def returnStudentAssesmentBySubId(subId, stdId):
     sconn = createConnection(DB_FILE)
     sconn.row_factory = lambda cursor, row: row[0]
     try:
         with sconn:
-            sql = "SELECT Score.asses FROM Student INNER JOIN Score ON Student.id = Score.stdId WHERE Score.subId = ? and Student.id = ?"
+            sql = "SELECT Score.asses FROM Student INNER JOIN Score ON Student.id = Score.stdId WHERE Score.subId = ? " \
+                  "and Student.id = ? "
             result = sconn.cursor().execute(sql, (subId, stdId)).fetchall()
             return result
     except sqlite3.IntegrityError:
         print("평가문 조회 오류")
+
 
 def returnClassList():
     conn = createConnection(DB_FILE)
@@ -210,6 +226,7 @@ def returnClassList():
     except sqlite3.IntegrityError:
         print("학급 조회 오류")
 
+
 def returnParentSubject():
     conn = createConnection(DB_FILE)
     try:
@@ -219,6 +236,7 @@ def returnParentSubject():
             return result
     except sqlite3.IntegrityError:
         print("상위 과목 불러오기 오류")
+
 
 def returnChildSubjectsFromParentId(parentId):
     conn = createConnection(DB_FILE)
@@ -230,6 +248,7 @@ def returnChildSubjectsFromParentId(parentId):
     except sqlite3.IntegrityError:
         print("하위 과목 불러오기 오류")
 
+
 def returnChildSubjectId(name, parentId):
     conn = createConnection(DB_FILE)
     try:
@@ -239,6 +258,7 @@ def returnChildSubjectId(name, parentId):
             return result
     except sqlite3.IntegrityError:
         print("점수 저장 오류")
+
 
 def returnScore(subId, stdId):
     conn = createConnection(DB_FILE)
@@ -250,15 +270,18 @@ def returnScore(subId, stdId):
     except sqlite3.IntegrityError:
         print("점수 조회 오류")
 
+
 def returnScoreBySubIdAndClass(subId, grade, classes):
     conn = createConnection(DB_FILE)
     try:
         with conn:
-            sql = "SELECT Score.id, Score.stdId, Score.score, Score.asses FROM Student INNER JOIN Score ON Student.id = Score.stdId AND Score.subId = ? AND Student.grade = ? AND Student.class = ?"
+            sql = "SELECT Score.id, Score.stdId, Score.score, Score.asses FROM Student INNER JOIN Score ON Student.id " \
+                  "= Score.stdId AND Score.subId = ? AND Student.grade = ? AND Student.class = ? "
             result = conn.cursor().execute(sql, (int(subId), int(grade), int(classes))).fetchall()
             return result
     except sqlite3.IntegrityError:
         print("점수 조회 오류")
+
 
 def returnSubjectBySubId(subId):
     conn = createConnection(DB_FILE)
@@ -270,6 +293,7 @@ def returnSubjectBySubId(subId):
     except Exception as e:
         print("과목 조회 오류: ", e)
 
+
 def returnSubNameBySubId(subId):
     conn = createConnection(DB_FILE)
     try:
@@ -279,17 +303,19 @@ def returnSubNameBySubId(subId):
             return result
     except sqlite3.IntegrityError:
         print("과목 조회 오류")
-        
+
+
 def returnSubList():
     conn = createConnection(DB_FILE)
-    try:    
+    try:
         with conn:
             sql = "select id, subName, parentId from Subject"
             result = conn.cursor().execute(sql).fetchall()
             return result
     except sqlite3.IntegrityError:
         print("문제 발생")
-        
+
+
 def returnStandardBySubId(subId):
     conn = createConnection(DB_FILE)
     try:
@@ -300,6 +326,7 @@ def returnStandardBySubId(subId):
     except sqlite3.IntegrityError:
         print("평가 기준 불러오기 오류")
         return False
+
 
 def returnStandardById(stndId):
     conn = createConnection(DB_FILE)
@@ -312,6 +339,7 @@ def returnStandardById(stndId):
         print("평가 기준 불러오기 오류")
         return False
 
+
 def returnIfStudentSubjectScoreExist(subId, stdId):
     conn = createConnection(DB_FILE)
     try:
@@ -323,6 +351,7 @@ def returnIfStudentSubjectScoreExist(subId, stdId):
     except sqlite3.IntegrityError:
         print("점수 확인 오류")
         return False
+
 
 def returnScoreRangeAndContentBySubId(subId):
     conn = createConnection(DB_FILE)
@@ -340,6 +369,7 @@ def returnScoreRangeAndContentBySubId(subId):
         print("과목 점수별 평가문 불러오기 오류")
         return False
 
+
 def deleteAssesmentById(id):
     conn = createConnection(DB_FILE)
     try:
@@ -348,9 +378,10 @@ def deleteAssesmentById(id):
             conn.cursor().execute(sql, (id,))
             return True
     except sqlite3.IntegrityError:
-        print("평가 삭제 오류") 
+        print("평가 삭제 오류")
         return False
-        
+
+
 def deleteAssesmentBySubId(subId):
     conn = createConnection(DB_FILE)
     try:
@@ -359,8 +390,9 @@ def deleteAssesmentBySubId(subId):
             conn.cursor().execute(sql, (subId,))
             return True
     except sqlite3.IntegrityError:
-        print("점수 삭제 오류") 
+        print("점수 삭제 오류")
         return False
+
 
 def deleteAssesmentByStndId(stndId):
     conn = createConnection(DB_FILE)
@@ -373,6 +405,7 @@ def deleteAssesmentByStndId(stndId):
         print("평가문 삭제 오류")
         return False
 
+
 def deleteClass(grade, classes):
     conn = createConnection(DB_FILE)
     try:
@@ -381,8 +414,9 @@ def deleteClass(grade, classes):
             conn.cursor().execute(sql, (grade, classes))
             return True
     except sqlite3.IntegrityError:
-        print("학급 삭제 오류") 
+        print("학급 삭제 오류")
         return False
+
 
 def deleteStudent(id):
     conn = createConnection(DB_FILE)
@@ -395,6 +429,7 @@ def deleteStudent(id):
         print("학생 삭제 오류")
         return False
 
+
 def deleteScoreById(id):
     conn = createConnection(DB_FILE)
     try:
@@ -405,7 +440,8 @@ def deleteScoreById(id):
     except sqlite3.IntegrityError:
         print("점수 삭제 오류")
         return False
-        
+
+
 def deleteSubById(subId):
     conn = createConnection(DB_FILE)
     try:
@@ -417,10 +453,11 @@ def deleteSubById(subId):
             c.execute(sql1, (subId,))
             c.execute(sql2, (subId,))
             c.execute(sql3, (subId,))
-            return True  
+            return True
     except sqlite3.IntegrityError:
         print("과목 삭제 문제 발생")
         return False
+
 
 def deleteStandradById(stndId):
     conn = createConnection(DB_FILE)
@@ -432,7 +469,8 @@ def deleteStandradById(stndId):
     except sqlite3.IntegrityError:
         print("점수 기준 삭제 오류")
         return False
-        
+
+
 def saveScore(subId, stdId, score, asses):
     conn = createConnection(DB_FILE)
     try:
@@ -443,7 +481,8 @@ def saveScore(subId, stdId, score, asses):
     except sqlite3.IntegrityError:
         print("점수 저장 오류")
         return False
-        
+
+
 def createAssesment(subId, stndId, content):
     conn = createConnection(DB_FILE)
     try:
@@ -456,7 +495,8 @@ def createAssesment(subId, stndId, content):
     except sqlite3.IntegrityError:
         print("하위 과목 저장 오류")
         return False
-        
+
+
 def createChildSubject(name, parentId):
     conn = createConnection(DB_FILE)
     try:
@@ -470,6 +510,7 @@ def createChildSubject(name, parentId):
         print("하위 과목 저장 오류")
         return False
 
+
 def createParentSubject(name):
     conn = createConnection(DB_FILE)
     try:
@@ -482,7 +523,8 @@ def createParentSubject(name):
     except sqlite3.IntegrityError:
         print("상위 과목 저장 오류")
         return False
-        
+
+
 def createStandard(subId, grade, greater, less):
     conn = createConnection(DB_FILE)
     try:
@@ -496,28 +538,31 @@ def createStandard(subId, grade, greater, less):
         print("점수 기준 저장 오류")
         return False
 
+
 def saveStudent(id, name, grade, classes):
     conn = createConnection(DB_FILE)
     try:
         with conn:
             sql = "insert into Student(id, name, grade, class) values (?,?,?,?)"
             conn.cursor().execute(sql, (id, name, grade, classes))
-            return True  
+            return True
     except sqlite3.IntegrityError:
         print("과목 저장 문제 발생")
         return False
-    
+
+
 def updateSubNameBySubId(id, name):
     conn = createConnection(DB_FILE)
     try:
         with conn:
             sql = "UPDATE Subject SET subName = ? WHERE id = ?"
             conn.cursor().execute(sql, (name, id))
-            return True  
+            return True
     except sqlite3.IntegrityError:
         print("과목 저장 문제 발생")
         return False
-    
+
+
 def updateAssesment(assesId, content):
     conn = createConnection(DB_FILE)
     try:
@@ -528,6 +573,7 @@ def updateAssesment(assesId, content):
     except sqlite3.IntegrityError:
         print("하위 과목 저장 오류")
         return False
+
 
 def updateStandard(stndId, grade, greater, less):
     conn = createConnection(DB_FILE)
@@ -540,16 +586,18 @@ def updateStandard(stndId, grade, greater, less):
         print("등급 기준 업데이트 오류")
         return False
 
+
 def updateScoreById(scoreId, score, asses):
     conn = createConnection(DB_FILE)
     try:
         with conn:
-            sql = "UPDATE Score SET score = ?, asses = ? WHERE id = ?" 
+            sql = "UPDATE Score SET score = ?, asses = ? WHERE id = ?"
             conn.cursor().execute(sql, (score, asses, scoreId))
             return True
     except sqlite3.IntegrityError:
         print("점수 업데이트 오류")
         return False
+
 
 def updateScoreAssesBySubIdAndStdId(subId, stdId, asses):
     conn = createConnection(DB_FILE)
@@ -561,6 +609,7 @@ def updateScoreAssesBySubIdAndStdId(subId, stdId, asses):
     except sqlite3.IntegrityError:
         print("점수 업데이트 오류")
         return False
+
 
 def updateScoreAndAssesBySubIdAndStdId(subId, stdId, score, asses):
     conn = createConnection(DB_FILE)

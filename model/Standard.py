@@ -1,12 +1,13 @@
 import backend
 
+
 class Standard:
     def setId(self, id):
         self.id = id
-    
+
     def setSubId(self, subId):
         self.subId = subId
-    
+
     def setGrade(self, grade):
         self.grade = grade
 
@@ -15,7 +16,7 @@ class Standard:
 
     def setLess(self, less):
         self.less = less
-    
+
     def getId(self):
         return self.id
 
@@ -30,6 +31,7 @@ class Standard:
 
     def getLess(self):
         return self.less
+
 
 def getStandardBySubId(subId):
     try:

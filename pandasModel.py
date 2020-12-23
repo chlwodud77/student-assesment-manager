@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QAbstractTableModel, Qt
 
+
 class PandasModel(QAbstractTableModel):
 
     def __init__(self, data):

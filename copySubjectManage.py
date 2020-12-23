@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from adapter import subjectTreeWidgetAdpater as sa
 from model.Subject import Subject
 from model.Standard import Standard
-form_class = uic.loadUiType("subjectCopyDialog.ui")[0]
+form_class = uic.loadUiType("layout/subjectCopyDialog.ui")[0]
 
 class CopySubjectManage(QDialog, form_class):
     def __init__(self):
@@ -17,8 +17,8 @@ class CopySubjectManage(QDialog, form_class):
 
 
     def showSubList(self):
-        sa.showSub(self, self.copyingTreeWidget)
-        sa.showSub(self, self.copiedTreeWidget)
+        sa.showSub(self.copyingTreeWidget)
+        sa.showSub(self.copiedTreeWidget)
 
     def saveCopySubject(self):
         buttonReply = QMessageBox.question(self, '알림', "과목 복사를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
