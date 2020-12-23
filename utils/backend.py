@@ -1,6 +1,6 @@
 import sqlite3
 
-DB_FILE = "assets/studentManager.db"
+DB_FILE = "./assets/studentManager.db"
 SQL_CREATE_ASSESMENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Assesment" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"subId"	INTEGER NOT NULL,
@@ -97,7 +97,7 @@ def returnAssesmetnStandardBySubIdAndGrade(subId, grade):
 
 
 def returnAssesmentContentBySubIdAndGrade(subId, grade):
-    sconn = sqlite3.connect("assets/studentManager.db")
+    sconn = sqlite3.connect("./assets/studentManager.db")
     # sconn.row_factory = lambda cursor, row: row[0]
     try:
         with sconn:

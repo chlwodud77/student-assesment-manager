@@ -6,9 +6,9 @@ from PyQt5.QtWidgets import *
 from openpyxl.styles import Alignment, Border, Side
 from pandas import DataFrame
 
-import backend
+from utils import backend
 import random
-from pandasModel import PandasModel
+from utils.pandasModel import PandasModel
 
 ASSES_CELL_COL = "E"
 LENGTH_CELL_COL = "F"

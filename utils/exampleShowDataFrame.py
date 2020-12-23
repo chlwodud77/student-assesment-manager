@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 
-from pandasModel import PandasModel
+from utils.pandasModel import PandasModel
 
 
 # df = pd.DataFrame({'a': ['Mary', 'Jim', 'John'],

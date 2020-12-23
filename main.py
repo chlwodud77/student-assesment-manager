@@ -8,14 +8,8 @@ from PyQt5 import QtCore
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
-from src import classManage
-import excelManage
-import scoreChangeManage
-import scoreManage
-import subjectManage
-from adapter import classComboBoxAdapter as ca
-from adapter import subjectTreeWidgetAdpater as sa
-
+from src import classManage, scoreManage, subjectManage, scoreChangeManage, excelManage
+from utils.adapter import subjectTreeWidgetAdpater as sa, classComboBoxAdapter as ca
 
 form_class = uic.loadUiType("layout/manager.ui")[0]
 

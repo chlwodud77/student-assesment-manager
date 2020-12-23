@@ -1,4 +1,4 @@
-import backend
+from utils import backend
 
 
 # 학급 리스트 출력 함수

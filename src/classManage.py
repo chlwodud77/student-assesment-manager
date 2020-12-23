@@ -3,7 +3,7 @@
 from PyQt5.QtWidgets import *
 from openpyxl import load_workbook
 
-import backend
+from utils import backend
 
 
 def deleteStdClass(self):

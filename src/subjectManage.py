@@ -6,11 +6,11 @@ from PyQt5 import QtCore
 from PyQt5.Qt import QApplication
 from PyQt5.QtWidgets import *
 
-import backend
-from copySubjectManage import CopySubjectManage
-from subjectInputDialog import SubjectInput
-from subjectModInputDialog import SubjectModInput
-from subjectStandardModifyInputDialog import StandardModifyInput
+from utils import backend
+from src.dialog.copySubjectManage import CopySubjectManage
+from src.dialog.subjectInputDialog import SubjectInput
+from src.dialog.subjectModInputDialog import SubjectModInput
+from src.dialog.subjectStandardModifyInputDialog import StandardModifyInput
 
 
 def getTextFromSubjectInput():

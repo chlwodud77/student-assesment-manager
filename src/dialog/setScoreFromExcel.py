@@ -4,9 +4,9 @@ import pandas as pd
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
-import backend
-import scoreManage
-from pandasModel import PandasModel
+from utils import backend
+from src import scoreManage
+from utils.pandasModel import PandasModel
 
 form_class = uic.loadUiType("layout/setScoreFromExcel.ui")[0]
 

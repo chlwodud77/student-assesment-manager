@@ -1,8 +1,8 @@
-import sys, random
-import backend, excelManage, scoreManage
+import random
+from utils import backend
+from src import scoreManage, excelManage
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
 
 form_class = uic.loadUiType("layout/multiAssesInput.ui")[0]
 
@@ -43,9 +43,8 @@ class MultiAssesInput(QDialog, form_class):
             for classes in classList:
                 grade, cl = classes
                 scoreList = backend.returnScoreBySubIdAndClass(subId, int(grade), int(cl))
-                for stdId, score in scoreList:
-                    content = ""
-                    if (score is not None):
+                for sid, stdId, score, sasses in scoreList:
+                    if score is not None:
                         assesments = scoreManage.getPossibleAssesmentByScore(subId, int(score))
                         if len(assesments) == 0:
                             content = ""

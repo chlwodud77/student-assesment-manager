@@ -3,11 +3,11 @@
 from PyQt5.Qt import QApplication
 from PyQt5.QtWidgets import *
 
-import backend
+from utils import backend
 import random
 import re
-from multiAssesInput import MultiAssesInput
-from setScoreFromExcel import SetScoreFromExcel
+from src.dialog.multiAssesInput import MultiAssesInput
+from src.dialog.setScoreFromExcel import SetScoreFromExcel
 
 NAME_COL = 0
 HAKBUN_COL = 1
