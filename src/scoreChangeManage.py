@@ -70,6 +70,11 @@ def showScoreList(self, studentArray, scoreAArray, scoreBArray, standardArray, a
     widget.setColumnCount(len(headers))
     widget.setHorizontalHeaderLabels(headers)
 
+    commonAssesment1 = self.commonTextA.toPlainText()
+    commonAssesment2 = self.commonTextB.toPlainText()
+
+    commonAssesments = [commonAssesment1, commonAssesment2]
+
     for student, i in zip(studentArray, range(len(studentArray))):
         stdId = student.getId()
         name = student.getName()
@@ -77,7 +82,7 @@ def showScoreList(self, studentArray, scoreAArray, scoreBArray, standardArray, a
         scoreBObj = getScoreByStdId(scoreBArray, stdId)
         scoreChange = getScoreChange(scoreAObj, scoreBObj)
         assesment = getAssesmentFromScoreChange(scoreChange, standardArray, assesmentArray)
-        assesment = addDescriptionToAsses(scoreChange, assesment)
+        assesment = addDescriptionToAsses(scoreChange, assesment, commonAssesments)
 
         nameItem = QTableWidgetItem(str(name))
         stdIdItem = QTableWidgetItem(str(stdId))
@@ -127,12 +132,13 @@ def saveScoreChangeAssesment(self):
     del scoreChangeAssesments[:]
 
 
-def addDescriptionToAsses(scoreChange, assesment):
+def addDescriptionToAsses(scoreChange, assesment, commonAssesments):
     if scoreChange is None or assesment is None: return None
-    if scoreChange > 0:
-        return "점수가 " + str(scoreChange) + "점 향상되어 " + assesment
-    elif scoreChange < 0:
-        return "점수가 " + str(scoreChange) + "점 하락하여 " + assesment
+    # if scoreChange > 0:
+    #     return "점수가 " + str(scoreChange) + "점 향상되어 " + assesment
+    # elif scoreChange < 0:
+    #     return "점수가 " + str(scoreChange) + "점 하락하여 " + assesment
+    return commonAssesments[0] + " " + str(scoreChange) + " " + commonAssesments[1] + " " + assesment
 
 
 def getScoreByStdId(scoreArray, stdId):
