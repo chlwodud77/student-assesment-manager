@@ -49,7 +49,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -1369,7 +1369,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="scoreChangeComboBox"/>
+                  <widget class="QComboBox" name="scoreChangeClassList"/>
                  </item>
                 </layout>
                </widget>
@@ -1522,7 +1522,35 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_18">
               <item>
-               <widget class="QTableWidget" name="tableWidget">
+               <widget class="QFrame" name="frame_40">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <item>
+                  <widget class="QLabel" name="label_10">
+                   <property name="text">
+                    <string>TextLabel</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPlainTextEdit" name="plainTextEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="scoreChangeWidget">
                 <property name="frameShape">
                  <enum>QFrame::Box</enum>
                 </property>
@@ -1538,14 +1566,14 @@
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_31">
                  <item>
-                  <widget class="QPushButton" name="pushButton">
+                  <widget class="QPushButton" name="scoreChangeAssesBtn">
                    <property name="text">
                     <string>점수변동평가 생성</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="scoreChangeSaveBtn">
                    <property name="text">
                     <string>점수변동평가 저장</string>
                    </property>

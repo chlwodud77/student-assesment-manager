@@ -1,3 +1,4 @@
+import backend
 
 class Subject:
     def setId(self, id):
@@ -17,3 +18,19 @@ class Subject:
     
     def getParentId(self):
         return self.parentId
+
+def getSubjectBySubId(subId):
+    try:
+        subject = backend.returnSubjectBySubId(subId)
+        name = subject[1]
+        parentId = subject[2]
+        subjectObj = Subject()
+        subjectObj.setId(subId)
+        subjectObj.setName(name)
+        subjectObj.setParentId(parentId)
+
+        return subjectObj
+    except Exception as e:
+        print(e)
+        return []
+        

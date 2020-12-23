@@ -258,10 +258,11 @@ def exlPrintMultiAsses(self):
             
             for asses in printAsses:
                 if(asses != ""):
+                    if(asses is None): asses = ""
                     asses.strip()
                     #줄바꿈모드 확인
                     if(self.lineChangeCheckBox.isChecked()):
-                        assesText = assesText + " \n" + asses
+                        assesText = assesText + "\n" + asses
                     else:
                         assesText = assesText + " " + asses
 

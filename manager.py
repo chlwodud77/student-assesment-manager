@@ -5,7 +5,7 @@ from PyQt5 import uic
 from PyQt5 import QtCore, QtGui
 from pathlib import Path
 import sys, os, sqlite3, random, shutil
-import classManage, subjectManage, scoreManage, excelManage
+import classManage, subjectManage, scoreManage, scoreChangeManage, excelManage
 from adapter import classComboBoxAdapter as ca
 from adapter import subjectTreeWidgetAdpater as sa
 
@@ -27,7 +27,7 @@ class WindowClass(QMainWindow, form_class) :
         self.tabWidget.currentChanged.connect(self.checkChangedTab)
         self.exlAllShowClassList()
         self.exlAllShowSubList()
-        ca.insertClassComboBox(self, self.scoreChangeComboBox)
+        ca.insertClassComboBox(self, self.scoreChangeClassList)
         sa.showSub(self, self.compareSubjectLeft)
         sa.showSub(self, self.compareSubjectRight)
         sa.showSub(self, self.scoreChangeSubject)
@@ -85,6 +85,8 @@ class WindowClass(QMainWindow, form_class) :
         self.compareSubjectLeft.itemDoubleClicked.connect(self.showLeftSelectedSubject)
         self.compareSubjectRight.itemDoubleClicked.connect(self.showRightSelectedSubject)
         self.scoreChangeSubject.itemDoubleClicked.connect(self.showSelectedSubject)
+        self.scoreChangeAssesBtn.clicked.connect(self.showScoreChangeAsses)
+        self.scoreChangeSaveBtn.clicked.connect(self.saveScoreChange)
 
         #엑셀출력 탭
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
@@ -174,7 +176,12 @@ class WindowClass(QMainWindow, form_class) :
     def showSelectedSubject(self):
         sa.showSelectedSubjectByListWidget(
             self, self.scoreChangeSubject, self.selectedChangeSubject, False)
-        
+    
+    def showScoreChangeAsses(self):
+        scoreChangeManage.setScoreChangeAssesment(self)
+
+    def saveScoreChange(self):
+        scoreChangeManage.saveScoreChangeAssesment(self)
     
 
     ##############점수입력###########################
@@ -368,7 +375,7 @@ class WindowClass(QMainWindow, form_class) :
         if(currentIndex == SUBJECT_MANAGE): self.showSub(self.subTreeWidget)
         if(currentIndex == SCORE_MANAGE): self.showSub(self.scoreSubTreeWidget)
         if(currentIndex == SCORE_CHANGE_MANAGE):
-            ca.insertClassComboBox(self, self.scoreChangeComboBox)
+            ca.insertClassComboBox(self, self.scoreChangeClassList)
             sa.showSub(self, self.compareSubjectLeft)
             sa.showSub(self, self.compareSubjectRight)
             sa.showSub(self, self.scoreChangeSubject)

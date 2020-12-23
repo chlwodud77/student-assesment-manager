@@ -254,11 +254,21 @@ def returnScoreBySubIdAndClass(subId, grade, classes):
     conn = createConnection(DB_FILE)
     try:
         with conn:
-            sql = "SELECT Score.stdId, Score.score FROM Student INNER JOIN Score ON Student.id = Score.stdId AND Score.subId = ? AND Student.grade = ? AND Student.class = ?"
+            sql = "SELECT Score.id, Score.stdId, Score.score, Score.asses FROM Student INNER JOIN Score ON Student.id = Score.stdId AND Score.subId = ? AND Student.grade = ? AND Student.class = ?"
             result = conn.cursor().execute(sql, (int(subId), int(grade), int(classes))).fetchall()
             return result
     except sqlite3.IntegrityError:
         print("점수 조회 오류")
+
+def returnSubjectBySubId(subId):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "SELECT id, subName, parentId FROM Subject WHERE id = ?"
+            result = conn.cursor().execute(sql, (subId,)).fetchone()
+            return result
+    except Exception as e:
+        print("과목 조회 오류: ", e)
 
 def returnSubNameBySubId(subId):
     conn = createConnection(DB_FILE)
