@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>학생평가관리프로그램_v1.2.2</string>
+   <string>학생평가관리프로그램_v1.2.3</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -1011,8 +1011,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>330</width>
-                   <height>606</height>
+                   <width>98</width>
+                   <height>91</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1159,8 +1159,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>888</width>
-                <height>723</height>
+                <width>515</width>
+                <height>377</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1678,8 +1678,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>306</width>
-                   <height>294</height>
+                   <width>98</width>
+                   <height>91</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -1724,8 +1724,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>305</width>
-                   <height>294</height>
+                   <width>98</width>
+                   <height>91</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_25">
@@ -1820,8 +1820,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>306</width>
-                   <height>293</height>
+                   <width>98</width>
+                   <height>91</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1849,8 +1849,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>305</width>
-                   <height>293</height>
+                   <width>98</width>
+                   <height>91</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_27">
@@ -1932,8 +1932,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>612</width>
-                <height>706</height>
+                <width>236</width>
+                <height>98</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
