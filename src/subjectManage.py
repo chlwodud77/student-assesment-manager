@@ -104,8 +104,8 @@ def showAssesment(self):
         stndGre.setText(str(greater))
         stndLess.setText(str(less))
         assesments = backend.returnAssesmentsByStandardId(stndId)
-        if not assesments:
-            return QMessageBox.about(self, "오류", "평가문 불러오기 오류.")
+        # if not assesments:
+        #     return QMessageBox.about(self, "오류", "평가문이 존재하지 않습니다.")
         row = 0
         col = 0
         for asses in assesments:

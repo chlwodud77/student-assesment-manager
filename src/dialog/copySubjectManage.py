@@ -72,6 +72,7 @@ class CopySubjectManage(QDialog, form_class):
                                 for asses in originalAssesments:
                                     if originStndId == asses[2]:
                                         content = asses[3]
+                                        backend.createAssesment(subId, stndId, content)
 
                             subjectObj = Subject()
                             subjectObj.setId(subjectId)
