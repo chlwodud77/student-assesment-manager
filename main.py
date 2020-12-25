@@ -4,12 +4,14 @@ import os
 import shutil
 import sys
 
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 from PyQt5 import uic
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
 from src import classManage, scoreManage, subjectManage, scoreChangeManage, excelManage
 from utils.adapter import subjectTreeWidgetAdapter as sa, classComboBoxAdapter as ca
+from utils.components import scoreSubTreeWidget
 
 form_class = uic.loadUiType("layout/manager.ui")[0]
 
@@ -20,7 +22,7 @@ except:
     os.chdir(os.getcwd())
 
 
-class WindowClass(QMainWindow, form_class):
+class WindowClass(QMainWindow, QTreeWidget, form_class):
     EXIT_CODE_REBOOT = -123
 
     def __init__(self):
@@ -28,7 +30,6 @@ class WindowClass(QMainWindow, form_class):
         self.setupUi(self)
         self.showClassList()
         self.showSub(self.subTreeWidget)
-        self.showSub(self.scoreSubTreeWidget)
         self.insertClassComboBox(self.classList)
         self.clsSetHeaders()
         self.tabWidget.currentChanged.connect(self.checkChangedTab)
@@ -38,6 +39,13 @@ class WindowClass(QMainWindow, form_class):
         sa.showSub(self.compareSubjectLeft)
         sa.showSub(self.compareSubjectRight)
         sa.showSub(self.scoreChangeSubject)
+
+        #자체 컴포넌트 생성
+        self.scoreSubTreeWidget = scoreSubTreeWidget.ScoreSubTreeWidget()
+        self.scrollArea_3.setWidget(self.scoreSubTreeWidget)
+        self.showSub(self.scoreSubTreeWidget)
+
+
 
         # 메뉴
         self.actionImport_DB.triggered.connect(self.importDatabase)

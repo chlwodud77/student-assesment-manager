@@ -1,9 +1,9 @@
-from utils import backend
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
-from utils.adapter import subjectTreeWidgetAdapter as sa
+
 from model.Subject import Subject
-from model.Standard import Standard
+from utils import copyManager
+from utils.adapter import subjectTreeWidgetAdapter as sa
 
 form_class = uic.loadUiType("layout/subjectCopyDialog.ui")[0]
 
@@ -22,7 +22,6 @@ class CopySubjectManage(QDialog, form_class):
     def saveCopySubject(self):
         buttonReply = QMessageBox.question(self, '알림', "과목 복사를 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No,
                                            QMessageBox.Yes)
-        selectedSubjects = []
         selectedParentSubject = Subject()
 
         if buttonReply == QMessageBox.Yes:
@@ -40,45 +39,11 @@ class CopySubjectManage(QDialog, form_class):
                 if self.copyingTreeWidget.selectedItems():
                     items = self.copyingTreeWidget.selectedItems()
                     for item in items:
-                        copiedStandards = []
                         if item.parent() is not None:
                             name = item.text(0)
-                            parentId = selectedParentSubject.getId()
+                            trgSubParentId = selectedParentSubject.getId()
                             originalSubId = item.whatsThis(0)
-                            subjectId = backend.createChildSubject(name, parentId)
-
-                            originalStandards = backend.returnStandardBySubId(originalSubId)
-                            for stnd in originalStandards:
-                                subId = subjectId
-                                grade = stnd[2]
-                                greater = stnd[3]
-                                less = stnd[4]
-                                standardId = backend.createStandard(subId, grade, greater, less)
-                                standardObj = Standard()
-                                standardObj.setId(standardId)
-                                standardObj.setSubId(subId)
-                                standardObj.setGrade(grade)
-                                standardObj.setGreater(greater)
-                                standardObj.setLess(less)
-                                copiedStandards.append(standardObj)
-
-                            originalAssesments = backend.returnAssesmentBySubId(originalSubId)
-
-                            for originalStands, copiedStands in zip(originalStandards, copiedStandards):
-                                subId = int(subjectId)
-                                stndId = copiedStands.getId()
-                                originStndId = originalStands[0]
-
-                                for asses in originalAssesments:
-                                    if originStndId == asses[2]:
-                                        content = asses[3]
-                                        backend.createAssesment(subId, stndId, content)
-
-                            subjectObj = Subject()
-                            subjectObj.setId(subjectId)
-                            subjectObj.setName(name)
-                            subjectObj.setParentId(parentId)
-                            selectedSubjects.append(subjectObj)
+                            copyManager.copyChildSubject(name, originalSubId, trgSubParentId)
                 else:
                     return QMessageBox.about(self, "알림", "복사할 하위항목을 선택해주세요.")
             except Exception as e:

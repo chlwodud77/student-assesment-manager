@@ -2,14 +2,20 @@ from utils import backend
 
 
 class Assesment:
+    def __init__(self, id=None, subId=None, stndId=None, content=None):
+        self.id = id
+        self.subId = subId
+        self.stndId = stndId
+        self.content = content
+
     def setId(self, id):
         self.id = id
 
     def setSubId(self, subId):
         self.subId = subId
 
-    def setStandardId(self, standardId):
-        self.standardId = standardId
+    def setStandardId(self, stndId):
+        self.stndId = stndId
 
     def setContent(self, content):
         self.content = content
@@ -21,7 +27,7 @@ class Assesment:
         return self.subId
 
     def getStandardId(self):
-        return self.standardId
+        return self.stndId
 
     def getContent(self):
         return self.content
@@ -34,13 +40,9 @@ def getAssesmentBySubId(subId):
 
         for assesment in assesments:
             assesId, subId, stndId, content = assesment
-            assesmentObj = Assesment()
-            assesmentObj.setId(assesId)
-            assesmentObj.setSubId(subId)
-            assesmentObj.setStandardId(stndId)
-            assesmentObj.setContent(content)
-            assesmentObjectArray.append(assesmentObj)
+            assesmentObj = Assesment(assesId, subId, stndId, content)
 
+            assesmentObjectArray.append(assesmentObj)
         return assesmentObjectArray
     except Exception as e:
         print(e)
