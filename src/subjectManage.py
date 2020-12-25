@@ -23,8 +23,8 @@ def getTextFromSubjectInput():
         return False
 
 
-def getTextFromSubjectModInput():
-    win = SubjectModInput()
+def getTextFromSubjectModInput(originalName):
+    win = SubjectModInput(originalName)
     r = win.showModal()
     if r:
         text = win.edit.text()
@@ -190,7 +190,8 @@ def modSubName(self):
     widget = self.subTreeWidget
     if widget.currentItem():
         subId = widget.currentItem().whatsThis(0)
-        subName = getTextFromSubjectModInput()
+        originalName = widget.currentItem().text(0)
+        subName = getTextFromSubjectModInput(originalName)
         if subName:
             backend.updateSubNameBySubId(int(subId), subName)
             showSub(self.subTreeWidget)
