@@ -2,6 +2,13 @@ from utils import backend
 
 
 class Score:
+    def __init__(self, id=None, subId=None, stdId=None, score=None, asses=None):
+        self.id = id
+        self.subId = subId
+        self.stdId = stdId
+        self.score = score
+        self.asses = asses
+
     def setId(self, id):
         self.id = id
 
@@ -31,6 +38,20 @@ class Score:
 
     def getAsses(self):
         return self.asses
+
+def getScoreBySubId(subId):
+    try:
+        scores = backend.returnScoreBySubId(subId)
+        scoreObjectArray = []
+
+        for score in scores:
+            scoreId, subId, stdId, score, asses = score
+            scoreObj = Score(scoreId, subId, stdId, score, asses)
+            scoreObjectArray.append(scoreObj)
+
+        return scoreObjectArray
+    except Exception as e:
+        print(e)
 
 
 def getScoreBySubIdAndClass(subId, grade, classes):

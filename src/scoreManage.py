@@ -40,7 +40,7 @@ def copyContent(self, col):
     content = copyFromExl.getCopyContent()
     if content:
         # 복사해온 텍스트 행이 기존 테이블에 있는 행과 비교시 적거나 같을 때만 붙여넣기
-        if widget.currentRow() == 0 and widget.rowCount() >= len(content) - 1:
+        if widget.currentRow() == 0 and widget.rowCount() >= len(content):
             for i in range(0, len(content)):
                 if col == SCORE_COL:
                     if widget.item(i, col).whatsThis():
@@ -113,8 +113,6 @@ def saveAssesment(self):
                 regTest = REGEX.match(score)
                 if regTest:
                     score = float(score)
-                # if(score.isdigit()):
-                #     score = float(score)
                 elif score.replace(" ", "") == "":
                     score = None
                 elif not score.replace(" ", "").isdigit():

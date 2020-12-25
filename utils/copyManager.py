@@ -1,6 +1,8 @@
 from model import Assesment as As
 from model import Standard as St
+from model import Score as Sc
 from model.Standard import Standard
+from model.Score import Score
 from utils import backend
 
 
@@ -9,7 +11,7 @@ def copyChildSubject(name, srcSubId, trgParentSubId):
         trgSubId = backend.createChildSubject(name, trgParentSubId)
         orgStandards, copiedStandards = copyStandard(srcSubId, trgSubId)
         copyAssesment(srcSubId, trgSubId, orgStandards, copiedStandards)
-        return True
+        return trgSubId
     except Exception as e:
         print(e)
 
@@ -42,5 +44,14 @@ def copyAssesment(srcSubId, trgSubId, orgStandards, copiedStandards):
                 content = assesment.getContent()
                 backend.createAssesment(trgSubId, trgStndId, content)
 
-def copyScore():
-    pass
+
+def copyScore(orgScore: Score, trgSubId):
+    try:
+        stdId = orgScore.getStdId()
+        score = orgScore.getScore()
+        asses = orgScore.getAsses()
+        Sc.saveScore(trgSubId, stdId, score, asses)
+        return True
+    except Exception as e:
+        print(e)
+        return False

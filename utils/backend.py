@@ -260,6 +260,17 @@ def returnChildSubjectId(name, parentId):
         print("점수 저장 오류")
 
 
+def returnScoreBySubId(subId):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "SELECT id, subId, stdId, score, asses FROM Score WHERE subId = ? "
+            result = conn.cursor().execute(sql, (int(subId),)).fetchall()
+            return result
+    except Exception as e:
+        print("점수조회 오류: ", e)
+
+
 def returnScore(subId, stdId):
     conn = createConnection(DB_FILE)
     try:
