@@ -194,7 +194,7 @@ class WindowClass(QMainWindow, form_class):
         if obj == self.grdAseList:
             if event.type() == QtCore.QEvent.KeyPress:
                 if event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier:
-                    subjectManage.copyContent(obj)
+                    subjectManage.copyContent(self,obj)
                     return True
                 else:
                     return False
