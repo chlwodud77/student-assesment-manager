@@ -3,14 +3,13 @@
 from operator import itemgetter
 
 from PyQt5 import QtCore
-from PyQt5.Qt import QApplication
 from PyQt5.QtWidgets import *
 
-from utils import backend
 from src.dialog.copySubjectManage import CopySubjectManage
 from src.dialog.subjectInputDialog import SubjectInput
 from src.dialog.subjectModInputDialog import SubjectModInput
 from src.dialog.subjectStandardModifyInputDialog import StandardModifyInput
+from utils import backend, copyFromExl
 
 
 def getTextFromSubjectInput():
@@ -66,18 +65,40 @@ def addChildSub(self):
         return
 
 
-def copyContent(obj):
-    mimeType = 'application/x-qt-windows-mime;value="Csv"'
-    clipboard = QApplication.clipboard()
-    mimeData = clipboard.mimeData()
-    if mimeType in mimeData.formats():  # 엑셀에서 복사해온 텍스트인지 확인
-        text = clipboard.text()
-        content = text.split("\n")
-        if obj.rowCount() == 0:
-            for i in range(0, len(content) - 1):
-                obj.insertRow(obj.rowCount())
+def copyContent(self, widget):
+    content = copyFromExl.getCopyContent()
+    # if obj.rowCount() == 0:
+    if content:
+        if widget.rowCount() != 0:
+            for i in range(0, len(content)):
+                widget.insertRow(widget.rowCount())
                 item = QTableWidgetItem(str(content[i]))
-                obj.setItem(i, 0, item)
+                widget.setItem(widget.rowCount() - 1, 0, item)
+
+        else:
+            for i in range(0, len(content)):
+                widget.insertRow(widget.rowCount())
+                item = QTableWidgetItem(str(content[i]))
+                widget.setItem(i, 0, item)
+        saveAssesmentFromCopyContent(self, content)
+
+
+def saveAssesmentFromCopyContent(self, contents):
+    if contents:
+        print(contents)
+        buttonReply = QMessageBox.question(self, '알림', "복사한 평가문들을 저장하시겠습니까?", QMessageBox.Yes | QMessageBox.No,
+                                           QMessageBox.No)
+        if buttonReply == QMessageBox.Yes:
+            stndList = self.grdStndList
+            subjectList = self.subTreeWidget
+            if stndList.currentItem() is None or subjectList.currentItem() is None:
+                return QMessageBox.about(self, "주의", "평가를 추가할 과목 또는 등급을 선택해주세요.")
+            subId = subjectList.currentItem().whatsThis(0)
+            stndId = stndList.currentItem().whatsThis()
+            for content in contents:
+                backend.createAssesment(int(subId), int(stndId), str(content))
+            QMessageBox.about(self, "알림", "평가문 저장 완료.")
+            showAssesment(self)
 
 
 def editItem(self):
@@ -334,11 +355,18 @@ def modAse(self):
     item = assesList.currentItem()
     if item is None:
         return QMessageBox.about(self, "주의", "수정할 평가문을 선택해주세요.")
-    assesId = item.whatsThis()
-    backend.updateAssesment(int(assesId), content)
-    showAssesment(self)
-    self.grdAseEdit.clear()
-    return QMessageBox.about(self, "알림", "수정완료.")
+
+    if content == "":
+        return QMessageBox.about(self, "알림", "수정할 평가문을 입력해주세요.")
+
+    buttonReply = QMessageBox.question(self, '알림', "선택한 평가문을 수정하시겠습니까?", QMessageBox.Yes | QMessageBox.No,
+                                       QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        assesId = item.whatsThis()
+        backend.updateAssesment(int(assesId), content)
+        showAssesment(self)
+        self.grdAseEdit.clear()
+        return QMessageBox.about(self, "알림", "수정완료.")
 
 
 # 평가 내용 항목 지우는 함수
@@ -347,9 +375,12 @@ def delAse(self):
         return QMessageBox.about(self, "주의", "삭제할 평가문을 선택하세요.")
     assesList = self.grdAseList
     assesItems = assesList.selectedItems()
-    for item in assesItems:
-        assesId = item.whatsThis()
-        backend.deleteAssesmentById(int(assesId))
-    showAssesment(self)
-    self.grdAseEdit.clear()
-    return QMessageBox.about(self, "알림", "선택하신 평가문(들)이 삭제되었습니다.")
+    buttonReply = QMessageBox.question(self, '알림', "선택한 평가문(들)을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No,
+                                       QMessageBox.No)
+    if buttonReply == QMessageBox.Yes:
+        for item in assesItems:
+            assesId = item.whatsThis()
+            backend.deleteAssesmentById(int(assesId))
+        showAssesment(self)
+        self.grdAseEdit.clear()
+        return QMessageBox.about(self, "알림", "선택하신 평가문(들)이 삭제되었습니다.")

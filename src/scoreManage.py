@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5.Qt import QApplication
-from PyQt5.QtWidgets import *
-
-from utils import backend
 import random
 import re
+
+from PyQt5.QtWidgets import *
+
 from src.dialog.multiAssesInput import MultiAssesInput
 from src.dialog.setScoreFromExcel import SetScoreFromExcel
+from utils import backend, copyFromExl
 
 NAME_COL = 0
 HAKBUN_COL = 1
@@ -36,17 +36,19 @@ def openTotalScoreSetInput():
 
 
 def copyContent(self, col):
-    mimeType = 'application/x-qt-windows-mime;value="Csv"'
-    clipboard = QApplication.clipboard()
-    mimeData = clipboard.mimeData()
-    if mimeType in mimeData.formats():  # 엑셀에서 복사해온 텍스트인지 확인
-        text = clipboard.text()
-        content = text.split("\n")
+    widget = self.classListWidget
+    content = copyFromExl.getCopyContent()
+    if content:
         # 복사해온 텍스트 행이 기존 테이블에 있는 행과 비교시 적거나 같을 때만 붙여넣기
-        if self.classListWidget.currentRow() == 0 and self.classListWidget.rowCount() >= len(content) - 1:
-            for i in range(0, len(content) - 1):
-                item = QTableWidgetItem(str(content[i]))
-                self.classListWidget.setItem(i, col, item)
+        if widget.currentRow() == 0 and widget.rowCount() >= len(content) - 1:
+            for i in range(0, len(content)):
+                if col == 2:
+                    item = QTableWidgetItem(str(content[i]))
+                    widget.setItem(i, col, item)
+                if col == 3:
+                    comboBox = widget.cellWidget(i, col)
+                    comboBox.addItem(str(content[i]))
+                    comboBox.setCurrentText(str(content[i]))
 
 
 # 점수 입력 테이블 항목 선택 후 텍스트 편집기에서 편집해주는 함수
