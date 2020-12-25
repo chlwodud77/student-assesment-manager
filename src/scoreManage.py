@@ -121,7 +121,6 @@ def saveAssesment(self):
                     return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
                 scoreId = int(widget.item(row, SCORE_COL).whatsThis())
                 asses = widget.cellWidget(row, ASSES_COL).currentText()
-                print("기존점수저장")
                 backend.updateScoreById(scoreId, score, asses)
             else:  # 기존에 스코어 존재 X
                 score = widget.item(row, SCORE_COL).text()
@@ -137,7 +136,6 @@ def saveAssesment(self):
                 elif not regTest:
                     return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
                 stdId = int(widget.item(row, HAKBUN_COL).text())
-                print("새로점수저장")
                 backend.saveScore(subId, stdId, score, asses)  # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
         showScoreList(self)
