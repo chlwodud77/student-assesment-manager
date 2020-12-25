@@ -14,7 +14,7 @@ HAKBUN_COL = 1
 SCORE_COL = 2
 ASSES_COL = 3
 
-REGEX = re.compile('^[+-]?\d+(\.?\d+)$')
+REGEX = re.compile('^[+-]?\d*(\.?\d+)$')
 
 
 def resizeColumnWidth(self):
@@ -42,10 +42,18 @@ def copyContent(self, col):
         # 복사해온 텍스트 행이 기존 테이블에 있는 행과 비교시 적거나 같을 때만 붙여넣기
         if widget.currentRow() == 0 and widget.rowCount() >= len(content) - 1:
             for i in range(0, len(content)):
-                if col == 2:
-                    item = QTableWidgetItem(str(content[i]))
-                    widget.setItem(i, col, item)
-                if col == 3:
+                if col == SCORE_COL:
+                    if widget.item(i, col).whatsThis():
+                        scoreId = widget.item(i, col).whatsThis()
+                        print(scoreId)
+                        scoreItem = QTableWidgetItem(str(content[i]))
+                        scoreItem.setWhatsThis(scoreId)
+                        widget.setItem(i, col, scoreItem)
+                    else:
+                        item = QTableWidgetItem(str(content[i]))
+                        widget.setItem(i, col, item)
+
+                if col == ASSES_COL:
                     comboBox = widget.cellWidget(i, col)
                     comboBox.addItem(str(content[i]))
                     comboBox.setCurrentText(str(content[i]))
@@ -113,7 +121,7 @@ def saveAssesment(self):
                     return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
                 scoreId = int(widget.item(row, SCORE_COL).whatsThis())
                 asses = widget.cellWidget(row, ASSES_COL).currentText()
-
+                print("기존점수저장")
                 backend.updateScoreById(scoreId, score, asses)
             else:  # 기존에 스코어 존재 X
                 score = widget.item(row, SCORE_COL).text()
@@ -129,6 +137,7 @@ def saveAssesment(self):
                 elif not regTest:
                     return QMessageBox.about(self, "주의", "점수는 공백 또는 숫자만 입력하세요.")
                 stdId = int(widget.item(row, HAKBUN_COL).text())
+                print("새로점수저장")
                 backend.saveScore(subId, stdId, score, asses)  # 새로 저장.
         QMessageBox.about(self, "결과", "점수 저장 성공.")
         showScoreList(self)

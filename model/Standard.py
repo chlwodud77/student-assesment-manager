@@ -2,6 +2,13 @@ from utils import backend
 
 
 class Standard:
+    def __init__(self, id=None, subId=None, grade=None, greater=None, less=None):
+        self.id = id
+        self.subId = subId
+        self.grade = grade
+        self.greater = greater
+        self.less = less
+
     def setId(self, id):
         self.id = id
 
@@ -40,14 +47,8 @@ def getStandardBySubId(subId):
 
         for standard in standards:
             stndId, subId, grade, greater, less = standard
-            standardObj = Standard()
-            standardObj.setId(stndId)
-            standardObj.setSubId(subId)
-            standardObj.setGrade(grade)
-            standardObj.setGreater(greater)
-            standardObj.setLess(less)
+            standardObj = Standard(stndId, subId, grade, greater, less)
             standardOjbectArray.append(standardObj)
-
         return standardOjbectArray
     except Exception as e:
         print(e)
