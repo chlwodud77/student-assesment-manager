@@ -457,16 +457,15 @@ def deleteSubById(subId):
     conn = createConnection(DB_FILE)
     try:
         with conn:
-            sql1 = "delete from Subject where parentId = ?"
-            sql2 = "delete from Subject where id = ?"
-            sql3 = "delete from Assesment where subId = ?"
+            sqls = ["delete from Subject where parentId = ?", "delete from Subject where id = ?",
+                    "delete from Assesment where subId = ?", "delete from Score where subId = ?",
+                    "delete from Standard where subId = ?"]
             c = conn.cursor()
-            c.execute(sql1, (subId,))
-            c.execute(sql2, (subId,))
-            c.execute(sql3, (subId,))
+            for sql in sqls:
+                c.execute(sql, (subId,))
             return True
-    except sqlite3.IntegrityError:
-        print("과목 삭제 문제 발생")
+    except Exception as e:
+        print("과목 삭제 문제 발생: ", e)
         return False
 
 

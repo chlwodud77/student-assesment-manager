@@ -265,7 +265,7 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
         scoreManage.insertClassComboBox(combobox)
 
     def openTotalScoreSetInput(self):
-        scoreManage.openTotalScoreSetInput()
+        scoreManage.openTotalScoreSetInput(self)
 
     def openMultiAssesInput(self):
         scoreManage.openMultiAssesInput()

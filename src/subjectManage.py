@@ -240,6 +240,7 @@ def delSub(self):
                 QMessageBox.about(self, "결과", "삭제 실패")
         showSub(self.subTreeWidget)
         showSub(self.scoreSubTreeWidget)
+        self.grdStndList.clear()
 
 
 # 평가 내용 선택하면 편집기에 해당 내용 보여줌
