@@ -35,6 +35,7 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
         self.tabWidget.currentChanged.connect(self.checkChangedTab)
         self.exlAllShowClassList()
         self.exlAllShowSubList()
+        self.stretchStndAddWidget()
         ca.insertClassComboBox(self.scoreChangeClassList)
         sa.showSub(self.compareSubjectLeft)
         sa.showSub(self.compareSubjectRight)
@@ -388,6 +389,17 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
         if currentIndex == EXCEL_MANAGE:
             self.exlAllShowClassList()
             self.exlAllShowSubList()
+
+    def stretchStndAddWidget(self):
+        label = ["등급명", "초과", "이하"]
+        widget = self.grdStndAddWidget
+        header = widget.horizontalHeader()
+        widget.setColumnCount(3)
+        widget.setHorizontalHeaderLabels(label)
+
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
 
 
 if __name__ == "__main__":

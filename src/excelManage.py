@@ -263,7 +263,7 @@ def exlPrintMultiAsses(self):
             for asses in printAsses:
                 if asses != "":
                     if asses is None: continue
-                    asses.strip()
+                    asses = asses.strip()
                     # 줄바꿈모드 확인
                     if self.lineChangeCheckBox.isChecked():
                         assesText = assesText + "\n" + asses
@@ -271,8 +271,14 @@ def exlPrintMultiAsses(self):
                         assesText = assesText + " " + asses
 
             assesText = assesText.strip()
+
             contentLength = len(assesText)
             contentLengthByte = len(assesText.encode("utf-8"))
+
+            if self.lineChangeCheckBox.isChecked():
+                for asses in assesText:
+                    if "\n" in asses: contentLength -= 1
+
             contentLengthList.append(str(contentLength) + " 자 (" +
                                      str(contentLengthByte) + " 바이트)")
             assesment.append(assesText)
