@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>학생평가관리프로그램_v1.2.4</string>
+   <string>학생평가관리프로그램_v1.2.5</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -49,7 +49,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -516,29 +516,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QTableWidget" name="grdStndAddWidget">
-                <attribute name="horizontalHeaderDefaultSectionSize">
-                 <number>60</number>
-                </attribute>
-                <attribute name="horizontalHeaderStretchLastSection">
-                 <bool>true</bool>
-                </attribute>
-                <column>
-                 <property name="text">
-                  <string>등급이름</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>초과</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>이하</string>
-                 </property>
-                </column>
-               </widget>
+               <widget class="QTableWidget" name="grdStndAddWidget"/>
               </item>
               <item>
                <widget class="QPushButton" name="grdStndAddBtn">
