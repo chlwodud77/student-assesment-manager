@@ -233,6 +233,9 @@ def exlPrintMultiAsses(self):
                 if data:
                     tmpAsses[i] = data[0]
                     i += 1
+                else:
+                    tmpAsses[i] == " "
+                    i += 1
 
             printAsses = ["" for _ in range(self.exlAddedSubWidget.count())]
             # 평가위치 셔플
