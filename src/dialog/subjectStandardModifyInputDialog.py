@@ -2,7 +2,7 @@ import sys
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
-form_class = uic.loadUiType("subjectStandardModify.ui")[0]
+form_class = uic.loadUiType("layout/subjectStandardModify.ui")[0]
 
 class StandardModifyInput(QDialog, form_class):
     def __init__(self, name, greater, less):

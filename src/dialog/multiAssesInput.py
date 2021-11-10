@@ -1,10 +1,11 @@
-import sys, random
-import backend, excelManage, scoreManage
+import random
+from utils import backend
+from src import scoreManage, excelManage
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
 
-form_class = uic.loadUiType("multiAssesInput.ui")[0]
+form_class = uic.loadUiType("layout/multiAssesInput.ui")[0]
+
 
 class MultiAssesInput(QDialog, form_class):
     def __init__(self):
@@ -27,12 +28,12 @@ class MultiAssesInput(QDialog, form_class):
         subjectListCnt = subjectListWidget.count()
         classListCnt = classListWidget.count()
 
-        if(subjectListCnt == 0 or classListCnt == 0): return QMessageBox.about(self, "주의", "평가를 생성할 과목 또는 학급을 추가해주세요.")
+        if subjectListCnt == 0 or classListCnt == 0: return QMessageBox.about(self, "주의", "평가를 생성할 과목 또는 학급을 추가해주세요.")
 
         for i in range(0, subjectListCnt):
             subjectId = subjectListWidget.item(i).whatsThis()
             subjectIdList.append(int(subjectId))
-        
+
         for i in range(0, classListCnt):
             classText = classListWidget.item(i).text()
             grade, classes = excelManage.returnClassInteger(classText)
@@ -42,15 +43,14 @@ class MultiAssesInput(QDialog, form_class):
             for classes in classList:
                 grade, cl = classes
                 scoreList = backend.returnScoreBySubIdAndClass(subId, int(grade), int(cl))
-                for stdId, score in scoreList:
-                    content = ""
-                    if(score is not None):
+                for sid, stdId, score, sasses in scoreList:
+                    if score is not None:
                         assesments = scoreManage.getPossibleAssesmentByScore(subId, int(score))
-                        if(len(assesments) == 0):
+                        if len(assesments) == 0:
                             content = ""
                             backend.updateScoreAssesBySubIdAndStdId(subId, stdId, content)
                         else:
-                            randomIndex = random.randint(0, len(assesments)-1)
+                            randomIndex = random.randint(0, len(assesments) - 1)
                             content = assesments[randomIndex]
                             backend.updateScoreAssesBySubIdAndStdId(subId, stdId, content)
         return QMessageBox.about(self, "알림", "평가 생성 완료.")
@@ -65,14 +65,14 @@ class MultiAssesInput(QDialog, form_class):
             parentId = int(parent[0])
             parentName = parent[1]
             item = QTreeWidgetItem(widget, [parentName])
-            item.setWhatsThis(0, str(parentId)+"-")
-        
+            item.setWhatsThis(0, str(parentId) + "-")
+
         it = QTreeWidgetItemIterator(widget)
         while it.value():
-            if("-" in it.value().whatsThis(0)):
+            if "-" in it.value().whatsThis(0):
                 parentId, trash = it.value().whatsThis(0).split("-")
                 childSubjects = backend.returnChildSubjectsFromParentId(int(parentId))
-                if(len(childSubjects) == 0):
+                if len(childSubjects) == 0:
                     it += 1
                 for child in childSubjects:
                     childId = int(child[0])
@@ -88,16 +88,16 @@ class MultiAssesInput(QDialog, form_class):
         classList = backend.returnClassList()
 
         for grade, classes in classList:
-            item = QListWidgetItem(str(grade)+"학년 "+str(classes)+"반")
+            item = QListWidgetItem(str(grade) + "학년 " + str(classes) + "반")
             widget.addItem(item)
 
     def addSubToWidget(self):
         srcWidget = self.subTreeWidget
         trgWidget = self.addedSubListWidget
-        if(srcWidget.selectedItems() is not None):
+        if srcWidget.selectedItems() is not None:
             items = srcWidget.selectedItems()
             for item in items:
-                if(item.parent() is not None): #자식 노드이면
+                if item.parent() is not None:  # 자식 노드이면
                     parentItem = item.parent()
                     parentName = parentItem.text(0)
                     childName = item.text(0)
@@ -108,27 +108,25 @@ class MultiAssesInput(QDialog, form_class):
 
     def extSubFromWidget(self):
         widget = self.addedSubListWidget
-        if(widget.currentItem() is not None):
+        if widget.currentItem() is not None:
             row = widget.currentRow()
             widget.takeItem(row)
 
     def addClassToWidget(self):
         srcWidget = self.classWidget
         trgWidget = self.addedClassWidget
-        if(srcWidget.selectedItems() is not None):
+        if srcWidget.selectedItems() is not None:
             items = srcWidget.selectedItems()
             for item in items:
                 newItem = QListWidgetItem(item.text())
                 trgWidget.addItem(newItem)
-    
+
     def extClassFromWidget(self):
         widget = self.addedClassWidget
-        if(widget.currentItem() is not None):
+        if widget.currentItem() is not None:
             row = widget.currentRow()
             widget.takeItem(row)
 
     def show(self):
         dialog = MultiAssesInput()
         dialog.exec_()
-
-

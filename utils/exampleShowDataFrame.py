@@ -1,9 +1,6 @@
-import sys
-import pandas as pd
-from PyQt5 import uic
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QAbstractTableModel, Qt
-from pandasModel import PandasModel
+
+from utils.pandasModel import PandasModel
 
 
 # df = pd.DataFrame({'a': ['Mary', 'Jim', 'John'],
@@ -25,12 +22,11 @@ class ShowDataFrame():
             view.setModel(model)
             header = view.horizontalHeader()
             header.setSectionResizeMode(4, QHeaderView.Stretch)
-            view.resize(800,600)
+            view.resize(800, 600)
             tabwidget.addTab(tab, classText)
 
         vbox = QVBoxLayout()
         vbox.addWidget(tabwidget)
         dialog.setLayout(vbox)
-        dialog.resize(800,600)
+        dialog.resize(800, 600)
         dialog.exec_()
-        
