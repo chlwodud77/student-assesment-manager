@@ -335,8 +335,6 @@ def exlPrintMultiAsses(self):
                     if ids not in groupSubjectSelectList:
                         groupSubjectSelectList.append(ids)
 
-            print(groupSubjectSelectList)
-
             assesText = ""
             tmpAsses = ["" for _ in range(self.exlAddedSubWidget.count())]
             i = 0
@@ -361,8 +359,6 @@ def exlPrintMultiAsses(self):
                     else:
                         tmpAsses[i] == " "
                     i += 1
-
-            print(tmpAsses)
 
             printAsses = ["" for _ in range(self.exlAddedSubWidget.count())]
             # 평가위치 셔플
