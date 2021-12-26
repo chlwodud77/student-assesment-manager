@@ -104,12 +104,15 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
         self.scoreChangeSaveBtn.clicked.connect(self.saveScoreChange)
 
         # 엑셀출력 탭
+        self.assesementGroupResetBtn.clicked.connect(self.exlResetAddedSubjectList)
+        self.assesementGroupBtn.clicked.connect(self.exlShowAssesmentGroupDialog)
         self.exlFileSaveBtn.clicked.connect(self.exlSaveToFile)
         self.exlClassAddBtn.clicked.connect(self.exlAddClassList)
         self.exlAddedClassList.itemDoubleClicked.connect(self.exlExtClassList)
         self.exlSubjectAddBtn.clicked.connect(self.exlAddSubList)
         self.exlAddedSubWidget.itemDoubleClicked.connect(self.exlExtSubList)
         self.multiAssesPrintBtn.clicked.connect(self.exlPrintMultiAsses)
+        
 
     def keyPressEvent(self, e):
         if e.key() == QtCore.Qt.Key_R and e.modifiers() == QtCore.Qt.ControlModifier:
@@ -169,6 +172,12 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
 
     def exlExtSubList(self):
         excelManage.exlExtSubList(self)
+        
+    def exlShowAssesmentGroupDialog(self):
+        excelManage.setSelectedSubjectGroup(self)
+        
+    def exlResetAddedSubjectList(self):
+        excelManage.resetAddedSubjectList(self)
 
     # 최종 엑셀 파일로 저장 함수
     def exlSaveToFile(self):
