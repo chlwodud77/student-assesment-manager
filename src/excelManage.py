@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from typing import Dict, List
+from PyQt5.QtCore import QMimeData
 import pandas as pd
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
 from openpyxl.styles import Alignment, Border, Side
 from pandas import DataFrame
+from src.dialog.assesmentGroupDialog import AssesmentGroupDialog
 
 from utils import backend
 import random
@@ -35,6 +38,63 @@ allroundBorder = Border(left=Side(border_style="thin",
                         bottom=Side(border_style="thin",
                                     color='000000'))
 
+def resetAddedSubjectList(self):
+    try:
+        self.subjectGroups = []
+        subjectList: QListWidget = self.exlAddedSubWidget
+        widgetItems: List[QListWidgetItem] = self.originalAddedSubjects[:]
+        for item, idx in zip(widgetItems, range(len(widgetItems))):
+            subjectList.item(idx).setText(item.text())
+            subjectList.item(idx).setWhatsThis(item.whatsThis())
+    except Exception as e:
+        print(e)
+
+
+def setSelectedSubjectGroup(self):
+    """
+    평가 항목 그룹 지정 함수
+    평가 항목을 선택하고 해당 그룹의 이름을 입력하면 평가 항목 리스트의 
+    평가 항목명의 서두에 그룹의 이름이 추가됨
+    """
+    groupName = ""
+    groupIds = []
+    subjectListWidget: QListWidget = self.exlAddedSubWidget
+    if len(subjectListWidget.selectedItems()) == 0:
+        return QMessageBox.about(self, "알림", "평가 항목 그룹을 생성할 평가 항목을 지정해주세요.")
+
+    selectedSubjects: List[QListWidgetItem] = subjectListWidget.selectedItems()
+    win = AssesmentGroupDialog()
+    r = win.showModal()
+    if r:
+        groupName: str = win.edit.text()
+        randomSelection: str = win.selectionSize.text()
+        if not randomSelection.isdigit():
+            return QMessageBox.about(self, "알림", "평가그룹 항목 추출 개수는 정수여야 합니다.")
+        if len(subjectListWidget.selectedItems()) < int(randomSelection):
+            return QMessageBox.about(self, "알림", "평가그룹 항목 추출 개수는 선택된 그룹 개수이하여야 합니다.")
+
+    if groupName == "":
+        return QMessageBox.about(self, "알림", "평가 항목 그룹 이름을 입력해주세요.")
+
+    for item in selectedSubjects:
+        if ">>" in item.text():
+            return QMessageBox.about(self, "알림", "이미 평가 항목 그룹에 속하는 항목이 존재합니다.")
+        
+    
+
+    for item in selectedSubjects:
+        orgName: str = item.text()
+        item.setText(f"[{groupName}]>>{orgName}")
+        groupIds.append(int(item.whatsThis()))
+
+    self.subjectGroups.append({
+        "groupName": groupName,
+        "subjectIds":  groupIds,
+        "randomSelection": int(randomSelection)
+    })
+
+    subjectListWidget.clearSelection()
+
 
 # 엑셀 테이블 항목 선택 시 내용 표시 함수
 def exlActivateEdit(self):
@@ -54,17 +114,21 @@ def showAssesLengthAndState(self, currentContent, row):
                                   + "바이트)")
     self.exlClassListWidget.setItem(row, LENGTH_COL, lengthItem)
     if contentLength > 1000 or contentLengthByte > 3000:
-        self.exlClassListWidget.item(row, LENGTH_COL).setBackground(QtGui.QColor(255, 0, 0))
+        self.exlClassListWidget.item(
+            row, LENGTH_COL).setBackground(QtGui.QColor(255, 0, 0))
 
 
 def exlSaveToFile(self):
     global dataFrameList, classTextList
     dfList = dataFrameList
     clList = classTextList
-    if not dfList: return QMessageBox.about(self, "주의", "엑셀로 저장할 항목들을 추가해주세요.")
-    name, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Excel files (*.xlsx)')
+    if not dfList:
+        return QMessageBox.about(self, "주의", "엑셀로 저장할 항목들을 추가해주세요.")
+    name, _ = QFileDialog.getSaveFileName(
+        self, 'Save File', '', 'Excel files (*.xlsx)')
 
-    if name == "": return
+    if name == "":
+        return
 
     with pd.ExcelWriter(name, engine="openpyxl") as writer:
         for df, cl in zip(dfList, clList):
@@ -125,6 +189,7 @@ def exlExtClassList(self):
 
 
 def exlAllShowSubList(self):
+    self.subjectGroups = []
     widget = self.exlSubWidget
     widget.clear()
     widget.setColumnCount(1)
@@ -140,7 +205,8 @@ def exlAllShowSubList(self):
     while it.value():
         if "-" in it.value().whatsThis(0):
             parentId, trash = it.value().whatsThis(0).split("-")
-            childSubjects = backend.returnChildSubjectsFromParentId(int(parentId))
+            childSubjects = backend.returnChildSubjectsFromParentId(
+                int(parentId))
             if len(childSubjects) == 0:
                 it += 1
             for child in childSubjects:
@@ -163,9 +229,13 @@ def exlAddSubList(self):
                 parentName = parentItem.text(0)
                 childName = item.text(0)
                 childId = item.whatsThis(0)
-                newItem = QListWidgetItem(str(parentName) + " - " + str(childName))
+                newItem = QListWidgetItem(
+                    str(parentName) + " - " + str(childName))
                 newItem.setWhatsThis(str(childId))
                 targetWidget.addItem(newItem)
+                
+    self.originalAddedSubjects = getItemsFromQListWWidget(targetWidget)
+
 
 
 def exlExtSubList(self):
@@ -175,33 +245,60 @@ def exlExtSubList(self):
         widget.takeItem(row)
 
 
+def getItemsFromQListWWidget(listWidget: QListWidget) -> List[QListWidgetItem]:
+    items: List[QListWidgetItem] = []
+    for idx in range(listWidget.count()):
+        items.append(listWidget.item(idx).clone())
+    return items
+
+
 def exlPrintMultiAsses(self):
     tabwidget = self.totalAssesTab
     tabwidget.clear()
     classList = []
-    subjectIdList = []
+    subjectList: List[dict] = []
     global dataFrameList
     global classTextList
 
     dataFrameList = []
     classTextList = []
 
-    classListWidget = self.exlAddedClassList
-    subjectListWidget = self.exlAddedSubWidget
-    classListCnt = classListWidget.count()
-    subjectListCnt = subjectListWidget.count()
+    classListWidget: QListWidget = self.exlAddedClassList
+    subjectListWidget: QListWidget = self.exlAddedSubWidget
+    classListCnt: int = classListWidget.count()
+    subjectListCnt: int = subjectListWidget.count()
 
-    if classListCnt == 0 or subjectListCnt == 0: return
+    if classListCnt == 0 or subjectListCnt == 0:
+        return
 
-    for i in range(0, classListCnt):
-        classText = classListWidget.item(i).text()
+    classItems: List[QListWidgetItem] = getItemsFromQListWWidget(
+        classListWidget)
+
+    subjectItems: List[QListWidgetItem] = getItemsFromQListWWidget(
+        subjectListWidget)
+
+    for item in classItems:
+        classText = item.text()
         classTextList.append(classText)
         grade, classes = returnClassInteger(classText)
         classList.append([grade, classes])
 
-    for i in range(0, subjectListCnt):
-        subjectId = subjectListWidget.item(i).whatsThis()
-        subjectIdList.append(int(subjectId))
+    # self.subjectGroups 리스트 안에 [{"groupName": "name", "subjectIds": ['12','13','14',...]}, ...]
+    # 식으로 존재하니까 해당 자료 참조해서
+    # 평가 항목을 먼저 생성하고 랜덤하게 몇개를 추출할지 선택해서 평가문 생성
+
+    for item in subjectItems:
+        if ">>" in item.text():
+            subjectList.append({
+                "isGroupSubject": True,
+                "groupName": item.text(),
+                "subjectId": int(item.whatsThis())
+            })
+        else:
+            subjectList.append({
+                "isGroupSubject": False,
+                "subjectId": int(item.whatsThis())
+            })
 
     for item in classList:
         grade, classes = item
@@ -209,9 +306,12 @@ def exlPrintMultiAsses(self):
         classList = []
         assesment = []
         contentLengthList = []
-        classMemberList = backend.returnClassMemberName(int(grade), int(classes))
-        studentNumberList = backend.returnClassMemberNumber(int(grade), int(classes))
-        studentIdList = backend.returnClassMemberNumber(int(grade), int(classes))
+        classMemberList = backend.returnClassMemberName(
+            int(grade), int(classes))
+        studentNumberList = backend.returnClassMemberNumber(
+            int(grade), int(classes))
+        studentIdList = backend.returnClassMemberNumber(
+            int(grade), int(classes))
 
         for i in range(0, len(studentNumberList)):
             num = str(studentNumberList[i])
@@ -220,22 +320,49 @@ def exlPrintMultiAsses(self):
         for i in range(0, len(classMemberList)):
             gradeList.append(grade)
             classList.append(classes)
-        rawData = {"학년": gradeList, "반": classList, "번호": studentNumberList, "이름": classMemberList}
+        rawData = {"학년": gradeList, "반": classList,
+                   "번호": studentNumberList, "이름": classMemberList}
 
         for studentId in studentIdList:
+
+            groupSubjectSelectList: List[int] = []
+
+            for group in self.subjectGroups:
+                subjectIds: List[int] = group["subjectIds"]
+                selectedIds: List[int] = random.sample(
+                    subjectIds, k=group["randomSelection"])
+                for ids in selectedIds:
+                    if ids not in groupSubjectSelectList:
+                        groupSubjectSelectList.append(ids)
+
+            print(groupSubjectSelectList)
 
             assesText = ""
             tmpAsses = ["" for _ in range(self.exlAddedSubWidget.count())]
             i = 0
 
-            for subjectId in subjectIdList:
-                data = backend.returnStudentAssesmentBySubId(subjectId, studentId)
-                if data:
-                    tmpAsses[i] = data[0]
+            for subject in subjectList:
+                subjectId: int = subject["subjectId"]
+                isGroupSubject: bool = subject["isGroupSubject"]
+                if isGroupSubject == True:
+                    if subjectId in groupSubjectSelectList:
+                        data = backend.returnStudentAssesmentBySubId(
+                            subjectId, studentId)
+                        if data:
+                            tmpAsses[i] = data[0]
+                        else:
+                            tmpAsses[i] == " "
                     i += 1
                 else:
-                    tmpAsses[i] == " "
+                    data = backend.returnStudentAssesmentBySubId(
+                        subjectId, studentId)
+                    if data:
+                        tmpAsses[i] = data[0]
+                    else:
+                        tmpAsses[i] == " "
                     i += 1
+
+            print(tmpAsses)
 
             printAsses = ["" for _ in range(self.exlAddedSubWidget.count())]
             # 평가위치 셔플
@@ -246,7 +373,8 @@ def exlPrintMultiAsses(self):
                 if self.exlAddedSubWidget.selectedItems() is not None:
                     items = self.exlAddedSubWidget.selectedItems()
                     for it in items:
-                        noShuffleIndex.append(self.exlAddedSubWidget.indexFromItem(it).row())
+                        noShuffleIndex.append(
+                            self.exlAddedSubWidget.indexFromItem(it).row())
 
                     for rmi in noShuffleIndex:
                         shuffleIndex.remove(rmi)
@@ -255,7 +383,8 @@ def exlPrintMultiAsses(self):
                     random.shuffle(tmpIndex)
 
                     for j in range(len(noShuffleIndex)):
-                        printAsses[noShuffleIndex[j]] = tmpAsses[noShuffleIndex[j]]
+                        printAsses[noShuffleIndex[j]
+                                   ] = tmpAsses[noShuffleIndex[j]]
 
                     for j in range(len(shuffleIndex)):
                         printAsses[tmpIndex[j]] = tmpAsses[shuffleIndex[j]]
@@ -265,7 +394,8 @@ def exlPrintMultiAsses(self):
 
             for asses in printAsses:
                 if asses != "":
-                    if asses is None: continue
+                    if asses is None:
+                        continue
                     asses = asses.strip()
                     # 줄바꿈모드 확인
                     if self.lineChangeCheckBox.isChecked():
@@ -280,7 +410,8 @@ def exlPrintMultiAsses(self):
 
             if self.lineChangeCheckBox.isChecked():
                 for asses in assesText:
-                    if "\n" in asses: contentLength -= 1
+                    if "\n" in asses:
+                        contentLength -= 1
 
             contentLengthList.append(str(contentLength) + " 자 (" +
                                      str(contentLengthByte) + " 바이트)")

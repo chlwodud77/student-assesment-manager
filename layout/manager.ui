@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1317</width>
-    <height>848</height>
+    <height>847</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>학생평가관리프로그램_v1.2.5</string>
+   <string>학생평가관리프로그램_v1.3.0</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -49,7 +49,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -989,8 +989,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>330</width>
-                   <height>607</height>
+                   <width>326</width>
+                   <height>565</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_3"/>
@@ -1118,8 +1118,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>888</width>
-                <height>724</height>
+                <width>836</width>
+                <height>695</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1637,8 +1637,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>306</width>
-                   <height>294</height>
+                   <width>296</width>
+                   <height>262</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -1683,8 +1683,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>305</width>
-                   <height>294</height>
+                   <width>296</width>
+                   <height>262</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_25">
@@ -1779,8 +1779,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>306</width>
-                   <height>294</height>
+                   <width>296</width>
+                   <height>261</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1808,8 +1808,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>305</width>
-                   <height>294</height>
+                   <width>296</width>
+                   <height>261</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_27">
@@ -1836,18 +1836,44 @@
              </layout>
             </widget>
            </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QCheckBox" name="lineChangeCheckBox">
-             <property name="text">
-              <string>평가문 줄바꿈 여부</string>
+           <item alignment="Qt::AlignVCenter">
+            <widget class="QFrame" name="frame_41">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QCheckBox" name="assesmentShuffleCheckBox">
-             <property name="text">
-              <string>평가문 순서 셔플 여부</string>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
              </property>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="2" column="0">
+               <widget class="QCheckBox" name="lineChangeCheckBox">
+                <property name="text">
+                 <string>평가문 줄바꿈 여부</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QCheckBox" name="assesmentShuffleCheckBox">
+                <property name="text">
+                 <string>평가문 순서 셔플 여부</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" alignment="Qt::AlignVCenter">
+               <widget class="QPushButton" name="assesementGroupBtn">
+                <property name="text">
+                 <string>평가 항목 그룹 선택</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="assesementGroupResetBtn">
+                <property name="text">
+                 <string>평가 항목 그룹 초기화</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
@@ -1891,8 +1917,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>612</width>
-                <height>707</height>
+                <width>587</width>
+                <height>680</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -1970,7 +1996,7 @@
      <x>0</x>
      <y>0</y>
      <width>1317</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
