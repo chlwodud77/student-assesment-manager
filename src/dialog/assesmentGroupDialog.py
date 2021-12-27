@@ -9,14 +9,11 @@ class AssesmentGroupDialog(QDialog):
 
     def initUI(self):
         self.setWindowTitle('평가그룹 이름 입력')
-        self.setGeometry(100, 100, 200, 100)
+        self.setGeometry(300, 300, 480, 250)
         layout = QVBoxLayout()
         layout.addStretch(1)
         edit = QLineEdit()
         edit.setPlaceholderText("평가그룹 이름 입력")
-        font = edit.font()
-        font.setPointSize(20)
-        edit.setFont(font)
         self.edit = edit
         selectionSize = QLineEdit()
         selectionSize.setPlaceholderText("평가그룹 항목 추출 개수 입력")
