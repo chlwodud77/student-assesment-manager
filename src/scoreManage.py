@@ -6,6 +6,7 @@ import re
 from PyQt5.QtWidgets import *
 
 from src.dialog.multiAssesInput import MultiAssesInput
+from src.dialog.multiScoreInput import MultiScoreInput
 from src.dialog.setScoreFromExcel import SetScoreFromExcel
 from utils import backend, copyFromExl
 
@@ -31,8 +32,8 @@ def openMultiAssesInput():
 
 
 def openTotalScoreSetInput(self):
-    return QMessageBox.about(self, "알림", "현재 기능은 수정중이여서 사용할 수 없습니다.")
-    a = SetScoreFromExcel()
+    # return QMessageBox.about(self, "알림", "현재 기능은 수정중이여서 사용할 수 없습니다.")
+    a = MultiScoreInput()
     a.show()
 
 

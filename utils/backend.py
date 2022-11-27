@@ -1,6 +1,7 @@
 import sqlite3
+from utils import db_path
+DB_FILE = db_path.get_db_path()
 
-DB_FILE = "./assets/studentManager.db"
 SQL_CREATE_ASSESMENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Assesment" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"subId"	INTEGER NOT NULL,
@@ -603,6 +604,18 @@ def updateScoreById(scoreId, score, asses):
         with conn:
             sql = "UPDATE Score SET score = ?, asses = ? WHERE id = ?"
             conn.cursor().execute(sql, (score, asses, scoreId))
+            return True
+    except sqlite3.IntegrityError:
+        print("점수 업데이트 오류")
+        return False
+
+
+def updateScoreValueById(scoreId, score):
+    conn = createConnection(DB_FILE)
+    try:
+        with conn:
+            sql = "UPDATE Score SET score = ? WHERE id = ?"
+            conn.cursor().execute(sql, (score, scoreId))
             return True
     except sqlite3.IntegrityError:
         print("점수 업데이트 오류")

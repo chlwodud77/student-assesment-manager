@@ -1,0 +1,6 @@
+{
+	"DB": {
+		"DEFAULT_FILE_NAME": "./assets/studentManager.db",
+		"CURRENT_FILE_NAME": ""
+	}
+}

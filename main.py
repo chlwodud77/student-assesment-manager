@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import *
 from src import classManage, scoreManage, subjectManage, scoreChangeManage, excelManage
 from utils.adapter import subjectTreeWidgetAdapter as sa, classComboBoxAdapter as ca
 from utils.components import scoreSubTreeWidget
-
+from utils.db_path import get_db_path, set_db_path
 form_class = uic.loadUiType("layout/manager.ui")[0]
 
 try:
@@ -51,6 +51,9 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
         # 메뉴
         self.actionImport_DB.triggered.connect(self.importDatabase)
         self.actionBackup_DB.triggered.connect(self.exportDatabase)
+
+        # DB 사용 현황 라벨
+        self.dbNameLabel.setText(f"사용중인 데이터베이스 정보: {get_db_path()}")
 
         # 학급추가 탭
         self.stdClassDelBtn.clicked.connect(self.deleteStdClass)
@@ -120,35 +123,40 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
 
     ##############설정메뉴###########################
     def importDatabase(self):
-        DB_NAME = "assets/studentManager.db"
+        # DB_NAME = "assets/studentManager.db"
         targetPath = ""
         addFilePath, _ = QFileDialog.getOpenFileName(self, "Open File",
-                                                     "./",
+                                                     "./assets",
                                                      "Data Base File (*.db)")
         if addFilePath != "":
+            db_name = addFilePath.split("/")[-1]
+            
             buttonReply = QMessageBox.question(self,
-                                               '알림', "db 파일을 대체하시겠습니까? 기존 db 파일은 삭제됩니다.",
+                                               '알림', f"데이터 베이스를 {db_name} 파일로 변경하시겠습니까?",
                                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if ".db" not in db_name:
+                return QMessageBox.about(self, "알림", "db 파일 형식이 잘못되었습니다.")
+
             if buttonReply == QMessageBox.Yes:
-                if os.path.isfile(DB_NAME):
+                if os.path.isfile(addFilePath):
                     # os.rename(targetPath+DB_NAME, targetPath+"old_"+DB_NAME)
-                    os.remove(DB_NAME)
-                    shutil.copyfile(addFilePath, targetPath + DB_NAME)
+                    # os.remove(DB_NAME)
+                    set_db_path("./assets/" + db_name)
+                    # shutil.copyfile(addFilePath, targetPath)
                     QMessageBox.about(self, "알림", "프로그램이 재실행됩니다.")
                     qApp.exit(WindowClass.EXIT_CODE_REBOOT)
 
     def exportDatabase(self):
-        DB_NAME = "studentManager.db"
-        originPath = "assets/"
+        DB_NAME = "assets/studentManager.db"
         saveFilePath, _ = QFileDialog.getSaveFileName(self, "Save File",
-                                                      "",
+                                                      "./assets",
                                                       "Data Base File (*.db)")
         if saveFilePath != "":
             buttonReply = QMessageBox.question(self,
                                                '알림', "db 파일 백업하시겠습니까?",
                                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if buttonReply == QMessageBox.Yes:
-                shutil.copyfile(originPath + DB_NAME, saveFilePath)
+                shutil.copyfile(DB_NAME, saveFilePath)
                 QMessageBox.about(self, "알림", "db 파일이 백업되었습니다.")
 
     ################-끝-############################

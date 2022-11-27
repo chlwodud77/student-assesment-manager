@@ -41,6 +41,13 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_16">
     <item>
+     <widget class="QLabel" name="dbNameLabel">
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -49,7 +56,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -1020,7 +1027,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>430</width>
-                   <height>605</height>
+                   <height>588</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_3"/>
@@ -1148,8 +1155,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>788</width>
-                <height>721</height>
+                <width>877</width>
+                <height>705</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1163,7 +1170,7 @@
                <item>
                 <widget class="QPushButton" name="totalScoreInput">
                  <property name="text">
-                  <string>전체 점수 입력</string>
+                  <string>복수 점수 입력</string>
                  </property>
                 </widget>
                </item>
@@ -1686,7 +1693,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>280</width>
-                   <height>276</height>
+                   <height>268</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -1750,7 +1757,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>600</width>
-                   <height>276</height>
+                   <height>268</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_25">
@@ -1852,7 +1859,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>276</width>
-                   <height>275</height>
+                   <height>267</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1887,7 +1894,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>600</width>
-                   <height>275</height>
+                   <height>267</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_27">
@@ -1995,8 +2002,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>347</width>
-                <height>704</height>
+                <width>436</width>
+                <height>688</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -2068,13 +2075,14 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>1406</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -2087,7 +2095,6 @@
    </widget>
    <addaction name="menu"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionImport_DB">
    <property name="text">
     <string>Database 불러오기</string>
