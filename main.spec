@@ -6,7 +6,8 @@ block_cipher = None
 
 added_files = [
             ( 'assets', 'assets'),
-            ( 'layout', 'layout')
+            ( 'layout', 'layout'),
+            ( 'config.json', '.')
                ]
 
 excludes_modules = [
@@ -37,7 +38,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='학생평가관리v1.3.1',
+          name='학생평가관리v1.3.2',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
