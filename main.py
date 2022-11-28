@@ -13,6 +13,7 @@ from src import classManage, scoreManage, subjectManage, scoreChangeManage, exce
 from utils.adapter import subjectTreeWidgetAdapter as sa, classComboBoxAdapter as ca
 from utils.components import scoreSubTreeWidget
 from utils.db_path import get_db_path, set_db_path
+from utils.backend import init_db_file
 form_class = uic.loadUiType("layout/manager.ui")[0]
 
 try:
@@ -141,13 +142,13 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
                 if os.path.isfile(addFilePath):
                     # os.rename(targetPath+DB_NAME, targetPath+"old_"+DB_NAME)
                     # os.remove(DB_NAME)
-                    set_db_path("./assets/" + db_name)
+                    set_db_path(addFilePath)
                     # shutil.copyfile(addFilePath, targetPath)
                     QMessageBox.about(self, "알림", "프로그램이 재실행됩니다.")
                     qApp.exit(WindowClass.EXIT_CODE_REBOOT)
 
     def exportDatabase(self):
-        DB_NAME = "assets/studentManager.db"
+        srcDbPath = get_db_path()
         saveFilePath, _ = QFileDialog.getSaveFileName(self, "Save File",
                                                       "./assets",
                                                       "Data Base File (*.db)")
@@ -156,7 +157,7 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
                                                '알림', "db 파일 백업하시겠습니까?",
                                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if buttonReply == QMessageBox.Yes:
-                shutil.copyfile(DB_NAME, saveFilePath)
+                shutil.copyfile(srcDbPath, saveFilePath)
                 QMessageBox.about(self, "알림", "db 파일이 백업되었습니다.")
 
     ################-끝-############################
@@ -423,6 +424,7 @@ if __name__ == "__main__":
     currentExitCode = WindowClass.EXIT_CODE_REBOOT
     while currentExitCode == WindowClass.EXIT_CODE_REBOOT:
         # QApplication : 프로그램을 실행시켜주는 클래스
+        init_db_file()
         app = QApplication(sys.argv)
 
         # WindowClass의 인스턴스 생성

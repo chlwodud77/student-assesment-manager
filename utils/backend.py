@@ -2,6 +2,10 @@ import sqlite3
 from utils import db_path
 DB_FILE = db_path.get_db_path()
 
+def init_db_file():
+    global DB_FILE
+    DB_FILE = db_path.get_db_path()
+
 SQL_CREATE_ASSESMENT_TABLE = """ CREATE TABLE IF NOT EXISTS "Assesment" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"subId"	INTEGER NOT NULL,
