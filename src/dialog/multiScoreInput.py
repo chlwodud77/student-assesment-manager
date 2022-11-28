@@ -48,13 +48,19 @@ class MultiScoreInput(QDialog, form_class):
             for classes in classList:
                 grade, cl = classes
                 scoreList = backend.returnScoreBySubIdAndClass(subId, int(grade), int(cl))
-                for sid, stdId, score, sasses in scoreList:
-                    try:
-                        backend.updateScoreValueById(sid, commonScore)
-                    except Exception as e:
-                        print(e)
-                        QMessageBox.about(self, "오류", f"다중 점수 생성 오류... 관리자에게 문의하세요. 오류: {e}")
-                    
+                if scoreList == []:
+                    studentIds = backend.returnClassMemberNumber(grade, cl)
+                    for studentId in studentIds:
+                        backend.saveScore(subId, studentId, commonScore, '')
+
+                else:
+                    for sid, stdId, score, sasses in scoreList:
+                        try:
+                            backend.updateScoreValueById(sid, commonScore)
+                        except Exception as e:
+                            print(e)
+                            QMessageBox.about(self, "오류", f"다중 점수 생성 오류... 관리자에게 문의하세요. 오류: {e}")
+                        
         return QMessageBox.about(self, "알림", "다중 점수 생성 완료.")
 
 
