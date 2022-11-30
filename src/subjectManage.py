@@ -10,6 +10,32 @@ from src.dialog.subjectInputDialog import SubjectInput
 from src.dialog.subjectModInputDialog import SubjectModInput
 from src.dialog.subjectStandardModifyInputDialog import StandardModifyInput
 from utils import backend, copyFromExl
+from pandas import DataFrame
+
+import pandas as pd
+from openpyxl.styles import Alignment, Border, Side
+
+ASSES_CELL_COL = "E"
+LENGTH_CELL_COL = "F"
+ASSES_CELL_WIDTH = 50
+LENGTH_CELL_WIDTH = 20
+GRADE_COL = 0
+CLASS_COL = 1
+STDNUM_COL = 2
+NAME_COL = 3
+ASSES_COL = 4
+LENGTH_COL = 5
+
+alignCenter = Alignment(horizontal='center', vertical='center')
+wrapText = Alignment(vertical="center", wrapText=True)
+allroundBorder = Border(left=Side(border_style="thin",
+                                  color='000000'),
+                        right=Side(border_style="thin",
+                                   color='000000'),
+                        top=Side(border_style="thin",
+                                 color='000000'),
+                        bottom=Side(border_style="thin",
+                                    color='000000'))
 
 
 def getTextFromSubjectInput():
@@ -63,6 +89,51 @@ def addChildSub(self):
         childItem.setText(0, subName)
     else:
         return
+
+
+def exportAssesmentsOfStandard(self):
+    try:
+        name, _ = QFileDialog.getSaveFileName(
+            self, 'Save File', '', 'Excel files (*.xlsx)')
+
+        if name == "":
+            return
+
+        standardList = self.grdStndList
+        if standardList.count() == 0:
+            return QMessageBox.about(self, "알림", "출력할 등급이 없습니다.")
+
+        dataFrameList = []
+        standardNameList = []
+
+        for idx in range(standardList.count()):
+            standardName = standardList.item(idx).text()
+            standardNameList.append(standardName)
+            standardId = standardList.item(idx).whatsThis()
+            assesments = backend.returnAssesmentsByStandardId(standardId)
+            assesments = list(map(lambda x: x[1], assesments))
+            rawData = {'내용': assesments}
+        
+            df = DataFrame(rawData)
+            dataFrameList.append(df)
+
+        with pd.ExcelWriter(name, engine="openpyxl") as writer:
+            for df, stdName in zip(dataFrameList, standardNameList):
+                df.to_excel(writer, sheet_name=stdName, index=False)
+            
+            for cl in standardNameList:
+                worksheet = writer.sheets[cl]
+                worksheet.column_dimensions['A'].width = ASSES_CELL_WIDTH
+                for col in worksheet.columns:
+                    for idx, cell in enumerate(col):
+                        if idx == 0:
+                            cell.alignment = alignCenter
+                        cell.border = allroundBorder
+        
+        return QMessageBox.about(self, "알림", "파일 생성 완료.")
+    except Exception as e:
+        print(e)
+        return QMessageBox.about(self, "알림", f"파일 생성 실패.\n {e}")
 
 
 def copyContent(self, widget):

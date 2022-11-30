@@ -83,6 +83,7 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
         self.grdStndRowResetBtn.clicked.connect(self.resetGrdStndRow)
         self.grdAseList.installEventFilter(self)
         self.subjectCopyBtn.clicked.connect(self.showSubjectCopy)
+        self.exportAssesmentBtn.clicked.connect(self.__exportAssesmentsOfGrades)
 
         # 점수입력 탭
         # self.classListWidget.clicked.connect(self.activateScoreEdit)
@@ -352,6 +353,9 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
 
     def showSubjectCopy(self):
         subjectManage.openSubjectManage(self)
+
+    def __exportAssesmentsOfGrades(self):
+        subjectManage.exportAssesmentsOfStandard(self)
 
     ################-끝-############################
 
