@@ -23,6 +23,7 @@ STDNUM_COL = 2
 NAME_COL = 3
 ASSES_COL = 4
 LENGTH_COL = 5
+LENGTH_BYTE_COL = 6
 
 dataFrameList = []
 classTextList = []
@@ -336,6 +337,7 @@ def exlPrintMultiAsses(self):
         classList = []
         assesment = []
         contentLengthList = []
+        contentByteLengthList = []
         classMemberList = backend.returnClassMemberName(
             int(grade), int(classes)) if classes is not None else [backend.returnClassMemberNameByStudentId(grade)]
         studentNumberList = backend.returnClassMemberNumber(
@@ -353,7 +355,7 @@ def exlPrintMultiAsses(self):
         rawData = {"학년": gradeList, "반": classList,
                    "번호": studentNumberList, "이름": classMemberList}
 
-        for studentId in studentIdList:
+        for idx, studentId in enumerate(studentIdList):
             groupSubjectSelectList: List[int] = []
 
             for group in self.subjectGroups:
@@ -438,12 +440,13 @@ def exlPrintMultiAsses(self):
                     if "\n" in asses:
                         contentLength -= 1
 
-            contentLengthList.append(str(contentLength) + " 자 (" +
-                                     str(contentLengthByte) + " 바이트)")
+            contentLengthList.append("=LEN(E%s)" %(idx + 2))
+            contentByteLengthList.append("=(LENB(E%s)-LEN(E%s))*2+LEN(E%s)" %(idx + 2, idx + 2, idx + 2))
             assesment.append(assesText)
 
         rawData["평가"] = assesment
-        rawData["글자수(바이트)"] = contentLengthList
+        rawData["글자수"] = contentLengthList
+        rawData["글자수(바이트)"] = contentByteLengthList
 
         try:
             df = DataFrame(rawData)
@@ -464,4 +467,5 @@ def exlPrintMultiAsses(self):
         header.setSectionResizeMode(NAME_COL, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(ASSES_COL, QHeaderView.Stretch)
         header.setSectionResizeMode(LENGTH_COL, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(LENGTH_BYTE_COL, QHeaderView.ResizeToContents)
         tabwidget.addTab(view, classText)
