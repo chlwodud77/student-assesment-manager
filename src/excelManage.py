@@ -162,23 +162,52 @@ def returnClassInteger(classes):
 
 
 def exlAllShowClassList(self):
-    widget = self.exlClassWidget
-    widget.clear()
     classList = backend.returnClassList()
+    classTreeWidget = self.exlClassWidget
+    classTreeWidget.clear()
+    classTreeWidget.setColumnCount(1)
+    classTreeWidget.setHeaderLabels(["학급"])
+    for row in classList:
+        parentItem = QTreeWidgetItem(classTreeWidget, [str(row[0]) + "학년 " + str(row[1]) + "반"])
+        parentItem.setWhatsThis(0, str(row[0]) + "-" + str(row[1]))
 
-    for grade, classes in classList:
-        item = QListWidgetItem(str(grade) + "학년 " + str(classes) + "반")
-        widget.addItem(item)
-
-
+    it = QTreeWidgetItemIterator(self.exlClassWidget)
+    while it.value():
+        if "-" in it.value().whatsThis(0):
+            grade, classes = it.value().whatsThis(0).split("-")
+            students = backend.returnClassMemberList(int(grade), int(classes))
+            for row in students:
+                stdName = row[0]
+                stdId = row[1]
+                stdInfo = str(stdId) + " " + str(stdName)
+                childItem = QTreeWidgetItem(it.value())
+                childItem.setWhatsThis(0, str(stdId))
+                childItem.setText(0, stdInfo)
+        it += 1
+        
+            
 def exlAddClassList(self):
     srcWidget = self.exlClassWidget
     targetWidget = self.exlAddedClassList
     if srcWidget.selectedItems() is not None:
         items = srcWidget.selectedItems()
         for item in items:
-            newItem = QListWidgetItem(item.text())
-            targetWidget.addItem(newItem)
+            itemId = item.whatsThis(0)
+            if item.parent() is not None:  # 자식 노드이면 -> 학생정보
+                parentItem = item.parent()
+                parentName = parentItem.text(0)
+                childName = item.text(0)
+                newItem = QListWidgetItem(
+                    str(parentName) + " - " + str(childName))
+                newItem.setWhatsThis(str(itemId))
+                targetWidget.addItem(newItem)
+                
+            if item.parent() is None and '-' in itemId: # 부모 노드이면 -> 학급정보
+                newItem = QListWidgetItem(item.text(0))
+                newItem.setWhatsThis(itemId)
+                targetWidget.addItem(newItem)
+
+    self.originalAddedClassList = getItemsFromQListWWidget(targetWidget)
 
 
 def exlExtClassList(self):
@@ -237,7 +266,6 @@ def exlAddSubList(self):
     self.originalAddedSubjects = getItemsFromQListWWidget(targetWidget)
 
 
-
 def exlExtSubList(self):
     widget = self.exlAddedSubWidget
     if widget.currentItem() is not None:
@@ -280,9 +308,11 @@ def exlPrintMultiAsses(self):
     for item in classItems:
         classText = item.text()
         classTextList.append(classText)
-        grade, classes = returnClassInteger(classText)
-        classList.append([grade, classes])
-
+        if '-' in classText: # 단일 학생 (학급x)
+            classList.append([item.whatsThis(), None])
+        else: # 학급
+            grade, classes = returnClassInteger(classText)
+            classList.append([grade, classes])
     # self.subjectGroups 리스트 안에 [{"groupName": "name", "subjectIds": ['12','13','14',...]}, ...]
     # 식으로 존재하니까 해당 자료 참조해서
     # 평가 항목을 먼저 생성하고 랜덤하게 몇개를 추출할지 선택해서 평가문 생성
@@ -307,24 +337,23 @@ def exlPrintMultiAsses(self):
         assesment = []
         contentLengthList = []
         classMemberList = backend.returnClassMemberName(
-            int(grade), int(classes))
+            int(grade), int(classes)) if classes is not None else [backend.returnClassMemberNameByStudentId(grade)]
         studentNumberList = backend.returnClassMemberNumber(
-            int(grade), int(classes))
+            int(grade), int(classes)) if classes is not None else [grade]
         studentIdList = backend.returnClassMemberNumber(
-            int(grade), int(classes))
+            int(grade), int(classes)) if classes is not None else [grade]
 
         for i in range(0, len(studentNumberList)):
             num = str(studentNumberList[i])
             studentNumberList[i] = num[3:]
 
         for i in range(0, len(classMemberList)):
-            gradeList.append(grade)
-            classList.append(classes)
+            gradeList.append(grade if classes is not None else str(grade)[0])
+            classList.append(classes if classes is not None else str(grade)[1:3])
         rawData = {"학년": gradeList, "반": classList,
                    "번호": studentNumberList, "이름": classMemberList}
 
         for studentId in studentIdList:
-
             groupSubjectSelectList: List[int] = []
 
             for group in self.subjectGroups:
@@ -416,8 +445,12 @@ def exlPrintMultiAsses(self):
         rawData["평가"] = assesment
         rawData["글자수(바이트)"] = contentLengthList
 
-        df = DataFrame(rawData)
-        dataFrameList.append(df)
+        try:
+            df = DataFrame(rawData)
+            dataFrameList.append(df)
+        except Exception as e:
+            print(e)
+            print(rawData)
 
     for df, classText in zip(dataFrameList, classTextList):
         tab = QWidget()
