@@ -193,6 +193,19 @@ def returnClassMemberName(grade, classes):
             return result
     except sqlite3.IntegrityError:
         print("학급 구성원 조회 오류")
+        
+
+def returnClassMemberNameByStudentId(studentId):
+    sconn = createConnection(DB_FILE)
+    sconn.row_factory = lambda cursor, row: row[0]
+
+    try:
+        with sconn:
+            sql = "SELECT name FROM Student WHERE id = ?"
+            result = sconn.cursor().execute(sql, (studentId,)).fetchone()
+            return result
+    except sqlite3.IntegrityError:
+        print("학급 구성원 조회 오류")
 
 
 def returnClassMemberNumber(grade, classes):
