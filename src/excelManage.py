@@ -11,6 +11,7 @@ from src.dialog.assesmentGroupDialog import AssesmentGroupDialog
 
 from utils import backend
 import random
+import copy
 from utils.pandasModel import PandasModel
 
 ASSES_CELL_COL = "E"
@@ -133,7 +134,7 @@ def exlSaveToFile(self):
 
     with pd.ExcelWriter(name, engine="openpyxl") as writer:
         for df, cl in zip(dfList, clList):
-            df.to_excel(writer, sheet_name=cl, index=False)
+            df[1].to_excel(writer, sheet_name=cl, index=False)
 
         for cl in clList:
             worksheet = writer.sheets[cl]
@@ -337,7 +338,9 @@ def exlPrintMultiAsses(self):
         classList = []
         assesment = []
         contentLengthList = []
+        contentLengthList2 = []
         contentByteLengthList = []
+        contentByteLengthList2 = []
         classMemberList = backend.returnClassMemberName(
             int(grade), int(classes)) if classes is not None else [backend.returnClassMemberNameByStudentId(grade)]
         studentNumberList = backend.returnClassMemberNumber(
@@ -441,23 +444,29 @@ def exlPrintMultiAsses(self):
                         contentLength -= 1
 
             contentLengthList.append("=LEN(E%s)" %(idx + 2))
+            contentLengthList2.append(contentLength)
             contentByteLengthList.append("=(LENB(E%s)-LEN(E%s))*2+LEN(E%s)" %(idx + 2, idx + 2, idx + 2))
+            contentByteLengthList2.append(contentLengthByte)
             assesment.append(assesText)
 
         rawData["평가"] = assesment
         rawData["글자수"] = contentLengthList
         rawData["글자수(바이트)"] = contentByteLengthList
+        rawData2 = copy.deepcopy(rawData)
+        rawData2["글자수"] = contentLengthList2
+        rawData2["글자수(바이트)"] = contentByteLengthList2
 
         try:
-            df = DataFrame(rawData)
-            dataFrameList.append(df)
+            dfForExcel = DataFrame(rawData)
+            dfForShow = DataFrame(rawData2)
+            dataFrameList.append([dfForShow, dfForExcel])
         except Exception as e:
             print(e)
             print(rawData)
 
     for df, classText in zip(dataFrameList, classTextList):
         tab = QWidget()
-        model = PandasModel(df)
+        model = PandasModel(df[0])
         view = QTableView(tab)
         view.setModel(model)
         header = view.horizontalHeader()
