@@ -29,6 +29,11 @@ LENGTH_BYTE_COL = 6
 dataFrameList = []
 classTextList = []
 
+individualDataFrameList = []
+individualClassTextList = []
+
+currentExcelPrintType = '' # multi / individual 
+
 alignCenter = Alignment(horizontal='center', vertical='center')
 wrapText = Alignment(vertical="center", wrapText=True)
 allroundBorder = Border(left=Side(border_style="thin",
@@ -122,9 +127,15 @@ def showAssesLengthAndState(self, currentContent, row):
 
 def exlSaveToFile(self):
     global dataFrameList, classTextList
+    global individualDataFrameList, individualClassTextList
+    global currentExcelPrintType
+
     dfList = dataFrameList
     clList = classTextList
-    if not dfList:
+
+    indiDfList = individualDataFrameList
+    indiclList = individualClassTextList
+    if not dfList and not indiDfList:
         return QMessageBox.about(self, "주의", "엑셀로 저장할 항목들을 추가해주세요.")
     name, _ = QFileDialog.getSaveFileName(
         self, 'Save File', '', 'Excel files (*.xlsx)')
@@ -133,27 +144,47 @@ def exlSaveToFile(self):
         return
 
     with pd.ExcelWriter(name, engine="openpyxl") as writer:
-        for df, cl in zip(dfList, clList):
-            df[1].to_excel(writer, sheet_name=cl, index=False)
+        if dfList and currentExcelPrintType == 'multi':
+            for df, cl in zip(dfList, clList):
+                df[1].to_excel(writer, sheet_name=cl, index=False)
 
-        for cl in clList:
-            worksheet = writer.sheets[cl]
-            worksheet.column_dimensions[ASSES_CELL_COL].width = ASSES_CELL_WIDTH
-            worksheet.column_dimensions[LENGTH_CELL_COL].width = LENGTH_CELL_WIDTH
-            for col, i in zip(worksheet.columns, range(0, worksheet.max_column)):
-                if i != ASSES_COL:
-                    for cell in col:
-                        cell.alignment = alignCenter
-                        cell.border = allroundBorder
-                if i == ASSES_COL:
-                    for cell in col:
-                        if cell.row == 1:
+            for cl in clList:
+                worksheet = writer.sheets[cl]
+                worksheet.column_dimensions[ASSES_CELL_COL].width = ASSES_CELL_WIDTH
+                worksheet.column_dimensions[LENGTH_CELL_COL].width = LENGTH_CELL_WIDTH
+                for col, i in zip(worksheet.columns, range(0, worksheet.max_column)):
+                    if i != ASSES_COL:
+                        for cell in col:
                             cell.alignment = alignCenter
                             cell.border = allroundBorder
+                    if i == ASSES_COL:
+                        for cell in col:
+                            if cell.row == 1:
+                                cell.alignment = alignCenter
+                                cell.border = allroundBorder
+                            else:
+                                cell.alignment = wrapText
+                                cell.border = allroundBorder
+            dataFrameList = []
+            classTextList = []
+        if indiDfList and currentExcelPrintType == 'individual':
+            for df, cl in zip(indiDfList, indiclList):
+                df.to_excel(writer, sheet_name=cl, index=False)
+
+            for cl in indiclList:
+                worksheet = writer.sheets[cl]
+                worksheet.column_dimensions['A'].width = LENGTH_CELL_WIDTH
+                worksheet.column_dimensions['B'].width = ASSES_CELL_WIDTH
+                for col, i in zip(worksheet.columns, range(0, worksheet.max_column)):
+                    for idx, cell in enumerate(col):
+                        if idx == 0:
+                            cell.alignment = alignCenter
                         else:
                             cell.alignment = wrapText
-                            cell.border = allroundBorder
-    dataFrameList = []
+                        cell.border = allroundBorder
+            individualDataFrameList = []
+            individualClassTextList = []
+    
 
 
 def returnClassInteger(classes):
@@ -282,6 +313,64 @@ def getItemsFromQListWWidget(listWidget: QListWidget) -> List[QListWidgetItem]:
     return items
 
 
+def getRawDataForIndividualAssesments(studentId, subjectIds) -> list:
+    result = []
+    for subjectId in subjectIds:
+        subName = backend.returnSubNameBySubId(subjectId)
+        data = backend.returnStudentAssesmentBySubId(
+                            subjectId, studentId)
+        if data is None: continue
+        result.append({"과목": subName, "평가": data[0]})
+    return result
+
+
+
+def exlPrintIndividualAsses(self):
+    tabwidget = self.totalAssesTab
+    tabwidget.clear()
+    subjectIdList = []
+    global individualDataFrameList
+    global individualClassTextList
+    global currentExcelPrintType
+
+    individualDataFrameList = []
+    individualClassTextList = []
+
+    classListWidget: QListWidget = self.exlAddedClassList
+    subjectListWidget: QListWidget = self.exlAddedSubWidget
+
+    if classListWidget.count() == 0 or subjectListWidget.count() == 0:
+        return
+
+    studentItems: List[QListWidgetItem] = getItemsFromQListWWidget(
+        classListWidget)
+
+    subjectItems: List[QListWidgetItem] = getItemsFromQListWWidget(
+        subjectListWidget)
+
+    for item in subjectItems:
+        subjectIdList.append(int(item.whatsThis()))
+    
+    for item in studentItems:
+        classText = item.text()
+        rawData = getRawDataForIndividualAssesments(item.whatsThis(), subjectIdList)
+        dfForExcel = DataFrame(rawData)
+        individualDataFrameList.append(dfForExcel)
+        individualClassTextList.append(classText)
+
+    for df, classText in zip(individualDataFrameList, individualClassTextList):
+        tab = QWidget()
+        model = PandasModel(df)
+        view = QTableView(tab)
+        view.setModel(model)
+        header = view.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        tabwidget.addTab(view, classText)
+
+    currentExcelPrintType = 'individual'
+
+
 def exlPrintMultiAsses(self):
     tabwidget = self.totalAssesTab
     tabwidget.clear()
@@ -289,6 +378,7 @@ def exlPrintMultiAsses(self):
     subjectList: List[dict] = []
     global dataFrameList
     global classTextList
+    global currentExcelPrintType
 
     dataFrameList = []
     classTextList = []
@@ -478,3 +568,5 @@ def exlPrintMultiAsses(self):
         header.setSectionResizeMode(LENGTH_COL, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(LENGTH_BYTE_COL, QHeaderView.ResizeToContents)
         tabwidget.addTab(view, classText)
+
+    currentExcelPrintType = 'multi'

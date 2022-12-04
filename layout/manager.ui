@@ -56,7 +56,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -1033,8 +1033,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>426</width>
-                   <height>533</height>
+                   <width>430</width>
+                   <height>588</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_3"/>
@@ -1162,8 +1162,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>869</width>
-                <height>663</height>
+                <width>921</width>
+                <height>705</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1700,7 +1700,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>280</width>
-                   <height>246</height>
+                   <height>253</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -1761,7 +1761,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>600</width>
-                   <height>246</height>
+                   <height>253</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_25">
@@ -1863,7 +1863,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>276</width>
-                   <height>245</height>
+                   <height>253</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -1898,7 +1898,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>600</width>
-                   <height>245</height>
+                   <height>253</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_27">
@@ -1971,7 +1971,14 @@
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="text">
-              <string>평가 출력</string>
+              <string>평가 출력 (학급 - 과목)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="multiStudentAssesPrintBtn">
+             <property name="text">
+              <string>평가 출력 (학생 - 과목)</string>
              </property>
             </widget>
            </item>
@@ -2006,8 +2013,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>436</width>
-                <height>648</height>
+                <width>480</width>
+                <height>688</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -2086,7 +2093,7 @@
      <x>0</x>
      <y>0</y>
      <width>1450</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

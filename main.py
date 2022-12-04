@@ -117,6 +117,7 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
         self.exlSubjectAddBtn.clicked.connect(self.exlAddSubList)
         self.exlAddedSubWidget.itemDoubleClicked.connect(self.exlExtSubList)
         self.multiAssesPrintBtn.clicked.connect(self.exlPrintMultiAsses)
+        self.multiStudentAssesPrintBtn.clicked.connect(self.exlPrintIndividualAsses)
         
 
     def keyPressEvent(self, e):
@@ -195,6 +196,9 @@ class WindowClass(QMainWindow, QTreeWidget, form_class):
 
     def exlPrintMultiAsses(self):
         excelManage.exlPrintMultiAsses(self)
+    
+    def exlPrintIndividualAsses(self):
+        excelManage.exlPrintIndividualAsses(self)
 
     ################-끝-############################
 
